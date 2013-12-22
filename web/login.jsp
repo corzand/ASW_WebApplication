@@ -12,7 +12,7 @@
         <title>Login</title>
     </head>
     <body>
-        <applet style="width: 200px; height: 50px" codebase="applet/" code="ChatApplet.class" archive="JavaApplet.jar,JavaClassLibrary.jar" width=350 height=200>
+        <applet style="width: 200px; height: 50px" codebase="applet/" code="LoginApplet.class" archive="Applet1.jar,Lib1.jar,org.json.jar" width=350 height=200>
             <param name="sessionId" value="<%= session.getId()%>" />
         </applet>  
     </body>
