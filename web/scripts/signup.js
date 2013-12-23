@@ -30,17 +30,12 @@ function signUpViewModelDefinition(){
         console.log(self.lastName());
         
         $.ajax({
-            url: 'http://localhost:8080/ASW_WebApplication/application/signup',
+            url: '/application/signup/',
             type: 'POST',
             data: JSON.stringify(self.signUpData()),
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
-            success: function(data, textStatus, jqXHR) {
-                //ok
-                if(typeof data !== 'Object'){
-                    var data = JSON.parse(data);
-                }
-                
+            success: function(data, textStatus, jqXHR) {                
                 if(!data.error){
                     alert('ok');
                 }else {
