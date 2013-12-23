@@ -2,6 +2,8 @@ package asw1009;
 
 import asw1009.models.User;
 import asw1009.models.request.LoginRequestViewModel;
+import asw1009.models.request.SignUpRequestViewModel;
+import asw1009.models.response.BaseResponseViewModel;
 import asw1009.models.response.LoginResponseViewModel;
 import com.google.gson.Gson;
 import java.io.*;
@@ -20,6 +22,7 @@ public class Application extends HttpServlet {
 
     //Define servlet actions
     private final String ACTION_LOGIN = "login";
+    private final String ACTION_SIGNUP = "signup";
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {
@@ -35,6 +38,9 @@ public class Application extends HttpServlet {
         if(action.equals(ACTION_LOGIN)){
             System.out.println("forwarding...");
             forward(request, response, "/login.jsp");
+        }else if (action.equals(ACTION_SIGNUP)){
+            System.out.println("forwarding...");
+            forward(request, response, "/signup.jsp");
         }        
     }
 
@@ -57,6 +63,9 @@ public class Application extends HttpServlet {
             if (action.equals(ACTION_LOGIN)) {
                 LoginRequestViewModel requestData = gson.fromJson(json, LoginRequestViewModel.class);
                 jsonResponse = gson.toJson(login(requestData), LoginResponseViewModel.class);
+            }else if (action.equals(ACTION_SIGNUP)){
+                SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
+                jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
             }
             response.getOutputStream().print(jsonResponse);
             response.getOutputStream().flush();
@@ -136,6 +145,13 @@ public class Application extends HttpServlet {
             }
         }
 
+    }
+    
+    private BaseResponseViewModel signUp(SignUpRequestViewModel data){
+        //fa cose --> chiama il model, registra etc
+        BaseResponseViewModel responseViewModel = new BaseResponseViewModel();
+        responseViewModel.setError(false);
+        return responseViewModel;
     }
 
     private LoginResponseViewModel login(LoginRequestViewModel data) {
