@@ -1,3 +1,4 @@
 /build/
 !/build/web/applet/
 /dist/
+/nbproject/private/
