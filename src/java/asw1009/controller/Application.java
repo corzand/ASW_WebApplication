@@ -1,10 +1,15 @@
-package asw1009;
+package asw1009.controller;
 
-import asw1009.models.User;
-import asw1009.models.request.LoginRequestViewModel;
-import asw1009.models.response.LoginResponseViewModel;
+import asw1009.ManageXML;
+import asw1009.model.entities.User;
+import asw1009.viewmodel.request.LoginRequestViewModel;
+import asw1009.viewmodel.request.SignUpRequestViewModel;
+import asw1009.viewmodel.response.BaseResponseViewModel;
+import asw1009.viewmodel.response.LoginResponseViewModel;
 import com.google.gson.Gson;
 import java.io.*;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
@@ -13,16 +18,33 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-@WebServlet(urlPatterns = {"/users/*"})
-public class Users extends HttpServlet {
-    
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doGet(req, resp); //To change body of generated methods, choose Tools | Templates.
+@WebServlet(urlPatterns = {"/application/*"})
+public class Application extends HttpServlet {
+
+    //Define servlet actions
+    private final String ACTION_LOGIN = "login";
+    private final String ACTION_SIGNUP = "signup";
+
+    private void forward(HttpServletRequest request, HttpServletResponse response, String page)
+            throws ServletException, IOException {
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(page);
+        rd.forward(request, response);
     }
 
-    
-    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        String action = request.getPathInfo().replace("/", "");
+        if(action.equals(ACTION_LOGIN)){
+            System.out.println("forwarding...");
+            forward(request, response, "/login.jsp");
+        }else if (action.equals(ACTION_SIGNUP)){
+            System.out.println("forwarding...");
+            forward(request, response, "/signup.jsp");
+        }        
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -39,9 +61,12 @@ public class Users extends HttpServlet {
             String action = request.getPathInfo().replace("/", "");
             String jsonResponse = "";
 
-            if (action.equals(null)) {
+            if (action.equals(ACTION_LOGIN)) {
                 LoginRequestViewModel requestData = gson.fromJson(json, LoginRequestViewModel.class);
                 jsonResponse = gson.toJson(login(requestData), LoginResponseViewModel.class);
+            }else if (action.equals(ACTION_SIGNUP)){
+                SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
+                jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
             }
             response.getOutputStream().print(jsonResponse);
             response.getOutputStream().flush();
@@ -60,7 +85,7 @@ public class Users extends HttpServlet {
                 String action = root.getTagName();
                 Document answer = null;
 
-                if (action.equals(null)) {
+                if (action.equals(ACTION_LOGIN)) {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
@@ -70,7 +95,7 @@ public class Users extends HttpServlet {
                     answer = mngXML.newDocument();
 
                     root = answer.createElement("login");
-                    
+
                     Element hasError = answer.createElement("hasError");
                     hasError.setTextContent("" + loginResponseViewModel.isError());
 
@@ -102,10 +127,10 @@ public class Users extends HttpServlet {
                     root.appendChild(hasError);
                     root.appendChild(errorMessage);
                     root.appendChild(loggedUser);
-                    
+
                     answer.appendChild(root);
                 }
-                
+
                 mngXML.transform(os, answer);
                 os.close();
             } catch (ParserConfigurationException e) {
@@ -121,6 +146,13 @@ public class Users extends HttpServlet {
             }
         }
 
+    }
+    
+    private BaseResponseViewModel signUp(SignUpRequestViewModel data){
+        //fa cose --> chiama il model, registra etc
+        BaseResponseViewModel responseViewModel = new BaseResponseViewModel();
+        responseViewModel.setError(false);
+        return responseViewModel;
     }
 
     private LoginResponseViewModel login(LoginRequestViewModel data) {

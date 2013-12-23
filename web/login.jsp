@@ -12,7 +12,7 @@
         <title>Login</title>
     </head>
     <body>
-        <applet style="width: 200px; height: 50px" codebase="http://localhost:8080/ASW_WebApplication/applet/" code="LoginApplet.class" archive="ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" width=350 height=200>
+        <applet style="width: 200px; height: 50px" codebase="/applet/" code="LoginApplet.class" archive="ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" width=350 height=200>
             <param name="sessionId" value="<%= session.getId()%>" />
         </applet>  
     </body>
