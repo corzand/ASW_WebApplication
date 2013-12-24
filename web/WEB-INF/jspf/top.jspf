@@ -1,9 +1,15 @@
-<%-- any content can be specified here e.g.: --%>
 <%@ page pageEncoding="UTF-8" %>
 <div class="navigation">
     <img class="logo" src="/style/images/logo.png" />
-    <div class="items">
-        <a href="/View/login.jsp" >Login</a>
-        <a href="/View/signup.jsp" >Sign Up</a>
+    <div class="items">       
+        <%if(session.getAttribute("user") != null){ %> 
+            <a href="/View/login.jsp">Login</a>
+            <a href="/View/signup.jsp">Sign Up</a>
+        <% } else {%>
+            <img data-bind="attr: {src: User.picture}"/>
+            <span data-bind="text: User.firstName "/>
+            <span data-bind="text : User.lastName "/>
+            <a data-bind="click : Application.Logout">Logout</a>
+        <% } %>  
     </div>
 </div>

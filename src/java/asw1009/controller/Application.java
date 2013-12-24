@@ -26,6 +26,7 @@ public class Application extends HttpServlet {
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
     private final String ACTION_INDEX = "index";
+    private final String ACTION_LOGOUT = "logout";
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {
@@ -68,13 +69,24 @@ public class Application extends HttpServlet {
 
             String action = request.getPathInfo().replace("/", "");
             String jsonResponse = "";
-
-            if (action.equals(ACTION_LOGIN)) {
-                LoginRequestViewModel requestData = gson.fromJson(json, LoginRequestViewModel.class);
-                jsonResponse = gson.toJson(login(requestData), LoginResponseViewModel.class);
-            } else if (action.equals(ACTION_SIGNUP)) {
-                SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
-                jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
+            switch (action) {
+                case ACTION_LOGIN: {
+                    LoginRequestViewModel requestData = gson.fromJson(json, LoginRequestViewModel.class);
+                    jsonResponse = gson.toJson(login(requestData), LoginResponseViewModel.class);
+                    break;
+                }
+                case ACTION_SIGNUP: {
+                    SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
+                    jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
+                    break;
+                }
+                case ACTION_LOGOUT: {
+                    BaseResponseViewModel response_logout = new BaseResponseViewModel();
+                    response_logout.setError(false);
+                    session.setAttribute("user", null);
+                    jsonResponse = gson.toJson(response_logout,BaseResponseViewModel.class);
+                    break;
+                }
             }
             response.getOutputStream().print(jsonResponse);
             response.getOutputStream().flush();
@@ -98,9 +110,8 @@ public class Application extends HttpServlet {
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
 
-					
-					UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
-					
+                    UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
+
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
                     if (!loginResponseViewModel.isError()) {

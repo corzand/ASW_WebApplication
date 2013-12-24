@@ -50,6 +50,8 @@ table {
 
 /*END RESET STYLE*/
 
+
+
 /*Fragment title.jspf*/
 .title {
     
@@ -63,13 +65,15 @@ table {
     
 }
 
+
+
 /*Fragment top.jspf*/
 .navigation {
     background-color: red;
 }
 
 .navigation > logo {
-    
+  
 }
 
 .navigation > items {
