@@ -22,6 +22,15 @@ import org.xml.sax.SAXException;
 @WebServlet(urlPatterns = {"/application/*"})
 public class Application extends HttpServlet {
 
+    @Override
+    public void init() throws ServletException {
+        super.init(); 
+        UsersManager.getInstance().setDirectoryPath(getServletContext().getRealPath("/data/"));
+        UsersManager.getInstance().setFileName("Users");        
+    }
+
+    
+    
     //Define servlet actions
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
