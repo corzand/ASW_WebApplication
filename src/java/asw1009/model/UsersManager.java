@@ -11,12 +11,11 @@ import asw1009.model.entities.User;
  *
  * @author Andrea
  */
-public class UsersManager extends baseFileManager{
+public class UsersManager extends BaseFileManager{
 
 	private static UsersManager instance;
 
-	private UsersManager() {
-
+	private UsersManager() {            
 	}
 
 	public static synchronized UsersManager getInstance() {
@@ -25,7 +24,7 @@ public class UsersManager extends baseFileManager{
 		}
 
 		return instance;
-	}
+	}        
 
 	public User getUser(String username, String password) {
 		//Search a user and..
