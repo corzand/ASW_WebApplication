@@ -25,6 +25,7 @@ public class Application extends HttpServlet {
     //Define servlet actions
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
+    private final String ACTION_INDEX = "index";
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {
@@ -35,22 +36,28 @@ public class Application extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
+        //HttpSession session = request.getSession();
         String action = request.getPathInfo().replace("/", "");
-        if(action.equals(ACTION_LOGIN)){
-            System.out.println("forwarding...");
-            forward(request, response, "/login.jsp");
-        }else if (action.equals(ACTION_SIGNUP)){
-            System.out.println("forwarding...");
-            forward(request, response, "/signup.jsp");
-        }        
+        switch (action) {
+            case ACTION_LOGIN:
+                System.out.println("forwarding...");
+                forward(request, response, "/View/login.jsp");
+                break;
+            case ACTION_SIGNUP:
+                System.out.println("forwarding...");
+                forward(request, response, "/View/signup.jsp");
+                break;
+            case ACTION_INDEX:
+                System.out.println("forwarding...");
+                forward(request, response, "/View/index.jsp");
+                break;
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
-
         if (request.getContentType().contains("application/json")) {
             //JSON over HTTP
 
@@ -65,7 +72,7 @@ public class Application extends HttpServlet {
             if (action.equals(ACTION_LOGIN)) {
                 LoginRequestViewModel requestData = gson.fromJson(json, LoginRequestViewModel.class);
                 jsonResponse = gson.toJson(login(requestData), LoginResponseViewModel.class);
-            }else if (action.equals(ACTION_SIGNUP)){
+            } else if (action.equals(ACTION_SIGNUP)) {
                 SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
                 jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
             }
@@ -95,6 +102,10 @@ public class Application extends HttpServlet {
 					UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
 					
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
+
+                    if (!loginResponseViewModel.isError()) {
+                        session.setAttribute("user", loginResponseViewModel.getLoggedUser());
+                    }
 
                     answer = mngXML.newDocument();
 
@@ -151,8 +162,8 @@ public class Application extends HttpServlet {
         }
 
     }
-    
-    private BaseResponseViewModel signUp(SignUpRequestViewModel data){
+
+    private BaseResponseViewModel signUp(SignUpRequestViewModel data) {
         //fa cose --> chiama il model, registra etc
         BaseResponseViewModel responseViewModel = new BaseResponseViewModel();
         responseViewModel.setError(false);

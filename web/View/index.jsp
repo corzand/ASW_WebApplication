@@ -15,7 +15,10 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
         <link rel="stylesheet" href="style/jquery-ui-1.10.3.custom.css" />
     </head>
-    <body>        
+    <body>   
+        <%if(session.getAttribute("user") == null){
+            response.sendRedirect("/application/login");
+        }%>
         <h1>Hello World!</h1>
     </body>
 </html>

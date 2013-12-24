@@ -37,9 +37,10 @@ function signUpViewModelDefinition(){
             contentType: 'application/json; charset=utf-8',
             success: function(data, textStatus, jqXHR) {                
                 if(!data.error){
-                    alert('ok');
+                    alert('Ok');
+                    window.location.href = "/application/login";
                 }else {
-                    alert('error');
+                    alert('Error');
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
