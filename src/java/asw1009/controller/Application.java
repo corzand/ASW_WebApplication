@@ -1,6 +1,7 @@
 package asw1009.controller;
 
 import asw1009.ManageXML;
+import asw1009.model.UsersManager;
 import asw1009.model.entities.User;
 import asw1009.viewmodel.request.LoginRequestViewModel;
 import asw1009.viewmodel.request.SignUpRequestViewModel;
@@ -90,6 +91,9 @@ public class Application extends HttpServlet {
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
 
+					
+					UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
+					
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
                     answer = mngXML.newDocument();

@@ -11,24 +11,30 @@ import asw1009.model.entities.User;
  *
  * @author Andrea
  */
-public class UsersManager {
+public class UsersManager extends baseFileManager{
 
-    private static UsersManager instance;
+	private static UsersManager instance;
 
-    private UsersManager() {
+	private UsersManager() {
 
-    }
+	}
 
-    public static synchronized UsersManager getInstance() {
-        if (instance == null) {
-            instance = new UsersManager();
-        }
+	public static synchronized UsersManager getInstance() {
+		if (instance == null) {
+			instance = new UsersManager();
+		}
 
-        return instance;
-    }
-    
-    public User getUser(String username, String password){
-        //Search a user and..
-        return new User();
-    }
+		return instance;
+	}
+
+	public User getUser(String username, String password) {
+		//Search a user and..
+		return new User();
+	}
+
+	public User addUser(User user) {
+	//crea l'XML e scrivilo
+
+		return new User();
+	}
 }
