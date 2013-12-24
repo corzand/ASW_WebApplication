@@ -38,10 +38,10 @@ public class Application extends HttpServlet {
         String action = request.getPathInfo().replace("/", "");
         if(action.equals(ACTION_LOGIN)){
             System.out.println("forwarding...");
-            forward(request, response, "/login.jsp");
+            forward(request, response, "/View/login.jsp");
         }else if (action.equals(ACTION_SIGNUP)){
             System.out.println("forwarding...");
-            forward(request, response, "/signup.jsp");
+            forward(request, response, "/View/signup.jsp");
         }        
     }
 

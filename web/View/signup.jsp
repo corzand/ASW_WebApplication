@@ -9,6 +9,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="/style/style.css" rel="stylesheet" type="text/css">
         <title>Signup</title>
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
@@ -16,6 +17,8 @@
         <script src="/scripts/signup.js"></script>
     </head>
     <body>
+        <%@ include file="/WEB-INF/jspf/top.jspf" %> 
+        <%@ include file="/WEB-INF/jspf/title.jspf" %>    
         <div id="signUpDiv">
             <div>Nome : </div><div><input data-bind="value : firstName" type="text" /></div>
             <div>Cognome : </div><div><input data-bind="value : lastName" type="text" /></div>

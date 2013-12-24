@@ -1,0 +1,9 @@
+<%-- any content can be specified here e.g.: --%>
+<%@ page pageEncoding="UTF-8" %>
+<div class="navigation">
+    <img class="logo" src="/style/images/logo.png" />
+    <div class="items">
+        <a href="/View/login.jsp" >Login</a>
+        <a href="/View/signup.jsp" >Sign Up</a>
+    </div>
+</div>
