@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  *
  * @author Luca
  */
-public class BaseFileManager {
+public class FileManager {
 
     private String directoryPath;
     private String fileName;
@@ -58,7 +58,7 @@ public class BaseFileManager {
                     document = mngXML.parse(in);
                     root = document.getDocumentElement();
                 } catch (IOException | SAXException ex) {
-                    Logger.getLogger(BaseFileManager.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 //create
@@ -92,11 +92,11 @@ public class BaseFileManager {
             try (OutputStream out = new FileOutputStream(f)) {
                 mngXML.transform(out, document);
             } catch (IOException | TransformerException ex) {
-                Logger.getLogger(BaseFileManager.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         } catch (IllegalArgumentException | IllegalAccessException | TransformerConfigurationException | ParserConfigurationException ex) {
-            Logger.getLogger(BaseFileManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

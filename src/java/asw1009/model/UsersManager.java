@@ -11,7 +11,7 @@ import asw1009.model.entities.User;
  *
  * @author Andrea
  */
-public class UsersManager extends BaseFileManager{
+public class UsersManager extends FileManager{
 
 	private static UsersManager instance;
 
