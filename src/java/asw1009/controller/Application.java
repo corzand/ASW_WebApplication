@@ -24,13 +24,10 @@ public class Application extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        super.init(); 
-        UsersManager.getInstance().setDirectoryPath(getServletContext().getRealPath("/data/"));
-        UsersManager.getInstance().setFileName("Users");        
+        super.init();
+        UsersManager.getInstance().init(getServletContext().getRealPath("/data/"), "Users");
     }
 
-    
-    
     //Define servlet actions
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
@@ -93,7 +90,7 @@ public class Application extends HttpServlet {
                     BaseResponseViewModel response_logout = new BaseResponseViewModel();
                     response_logout.setError(false);
                     session.setAttribute("user", null);
-                    jsonResponse = gson.toJson(response_logout,BaseResponseViewModel.class);
+                    jsonResponse = gson.toJson(response_logout, BaseResponseViewModel.class);
                     break;
                 }
             }
@@ -118,8 +115,6 @@ public class Application extends HttpServlet {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
-
-                    UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
@@ -168,15 +163,7 @@ public class Application extends HttpServlet {
 
                 mngXML.transform(os, answer);
                 os.close();
-            } catch (ParserConfigurationException e) {
-                System.out.println(e);
-            } catch (IOException e) {
-                System.out.println(e);
-            } catch (SAXException e) {
-                System.out.println(e);
-            } catch (DOMException e) {
-                System.out.println(e);
-            } catch (TransformerException e) {
+            } catch (ParserConfigurationException | IOException | SAXException | DOMException | TransformerException e) {
                 System.out.println(e);
             }
         }
@@ -185,22 +172,22 @@ public class Application extends HttpServlet {
 
     private BaseResponseViewModel signUp(SignUpRequestViewModel data) {
         //fa cose --> chiama il model, registra etc
-        BaseResponseViewModel responseViewModel = new BaseResponseViewModel();
-        responseViewModel.setError(false);
-        return responseViewModel;
+        BaseResponseViewModel response = new BaseResponseViewModel();
+        if (data != null) {
+            response = UsersManager.getInstance().signUp(data);
+        }else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        return response;
     }
 
     private LoginResponseViewModel login(LoginRequestViewModel data) {
         LoginResponseViewModel response = new LoginResponseViewModel();
         if (data != null) {
-            System.out.println(data.getUsername());
-            System.out.println(data.getPassword());
 
-            //Validate login
-            //...
-            response.setError(false);
-            response.setLoggedUser(new User());//TODO
-            response.setErrorMessage("");
+            response = UsersManager.getInstance().login(data);
+
         } else {
             response.setError(true);
             response.setLoggedUser(null);//TODO
