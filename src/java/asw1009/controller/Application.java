@@ -118,7 +118,7 @@ public class Application extends HttpServlet {
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    if (!loginResponseViewModel.isError()) {
+                    if (!loginResponseViewModel.hasError()) {
                         session.setAttribute("user", loginResponseViewModel.getLoggedUser());
                     }
 
@@ -127,7 +127,7 @@ public class Application extends HttpServlet {
                     root = answer.createElement("login");
 
                     Element hasError = answer.createElement("hasError");
-                    hasError.setTextContent("" + loginResponseViewModel.isError());
+                    hasError.setTextContent("" + loginResponseViewModel.hasError());
 
                     Element errorMessage = answer.createElement("errorMessage");
                     errorMessage.setTextContent(loginResponseViewModel.getErrorMessage());
@@ -174,7 +174,7 @@ public class Application extends HttpServlet {
         //fa cose --> chiama il model, registra etc
         BaseResponseViewModel response = new BaseResponseViewModel();
         if (data != null) {
-            response = UsersManager.getInstance().signUp(data);
+            response = UsersManager.getInstance()._signUp(data);
         }else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
@@ -186,7 +186,7 @@ public class Application extends HttpServlet {
         LoginResponseViewModel response = new LoginResponseViewModel();
         if (data != null) {
 
-            response = UsersManager.getInstance().login(data);
+            response = UsersManager.getInstance()._login(data);
 
         } else {
             response.setError(true);

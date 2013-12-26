@@ -39,6 +39,15 @@ public class UsersManager extends FileManager {
         progId = 1;
     }
 
+    @Override
+    public void init(String directoryPath, String fileName) {
+        super.init(directoryPath, fileName); //To change body of generated methods, choose Tools | Templates.
+        
+        //Eventualmente, leggere il contenuto del file Users.xml e impostare gli oggetti in memoria.
+    }
+    
+    
+
     public static synchronized UsersManager getInstance() {
         if (instance == null) {
             instance = new UsersManager();
@@ -61,6 +70,40 @@ public class UsersManager extends FileManager {
         users.add(user);
     }
 
+    private User _getUserByUsername(String username){
+        
+        for (int i=0; i<users.size(); i++) {
+            User user = users.get(i);
+            if (user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        
+        return null;
+    }
+    
+    public BaseResponseViewModel _signUp(SignUpRequestViewModel request) {
+        BaseResponseViewModel viewModel = new BaseResponseViewModel();
+        
+        if(_getUserByUsername(request.getUsername()) == null){
+            User userToAdd = new User();
+            userToAdd.setId(this.newProgId());
+            userToAdd.setEmail(request.getEmail());
+            userToAdd.setFirstName(request.getFirstName());
+            userToAdd.setLastName(request.getLastName());
+            userToAdd.setUsername(request.getUsername());
+            userToAdd.setPassword(request.getPassword());
+            addUser(userToAdd);
+            
+            viewModel.setError(false);
+            
+        }else {
+            viewModel.setError(true);
+            viewModel.setErrorMessage("Questo username è già in uso");
+        }
+        
+        return viewModel;
+    }
     public BaseResponseViewModel signUp(SignUpRequestViewModel request) {
         BaseResponseViewModel viewModel = new BaseResponseViewModel();
 
@@ -69,10 +112,10 @@ public class UsersManager extends FileManager {
                 InputStream in = new FileInputStream(xml);
                 Document document = xmlManager.parse(in);
                 Element root = document.getDocumentElement();
-                NodeList users = root.getElementsByTagName("User");
+                NodeList userNodes = root.getElementsByTagName("User");
                 boolean found = false;
-                for (int i = 0; i < users.getLength() && !found; i++) {
-                    Element user = (Element) users.item(i);
+                for (int i = 0; i < userNodes.getLength() && !found; i++) {
+                    Element user = (Element) userNodes.item(i);
                     if (user.getElementsByTagName("username").item(0).getTextContent().equals(request.getUsername())) {
                         found = true;
                     }
@@ -90,8 +133,10 @@ public class UsersManager extends FileManager {
                     userToAdd.setId(this.newProgId());
                     userToAdd.setPicture("");
                     userToAdd.setPassword(request.getPassword());
-                    
+
                     addItem(userToAdd, userToAdd.getClass());
+                    addUser(userToAdd);
+
                     viewModel.setError(false);
                 }
             } catch (IOException | SAXException ex) {
@@ -106,7 +151,7 @@ public class UsersManager extends FileManager {
             userToAdd.setId(this.newProgId());
             userToAdd.setPicture("");
             userToAdd.setPassword(request.getPassword());
-            
+
             addItem(userToAdd, userToAdd.getClass());
             viewModel.setError(false);
         }
@@ -114,6 +159,21 @@ public class UsersManager extends FileManager {
         return viewModel;
     }
 
+    public LoginResponseViewModel _login(LoginRequestViewModel request) {
+        LoginResponseViewModel viewModel = new LoginResponseViewModel();
+        User user = _getUserByUsername(request.getUsername());
+        
+        if(user != null && user.getPassword().equals(request.getPassword())){
+            viewModel.setError(false);  
+            viewModel.setErrorMessage("");
+            viewModel.setLoggedUser(user);
+        }else {
+            viewModel.setError(true);
+            viewModel.setErrorMessage("Login failed");
+        }
+        
+        return viewModel;
+    }
     public LoginResponseViewModel login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
 
@@ -139,7 +199,7 @@ public class UsersManager extends FileManager {
                             loggedUser.setId(Integer.parseInt(user.getElementsByTagName("id").item(0).getTextContent()));
                             loggedUser.setPicture(user.getElementsByTagName("picture").item(0).getTextContent());
                             loggedUser.setUsername(user.getElementsByTagName("username").item(0).getTextContent());
-                            
+
                             viewModel.setLoggedUser(loggedUser);
                         } else {
                             viewModel.setError(true);
