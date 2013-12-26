@@ -101,7 +101,7 @@ public class Application extends HttpServlet {
                 case ACTION_EDITUSER: {
                     EditUserRequestViewModel requestData = gson.fromJson(json, EditUserRequestViewModel.class);
                     EditUserResponseViewModel response_edit = editUser(requestData);
-                    session.setAttribute("user", response_edit.getLoggedUser());
+                    session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
                     jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
                     break;
                 }
