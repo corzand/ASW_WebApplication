@@ -13,7 +13,15 @@ function applicationViewModelDefinition() {
         var user = this;
         user.firstName = ko.observable(loggedUser.firstName);
         user.lastName = ko.observable(loggedUser.lastName);
-        user.picture = ko.observable(loggedUser.picture);
+        user.password = ko.observable(loggedUser.password);
+        user.username = ko.observable(loggedUser.username);
+        user.email = ko.observable(loggedUser.email);
+        
+        if (loggedUser.picture !== '') {
+            user.picture = ko.observable(loggedUser.picture);
+        } else {
+            user.picture = ko.observable('/style/images/user50.png');         
+        }
     };
 
     self.Application = new function() {

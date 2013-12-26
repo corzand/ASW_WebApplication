@@ -45,5 +45,5 @@ function signUpViewModelDefinition() {
 $(document).ready(function() {
     //init view model and stuff
     var signUpViewModel = new signUpViewModelDefinition();
-    ko.applyBindings(signUpViewModel, $("#signUpDiv")[0]);
+    ko.applyBindings(signUpViewModel, $(".signUpDiv")[0]);
 });

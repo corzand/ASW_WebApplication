@@ -20,7 +20,7 @@
     <body>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <%@ include file="/WEB-INF/jspf/title.jspf" %>    
-        <div id="signUpDiv">
+        <div class="signUpDiv">
             <div>Nome : </div><div><input data-bind="value : firstName" type="text" /></div>
             <div>Cognome : </div><div><input data-bind="value : lastName" type="text" /></div>
             <div>Email : </div><div><input data-bind="value : email" type="text" /></div>

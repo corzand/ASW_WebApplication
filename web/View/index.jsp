@@ -19,9 +19,7 @@
         <link href="/style/style.css" rel="stylesheet" type="text/css">
     </head>
     <body>   
-        <%if(session.getAttribute("user") == null){
-            response.sendRedirect("/application/login");
-        }%>
+        <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <h1>Hello World!</h1>
     </body>

@@ -6,9 +6,11 @@
 package asw1009.model;
 
 import asw1009.model.entities.User;
+import asw1009.viewmodel.request.EditUserRequestViewModel;
 import asw1009.viewmodel.request.LoginRequestViewModel;
 import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
+import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -174,6 +176,7 @@ public class UsersManager extends FileManager {
         
         return viewModel;
     }
+    
     public LoginResponseViewModel login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
 
@@ -219,6 +222,28 @@ public class UsersManager extends FileManager {
             viewModel.setErrorMessage("Utente inesistente");
         }
 
+        return viewModel;
+    }
+    
+    public EditUserResponseViewModel _editUser(EditUserRequestViewModel request) {
+        EditUserResponseViewModel viewModel = new EditUserResponseViewModel();
+        User user = _getUserByUsername(request.getUsername());
+        
+        if(user != null){
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setEmail(request.getEmail());
+            user.setPassword(request.getPassword());
+            user.setPicture(request.getPicture());
+            
+            viewModel.setLoggedUser(user);
+            viewModel.setError(false);  
+            viewModel.setErrorMessage("");
+        }else {
+            viewModel.setError(true);
+            viewModel.setErrorMessage("Login failed");
+        }
+        
         return viewModel;
     }
 }
