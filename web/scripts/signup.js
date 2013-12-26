@@ -7,8 +7,8 @@
 function signUpViewModelDefinition() {
     var self = this;
 
-    self.firstName = ko.observable('Gianni');
-    self.lastName = ko.observable('Drudi');
+    self.firstName = ko.observable('');
+    self.lastName = ko.observable('');
     self.email = ko.observable('');
     self.username = ko.observable('');
     self.password = ko.observable('');
