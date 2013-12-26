@@ -4,17 +4,19 @@
  * and open the template in the editor.
  */
 
+var loggedUser;
+
 function applicationViewModelDefinition(){
     var self = this;
     
-    self.User = function() {
+    self.User = new function() {
         var user = this;       
-        user.firstName = ko.observable('');
-        user.lastName = ko.observable('');
-        user.picture = ko.observable('');
+        user.firstName = ko.observable(loggedUser.firstName);
+        user.lastName = ko.observable(loggedUser.lastName);
+        user.picture = ko.observable(loggedUser.picture);
     };
     
-    self.Application = function(){
+    self.Application = new function(){
         var app = this;
         app.logout = function(){        
             $.ajax({
@@ -23,7 +25,7 @@ function applicationViewModelDefinition(){
             contentType: 'application/json; charset=utf-8',
             success: function(data, textStatus, jqXHR) {                
                 if(!data.error){
-                    alert('Ok');
+                    
                     window.location.href = "/application/login";
                 }else {
                     alert('Error');
@@ -40,7 +42,7 @@ function applicationViewModelDefinition(){
 
 $(document).ready(function (){
     //init view model and stuff
-    var applicationViewModel = applicationViewModelDefinition();
+    var applicationViewModel = new applicationViewModelDefinition();
     ko.applyBindings(applicationViewModel, $(".navigation > .items")[0]);
 });
 

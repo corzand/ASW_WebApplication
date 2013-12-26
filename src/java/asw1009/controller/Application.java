@@ -119,7 +119,8 @@ public class Application extends HttpServlet {
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
                     if (!loginResponseViewModel.hasError()) {
-                        session.setAttribute("user", loginResponseViewModel.getLoggedUser());
+                        Gson gson = new Gson();
+                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
                     }
 
                     answer = mngXML.newDocument();

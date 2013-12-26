@@ -19,7 +19,7 @@ function signUpViewModelDefinition(){
             firstName : self.firstName(),
             lastName : self.lastName(),
             email : self.email(),
-            username : self.email(),
+            username : self.username(),
             password : self.password()
         };
     };
@@ -53,6 +53,6 @@ function signUpViewModelDefinition(){
 
 $(document).ready(function (){
     //init view model and stuff
-    var signUpViewModel = signUpViewModelDefinition();
+    var signUpViewModel = new signUpViewModelDefinition();
     ko.applyBindings(signUpViewModel, $("#signUpDiv")[0]);
 });
