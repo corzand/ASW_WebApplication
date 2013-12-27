@@ -9,7 +9,7 @@
         <script type="text/javascript">
             loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
         </script>
-            <a href="/application/user" > <img data-bind="attr: {src: User.picture}"/> </a>
+            <a href="/application/user" > <img data-bind="attr: {src: User.picture}" width="50" height="auto"/> </a>
             <span data-bind="text: User.firstName"></span>
             <span data-bind="text : User.lastName"></span>
             <a href="#" data-bind="click : Application.logout">Logout</a>
