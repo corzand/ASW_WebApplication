@@ -102,6 +102,7 @@ public class UsersManager extends FileManager {
         _users = (EntityList<User>)readXML();
     }
     
+    
     private void _updateXML(){        
         writeXML(_xstream.toXML(_users));
     }
