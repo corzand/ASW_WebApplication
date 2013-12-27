@@ -99,7 +99,11 @@ public class UsersManager extends FileManager {
     }
     
     private void _readXML(){
-        _users = (EntityList<User>)readXML();
+        if(xml.exists()){
+            _users = (EntityList<User>)readXML();
+        }else {
+            _users = new EntityList<>();
+        }
     }
     
     
