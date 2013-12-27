@@ -12,6 +12,7 @@ import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
 import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
+import com.thoughtworks.xstream.XStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,12 +33,15 @@ import org.xml.sax.SAXException;
  */
 public class UsersManager extends FileManager {
 
-    private List<User> users;
+    
+    //private List<User> users;
+    private EntityList<User> _users;
     private int progId;
     private static UsersManager instance;
 
     public UsersManager() {
-        users = new ArrayList<>();
+        //users = new ArrayList<>();
+        _users = new EntityList<>();
         progId = 1;
     }
 
@@ -45,6 +49,10 @@ public class UsersManager extends FileManager {
     public void init(String directoryPath, String fileName) {
         super.init(directoryPath, fileName); //To change body of generated methods, choose Tools | Templates.
         
+        _xstream.alias("user", User.class);
+        _xstream.alias("users", EntityList.class);
+        _xstream.addImplicitCollection(EntityList.class, "list");
+        _readXML();
         //Eventualmente, leggere il contenuto del file Users.xml e impostare gli oggetti in memoria.
     }
     
@@ -62,26 +70,40 @@ public class UsersManager extends FileManager {
         return ++progId;
     }
 
-    public User getUser(String username, String password) {
-        //Search a user and..
-        return new User();
-    }
-
     public void addUser(User user) {
         //crea l'XML e scrivilo
-        users.add(user);
+//        users.add(user);
+        
+        _users.getItems().add(user);
+        
+        _updateXML();
     }
 
     private User _getUserByUsername(String username){
         
-        for (int i=0; i<users.size(); i++) {
-            User user = users.get(i);
+//        for (int i = 0; i < users.size(); i++) {
+//            User user = users.get(i);
+//            if (user.getUsername().equals(username)) {
+//                return user;
+//            }
+//        }
+        
+        for (int i = 0; i < _users.getItems().size(); i++) {
+            User user = _users.getItems().get(i);
             if (user.getUsername().equals(username)) {
                 return user;
             }
         }
         
         return null;
+    }
+    
+    private void _readXML(){
+        _users = (EntityList<User>)readXML();
+    }
+    
+    private void _updateXML(){        
+        writeXML(_xstream.toXML(_users));
     }
     
     public BaseResponseViewModel _signUp(SignUpRequestViewModel request) {
@@ -175,8 +197,7 @@ public class UsersManager extends FileManager {
         }
         
         return viewModel;
-    }
-    
+    }    
     public LoginResponseViewModel login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
 
@@ -246,4 +267,5 @@ public class UsersManager extends FileManager {
         
         return viewModel;
     }
+
 }

@@ -6,6 +6,8 @@
 package asw1009.model;
 
 import asw1009.ManageXML;
+import com.sun.xml.bind.StringInputStream;
+import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -32,11 +34,13 @@ public class FileManager {
     private String fileName;
     protected File xml;
     protected ManageXML xmlManager;
+    protected XStream _xstream ;
     
     public void init(String directoryPath, String fileName){        
         this.directoryPath = directoryPath;
         this.fileName = fileName;
         this.xml = new File(this.directoryPath + "\\" + this.fileName + ".xml");
+        this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();
         } catch (TransformerConfigurationException | ParserConfigurationException ex) {
@@ -91,5 +95,38 @@ public class FileManager {
         } catch (TransformerException | IOException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }    
+    }
+    
+    protected void writeXML(String xmlString){
+        try {
+            Document document;
+            try (InputStream in = new StringInputStream(xmlString)) {
+                document = xmlManager.parse(in);
+            }
+            try (OutputStream out = new FileOutputStream(xml)) {
+                xmlManager.transform(out, document);
+                out.flush();
+            }
+        } catch (IOException | SAXException | TransformerException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    protected Object readXML(){
+        String xmlString;
+        try (InputStream in = new FileInputStream(xml)) {
+            StringBuilder builder = new StringBuilder();
+            int ch;
+            while((ch = in.read()) != -1){
+                builder.append((char)ch);
+            }
+            
+            xmlString = builder.toString();
+        
+            return _xstream.fromXML(xmlString);
+        } catch (IOException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 }
