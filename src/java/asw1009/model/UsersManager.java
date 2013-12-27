@@ -36,13 +36,11 @@ public class UsersManager extends FileManager {
     
     //private List<User> users;
     private EntityList<User> _users;
-    private int progId;
     private static UsersManager instance;
 
     public UsersManager() {
         //users = new ArrayList<>();
         _users = new EntityList<>();
-        progId = 1;
     }
 
     @Override
@@ -66,14 +64,10 @@ public class UsersManager extends FileManager {
         return instance;
     }
 
-    private int newProgId() {
-        return ++progId;
-    }
-
     public void addUser(User user) {
         //crea l'XML e scrivilo
 //        users.add(user);
-        
+        user.setId(_users.getNextId());
         _users.getItems().add(user);
         
         _updateXML();
@@ -116,7 +110,6 @@ public class UsersManager extends FileManager {
         
         if(_getUserByUsername(request.getUsername()) == null){
             User userToAdd = new User();
-            userToAdd.setId(this.newProgId());
             userToAdd.setEmail(request.getEmail());
             userToAdd.setFirstName(request.getFirstName());
             userToAdd.setLastName(request.getLastName());
@@ -159,8 +152,7 @@ public class UsersManager extends FileManager {
                     userToAdd.setFirstName(request.getFirstName());
                     userToAdd.setLastName(request.getLastName());
                     userToAdd.setUsername(request.getUsername());
-                    userToAdd.setId(this.newProgId());
-                    userToAdd.setPicture("");
+                    
                     userToAdd.setPassword(request.getPassword());
 
                     addItem(userToAdd, userToAdd.getClass());
@@ -177,8 +169,6 @@ public class UsersManager extends FileManager {
             userToAdd.setFirstName(request.getFirstName());
             userToAdd.setLastName(request.getLastName());
             userToAdd.setUsername(request.getUsername());
-            userToAdd.setId(this.newProgId());
-            userToAdd.setPicture("");
             userToAdd.setPassword(request.getPassword());
 
             addItem(userToAdd, userToAdd.getClass());
@@ -196,7 +186,7 @@ public class UsersManager extends FileManager {
             viewModel.setError(false);  
             viewModel.setErrorMessage("");
             viewModel.setLoggedUser(user);
-        }else {
+        } else {
             viewModel.setError(true);
             viewModel.setErrorMessage("Login failed");
         }
