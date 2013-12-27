@@ -2,14 +2,17 @@
 <div class="navigation">
     <img class="logo" src="/style/images/logo.png" />
     <div class="items">       
-        <%if(session.getAttribute("user") != null){ %> 
+        <%if(session.getAttribute("user") == null){ %> 
             <a href="/View/login.jsp">Login</a>
             <a href="/View/signup.jsp">Sign Up</a>
         <% } else {%>
-            <img data-bind="attr: {src: User.picture}"/>
-            <span data-bind="text: User.firstName "/>
-            <span data-bind="text : User.lastName "/>
-            <a data-bind="click : Application.Logout">Logout</a>
+        <script type="text/javascript">
+            loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
+        </script>
+            <a href="/application/user" > <img data-bind="attr: {src: User.picture}"/> </a>
+            <span data-bind="text: User.firstName"></span>
+            <span data-bind="text : User.lastName"></span>
+            <a href="#" data-bind="click : Application.logout">Logout</a>
         <% } %>  
     </div>
 </div>

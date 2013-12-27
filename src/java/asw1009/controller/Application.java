@@ -3,9 +3,11 @@ package asw1009.controller;
 import asw1009.ManageXML;
 import asw1009.model.UsersManager;
 import asw1009.model.entities.User;
+import asw1009.viewmodel.request.EditUserRequestViewModel;
 import asw1009.viewmodel.request.LoginRequestViewModel;
 import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
+import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
 import com.google.gson.Gson;
 import java.io.*;
@@ -24,18 +26,17 @@ public class Application extends HttpServlet {
 
     @Override
     public void init() throws ServletException {
-        super.init(); 
-        UsersManager.getInstance().setDirectoryPath(getServletContext().getRealPath("/data/"));
-        UsersManager.getInstance().setFileName("Users");        
+        super.init();
+        UsersManager.getInstance().init(getServletContext().getRealPath("/data/"), "Users");
     }
 
-    
-    
     //Define servlet actions
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
     private final String ACTION_INDEX = "index";
     private final String ACTION_LOGOUT = "logout";
+    private final String ACTION_USER = "user";
+    private final String ACTION_EDITUSER = "edituser";
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {
@@ -50,17 +51,18 @@ public class Application extends HttpServlet {
         String action = request.getPathInfo().replace("/", "");
         switch (action) {
             case ACTION_LOGIN:
-                System.out.println("forwarding...");
                 forward(request, response, "/View/login.jsp");
                 break;
             case ACTION_SIGNUP:
-                System.out.println("forwarding...");
                 forward(request, response, "/View/signup.jsp");
                 break;
             case ACTION_INDEX:
-                System.out.println("forwarding...");
                 forward(request, response, "/View/index.jsp");
                 break;
+            case ACTION_USER:
+                forward(request, response, "/View/user.jsp");
+                break;
+                
         }
     }
 
@@ -93,7 +95,14 @@ public class Application extends HttpServlet {
                     BaseResponseViewModel response_logout = new BaseResponseViewModel();
                     response_logout.setError(false);
                     session.setAttribute("user", null);
-                    jsonResponse = gson.toJson(response_logout,BaseResponseViewModel.class);
+                    jsonResponse = gson.toJson(response_logout, BaseResponseViewModel.class);
+                    break;
+                }
+                case ACTION_EDITUSER: {
+                    EditUserRequestViewModel requestData = gson.fromJson(json, EditUserRequestViewModel.class);
+                    EditUserResponseViewModel response_edit = editUser(requestData);
+                    session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
+                    jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
                     break;
                 }
             }
@@ -119,12 +128,11 @@ public class Application extends HttpServlet {
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
 
-                    UsersManager.getInstance().getClassFields(LoginRequestViewModel.class, loginRequestViewModel);
-
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    if (!loginResponseViewModel.isError()) {
-                        session.setAttribute("user", loginResponseViewModel.getLoggedUser());
+                    if (!loginResponseViewModel.hasError()) {
+                        Gson gson = new Gson();
+                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
                     }
 
                     answer = mngXML.newDocument();
@@ -132,7 +140,7 @@ public class Application extends HttpServlet {
                     root = answer.createElement("login");
 
                     Element hasError = answer.createElement("hasError");
-                    hasError.setTextContent("" + loginResponseViewModel.isError());
+                    hasError.setTextContent("" + loginResponseViewModel.hasError());
 
                     Element errorMessage = answer.createElement("errorMessage");
                     errorMessage.setTextContent(loginResponseViewModel.getErrorMessage());
@@ -168,15 +176,7 @@ public class Application extends HttpServlet {
 
                 mngXML.transform(os, answer);
                 os.close();
-            } catch (ParserConfigurationException e) {
-                System.out.println(e);
-            } catch (IOException e) {
-                System.out.println(e);
-            } catch (SAXException e) {
-                System.out.println(e);
-            } catch (DOMException e) {
-                System.out.println(e);
-            } catch (TransformerException e) {
+            } catch (ParserConfigurationException | IOException | SAXException | DOMException | TransformerException e) {
                 System.out.println(e);
             }
         }
@@ -185,22 +185,22 @@ public class Application extends HttpServlet {
 
     private BaseResponseViewModel signUp(SignUpRequestViewModel data) {
         //fa cose --> chiama il model, registra etc
-        BaseResponseViewModel responseViewModel = new BaseResponseViewModel();
-        responseViewModel.setError(false);
-        return responseViewModel;
+        BaseResponseViewModel response = new BaseResponseViewModel();
+        if (data != null) {
+            response = UsersManager.getInstance()._signUp(data);
+        }else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        return response;
     }
 
     private LoginResponseViewModel login(LoginRequestViewModel data) {
         LoginResponseViewModel response = new LoginResponseViewModel();
         if (data != null) {
-            System.out.println(data.getUsername());
-            System.out.println(data.getPassword());
 
-            //Validate login
-            //...
-            response.setError(false);
-            response.setLoggedUser(new User());//TODO
-            response.setErrorMessage("");
+            response = UsersManager.getInstance()._login(data);
+
         } else {
             response.setError(true);
             response.setLoggedUser(null);//TODO
@@ -210,5 +210,15 @@ public class Application extends HttpServlet {
         //return JSON string
         return response;
     }
-
+    
+    private EditUserResponseViewModel editUser(EditUserRequestViewModel request){
+        EditUserResponseViewModel response = new EditUserResponseViewModel();
+        if (request != null) {
+            response = UsersManager.getInstance()._editUser(request);
+        } else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        return response;
+    }
 }
