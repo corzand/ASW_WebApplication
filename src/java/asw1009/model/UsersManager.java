@@ -193,6 +193,7 @@ public class UsersManager extends FileManager {
         
         return viewModel;
     }    
+    
     public LoginResponseViewModel login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
 
