@@ -5,6 +5,7 @@
  */
 
 var loggedUser;
+var applicationViewModel;
 
 function applicationViewModelDefinition() {
     var self = this;
@@ -46,7 +47,7 @@ function applicationViewModelDefinition() {
 
 $(document).ready(function() {
     //init view model and stuff
-    var applicationViewModel = new applicationViewModelDefinition();
+    applicationViewModel = new applicationViewModelDefinition();
     ko.applyBindings(applicationViewModel, $(".navigation > .items")[0]);
 });
 
