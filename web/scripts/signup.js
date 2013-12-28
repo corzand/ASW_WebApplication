@@ -26,7 +26,7 @@ function signUpViewModelDefinition() {
 
     self.signUp = function() {
         var rSettings = new requestSettings();
-        rSettings.url = '/application/signup/';
+        rSettings.url = '/users/signup/';
         rSettings.requestData = JSON.stringify(self.signUpData());
         rSettings.successCallback = self.signUpCallback;
 

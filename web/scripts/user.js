@@ -39,7 +39,7 @@ function userViewModelDefinition() {
 
         if (user.validate()) {
             var rSettings = new requestSettings();
-            rSettings.url = '/application/edituser/';
+            rSettings.url = '/users/edituser/';
             rSettings.requestData = JSON.stringify(user.editUserData());
             rSettings.successCallback = user.editUserCallback;
             sendRequest(rSettings);

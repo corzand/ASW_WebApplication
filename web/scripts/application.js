@@ -29,7 +29,7 @@ function applicationViewModelDefinition() {
 
         app.logout = function() {
             var rSettings = new requestSettings();
-            rSettings.url = '/application/logout/';
+            rSettings.url = '/users/logout/';
             rSettings.successCallback = app.logoutCallback;
             sendRequest(rSettings);
         };
