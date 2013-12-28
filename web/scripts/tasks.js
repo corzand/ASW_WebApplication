@@ -128,6 +128,8 @@ $(document).ready(function() {
 	var taskViewModel = new taskViewModelDefinition();
 	taskViewModel.init();
 	ko.applyBindings(taskViewModel,$(".container")[0]);
+        
+        taskViewModel.search();
 });
 
 

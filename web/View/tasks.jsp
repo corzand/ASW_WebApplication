@@ -28,8 +28,8 @@
         <div class="container">
             <div class="categories">
                 <div class="private-filter">
-                    <div class="row"><input type="radio" name="private" value="true" />I miei task</div>
-                    <div class="row"><input type="radio" name="private" value="false" />Tutti i task</div>                    
+                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : Personal" />I miei task</div>
+                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : Personal" />Tutti i task</div>                    
                 </div>
                 <div class="categories-filter">
                     <ul data-bind="foreach : Categories">
