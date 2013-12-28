@@ -54,9 +54,9 @@ function tasksViewModelDefinition() {
 	};
 	
 	self.searchCallback = function(data){
-		
-		self.Days() = ko.observableArray([]);
-		
+ 		
+		self.Days().removeAll();
+                
 		var currentDay = self.StartDate;
 		var range = dateDiff(self.StartDate,self.EndDate);
 		
