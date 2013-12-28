@@ -34,4 +34,19 @@ function sendRequest(settings){
             }
         }
     });
+	
+}
+
+function dateDiff(d1, d2){
+	return parseInt((d2-d1)/(24*3600*1000));
+}
+
+function compareDate(d1,d2){
+	
+	if(d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear()){
+		return true;
+	}else{
+		return false;
+	}
+	
 }

@@ -19,7 +19,10 @@
         <link rel="stylesheet" href="style/jquery-ui-1.10.3.custom.css" />
         <link href="/style/style.css" rel="stylesheet" type="text/css">
     </head>
-    <body>   
+    <body> 
+		<script type="text/javascript">
+			tasksInitialData = JSON.parse('<%= qualcosa %>');
+		</script>
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <div class="container">
@@ -31,7 +34,7 @@
                 <div class="categories-filter">
                     <ul data-bind="foreach : Categories">
                         <li>
-                            <input type="checkbox" data-bind="attr : { name : title }, value : id" checked />
+                            <input type="checkbox" data-bind="attr : { name : title }, value : id, checked : state"/>
                         </li>
                     </ul> 
                 </div>
@@ -99,7 +102,7 @@
                 </div>
                 <div class="row">
                     <div>Privato</div>
-                    <div><input type="checkbox" data-bind="checked : private"/></div>
+                    <div><input type="checkbox" data-bind="checked : personal"/></div>
                 </div>
                 <div class="row">
                     <div>Categoria</div>
