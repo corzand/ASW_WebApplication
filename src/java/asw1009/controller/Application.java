@@ -1,25 +1,16 @@
 package asw1009.controller;
 
-import asw1009.ManageXML;
+import asw1009.model.CategoriesManager;
+import asw1009.model.TasksManager;
 import asw1009.model.UsersManager;
-import asw1009.model.entities.User;
-import asw1009.viewmodel.request.EditUserRequestViewModel;
-import asw1009.viewmodel.request.LoginRequestViewModel;
-import asw1009.viewmodel.request.SignUpRequestViewModel;
-import asw1009.viewmodel.response.BaseResponseViewModel;
-import asw1009.viewmodel.response.EditUserResponseViewModel;
-import asw1009.viewmodel.response.LoginResponseViewModel;
-import com.google.gson.Gson;
-import java.io.*;
+import java.io.IOException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = {"/application/*"})
 public class Application extends HttpServlet {
@@ -28,6 +19,8 @@ public class Application extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         UsersManager.getInstance().init(getServletContext().getRealPath("/data/"), "Users");
+        CategoriesManager.getInstance().init(getServletContext().getRealPath("/data/"), "Categories");
+        TasksManager.getInstance().init(getServletContext().getRealPath("/data/"), "Tasks");
     }
 
     //Define servlet actions

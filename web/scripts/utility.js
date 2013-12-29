@@ -29,6 +29,7 @@ function sendRequest(settings) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
             if (settings.errorCallback) {
                 settings.errorCallback(settings.callbackParameter);
             }
@@ -40,6 +41,11 @@ function sendRequest(settings) {
 function dateDiff(d1, d2) {
     return parseInt((d2 - d1) / (24 * 3600 * 1000));
 }
+
+function getMidnightDate(d){
+    return new Date(d.setHours(0,0,0,0));
+}
+    
 
 function compareDate(d1, d2) {
 

@@ -6,12 +6,7 @@
 package asw1009.model;
 
 import asw1009.model.entities.Category;
-import asw1009.model.entities.Task;
-import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import asw1009.viewmodel.response.CategoriesListResponseViewModel;
-import asw1009.viewmodel.response.SearchTasksResponseViewModel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -50,8 +45,6 @@ public class CategoriesManager extends FileManager {
     public void addCategory(Category category) {
         category.setId(_categories.getNextId());
         _categories.getItems().add(category);
-        
-        _updateXML();
     }
 
     private void _readXML(){

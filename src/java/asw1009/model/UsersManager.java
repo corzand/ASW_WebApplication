@@ -10,22 +10,14 @@ import asw1009.viewmodel.request.EditUserRequestViewModel;
 import asw1009.viewmodel.request.LoginRequestViewModel;
 import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
-import asw1009.viewmodel.response.CategoriesListResponseViewModel;
 import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
 import asw1009.viewmodel.response.UsersListResponseViewModel;
-import com.thoughtworks.xstream.XStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -177,6 +169,7 @@ public class UsersManager extends FileManager {
             viewModel.setError(false);
         }
 
+        _updateXML();
         return viewModel;
     }
 
@@ -263,6 +256,7 @@ public class UsersManager extends FileManager {
             viewModel.setErrorMessage("Login failed");
         }
         
+        _updateXML();
         return viewModel;
     }
     

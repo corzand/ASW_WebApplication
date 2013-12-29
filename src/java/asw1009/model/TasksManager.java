@@ -7,7 +7,9 @@ package asw1009.model;
 
 import asw1009.model.entities.Category;
 import asw1009.model.entities.Task;
+import asw1009.viewmodel.request.AddTaskRequestViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
+import asw1009.viewmodel.response.AddTaskResponseViewModel;
 import asw1009.viewmodel.response.SearchTasksResponseViewModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +48,6 @@ public class TasksManager extends FileManager {
         return instance;
     }
 
-    public void addTask(Task task) {
-        task.setId(_tasks.getNextId());
-        _tasks.getItems().add(task);
-        
-        _updateXML();
-    }
 
     private void _readXML(){
         if(xml.exists()){
@@ -120,4 +116,31 @@ public class TasksManager extends FileManager {
         
         return response;
     } 
+    
+    
+    public AddTaskResponseViewModel addTask(AddTaskRequestViewModel request) {
+        AddTaskResponseViewModel response = new AddTaskResponseViewModel();
+        Task task = new Task();
+        task.setId(_tasks.getNextId());
+        task.setAssignedUserId(request.getAssignedUserId());
+        task.setAttachment(request.getAttachment());
+        task.setCategoryId(request.getCategoryId());
+        task.setDate(request.getDate());
+        task.setDescription(request.getDescription());
+        task.setDone(request.getDone());
+        task.setLatitude(request.getLatitude());
+        task.setLongitude(request.getLongitude());
+        task.setPersonal(request.getPersonal());
+        task.setTitle(request.getTitle());
+        task.setUserId(request.getUserId());
+        
+        _tasks.getItems().add(task);        
+        
+        response.setTask(task);
+        response.setError(false);
+        
+        _updateXML();
+        
+        return response;
+    }
 }

@@ -2,10 +2,13 @@ package asw1009.controller;
 
 import asw1009.model.CategoriesManager;
 import asw1009.model.TasksManager;
+import asw1009.viewmodel.request.AddTaskRequestViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
+import asw1009.viewmodel.response.AddTaskResponseViewModel;
 import asw1009.viewmodel.response.CategoriesListResponseViewModel;
 import asw1009.viewmodel.response.SearchTasksResponseViewModel;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.io.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +19,8 @@ public class Tasks extends HttpServlet {
     
     private final String ACTION_SEARCH = "search";
     private final String ACTION_CATEGORIES = "categories";
+    private final String ACTION_ADD = "add";
+    private final String ACTION_EDIT = "edit";
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -27,18 +32,24 @@ public class Tasks extends HttpServlet {
 
             BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream()));
             String json = br.readLine();
-            Gson gson = new Gson();
+            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();;
             response.setContentType("application/json;");
 
             String action = request.getPathInfo().replace("/", "");
             String jsonResponse = "";
             switch(action){
-                case ACTION_SEARCH :
+                case ACTION_SEARCH :{
                     SearchTasksRequestViewModel requestData = gson.fromJson(json, SearchTasksRequestViewModel.class);
                     jsonResponse = gson.toJson(searchTasks(requestData), SearchTasksResponseViewModel.class);
                     break;
+                }
                 case ACTION_CATEGORIES:{
                     jsonResponse = gson.toJson(categoriesList(), CategoriesListResponseViewModel.class);
+                    break;
+                }
+                case ACTION_ADD: {
+                    AddTaskRequestViewModel requestData = gson.fromJson(json, AddTaskRequestViewModel.class);
+                    jsonResponse = gson.toJson(addTask(requestData), AddTaskResponseViewModel.class);
                     break;
                 }
             }
@@ -68,4 +79,17 @@ public class Tasks extends HttpServlet {
         return response;
     }
 
+    private AddTaskResponseViewModel addTask(AddTaskRequestViewModel request){
+        
+        AddTaskResponseViewModel response = new AddTaskResponseViewModel();
+        if(request != null){
+            response = TasksManager.getInstance().addTask(request);            
+            response.setError(false);
+        }else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        
+        return response;
+    }
 }
