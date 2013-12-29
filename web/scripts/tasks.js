@@ -180,12 +180,20 @@ function TasksViewModelDefinition() {
                 width: 350,
                 modal: true,
                 open: function(event, ui) {
+                    $.extend(task, {
+                        Categories : self.Categories(),
+                        Users : self.Users()
+                    });
                     ko.applyBindings(task, $("#edit-task-popup")[0]);
                 },
                 buttons: {
                     "Add": function() {
                         self.services.add.request();
                     }
+                },
+                close: function( event, ui ) {
+                    $("#edit-task-popup").dialog("destroy");
+                    ko.cleanNode($("#edit-task-popup")[0]);
                 }
             });
         };

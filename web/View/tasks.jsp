@@ -104,7 +104,7 @@
                 <div class="row">
                     <div>Categoria</div>
                     <div>
-                        <select data-bind="foreach : $root.Categories">
+                        <select data-bind="foreach : Categories">
                             <option data-bind="text : title, attr : {'data-id' : id}"></option>
                         </select>
                     </div>
@@ -112,7 +112,7 @@
                 <div class="row">
                     <div>Utente assegnato</div>
                     <div>
-                        <select data-bind="foreach : $root.Users">
+                        <select data-bind="foreach : Users">
                             <option data-bind="text : username, attr : {'data-id' : id}"></option>
                         </select>
                     </div>
