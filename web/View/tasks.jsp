@@ -20,16 +20,13 @@
         <link href="/style/style.css" rel="stylesheet" type="text/css">
     </head>
     <body> 
-		<script type="text/javascript">
-			tasksInitialData = JSON.parse('<%= qualcosa %>');
-		</script>
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <div class="container">
             <div class="categories">
                 <div class="private-filter">
-                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : Personal" />I miei task</div>
-                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : Personal" />Tutti i task</div>                    
+                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : personal" />I miei task</div>
+                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : personal" />Tutti i task</div>                    
                 </div>
                 <div class="categories-filter">
                     <ul data-bind="foreach : Categories">
@@ -81,50 +78,50 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="edit-task-popup">
-            <div>
-                <div class="row">
-                    <div>Titolo</div>
-                    <div><input type="text" data-bind="value : title" /></div>
-                </div>
-                <div class="row">
-                    <div>Descrizione</div>
-                    <div><textarea data-bind="text : description" ></textarea></div>
-                </div>
-                <div class="row">
-                    <div>Data</div>
-                    <div><input type='text' id='TaskDate' /><!-- Manual binding --></div>
-                </div>
-                <div class="row">
-                    <div>Fatto</div>
-                    <div><input type="checkbox" data-bind="checked : done"/></div>
-                </div>
-                <div class="row">
-                    <div>Privato</div>
-                    <div><input type="checkbox" data-bind="checked : personal"/></div>
-                </div>
-                <div class="row">
-                    <div>Categoria</div>
-                    <div>
-                        <select data-bind="foreach : Categories">
-                            <option data-bind="text : title, attr : {'data-id' : id}"></option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row">
-                    <div>Utente assegnato</div>
-                    <div>
-                        <select data-bind="foreach : Users">
-                            <option data-bind="text : username, attr : {'data-id' : id}"></option>
-                        </select>
-                    </div>
-                </div>
+            <div class="edit-task-popup" style="display:none;">
                 <div>
-                    <div>Posizione</div>
+                    <div class="row">
+                        <div>Titolo</div>
+                        <div><input type="text" data-bind="value : CurrentTask.title" /></div>
+                    </div>
+                    <div class="row">
+                        <div>Descrizione</div>
+                        <div><textarea data-bind="text : CurrentTask.description" ></textarea></div>
+                    </div>
+                    <div class="row">
+                        <div>Data</div>
+                        <div><input type='text' id='TaskDate' /><!-- Manual binding --></div>
+                    </div>
+                    <div class="row">
+                        <div>Fatto</div>
+                        <div><input type="checkbox" data-bind="checked : CurrentTask.done"/></div>
+                    </div>
+                    <div class="row">
+                        <div>Privato</div>
+                        <div><input type="checkbox" data-bind="checked : CurrentTask.personal"/></div>
+                    </div>
+                    <div class="row">
+                        <div>Categoria</div>
+                        <div>
+                            <select data-bind="foreach : Categories">
+                                <option data-bind="text : title, attr : {'data-id' : id}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div>Utente assegnato</div>
+                        <div>
+                            <select data-bind="foreach : Users">
+                                <option data-bind="text : username, attr : {'data-id' : id}"></option>
+                            </select>
+                        </div>
+                    </div>
                     <div>
-                        <!-- TODO -->
-                    </div>                    
+                        <div>Posizione</div>
+                        <div>
+                            <!-- TODO -->
+                        </div>                    
+                    </div>
                 </div>
             </div>
         </div>

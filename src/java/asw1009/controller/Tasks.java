@@ -1,7 +1,9 @@
 package asw1009.controller;
 
+import asw1009.model.CategoriesManager;
 import asw1009.model.TasksManager;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
+import asw1009.viewmodel.response.CategoriesListResponseViewModel;
 import asw1009.viewmodel.response.SearchTasksResponseViewModel;
 import com.google.gson.Gson;
 import java.io.*;
@@ -13,6 +15,7 @@ import javax.servlet.http.*;
 public class Tasks extends HttpServlet {
     
     private final String ACTION_SEARCH = "search";
+    private final String ACTION_CATEGORIES = "categories";
     
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -34,6 +37,10 @@ public class Tasks extends HttpServlet {
                     SearchTasksRequestViewModel requestData = gson.fromJson(json, SearchTasksRequestViewModel.class);
                     jsonResponse = gson.toJson(searchTasks(requestData), SearchTasksResponseViewModel.class);
                     break;
+                case ACTION_CATEGORIES:{
+                    jsonResponse = gson.toJson(categoriesList(), CategoriesListResponseViewModel.class);
+                    break;
+                }
             }
 
             response.getOutputStream().print(jsonResponse);
@@ -52,6 +59,12 @@ public class Tasks extends HttpServlet {
             response.setErrorMessage("Invalid data");
         }
         
+        return response;
+    }
+    
+    private CategoriesListResponseViewModel categoriesList(){
+        CategoriesListResponseViewModel response = CategoriesManager.getInstance().categoriesList();        
+        response.setError(false);
         return response;
     }
 

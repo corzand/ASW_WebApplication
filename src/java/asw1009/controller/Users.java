@@ -9,6 +9,7 @@ import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
 import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
+import asw1009.viewmodel.response.UsersListResponseViewModel;
 import com.google.gson.Gson;
 import java.io.*;
 import javax.servlet.ServletException;
@@ -27,6 +28,7 @@ public class Users extends HttpServlet {
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
     private final String ACTION_EDITUSER = "edituser";
+    private final String ACTION_USERS = "users";
     
 
     @Override
@@ -61,6 +63,10 @@ public class Users extends HttpServlet {
                     EditUserResponseViewModel response_edit = editUser(requestData);
                     session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
                     jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
+                    break;
+                }
+                case ACTION_USERS:{
+                    jsonResponse = gson.toJson(usersList(), UsersListResponseViewModel.class);
                     break;
                 }
             }
@@ -177,6 +183,12 @@ public class Users extends HttpServlet {
             response.setError(true);
             response.setErrorMessage("Invalid data");
         }
+        return response;
+    }
+    
+    private UsersListResponseViewModel usersList(){
+        UsersListResponseViewModel response = UsersManager.getInstance().usersList();        
+        response.setError(false);
         return response;
     }
 

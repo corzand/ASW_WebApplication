@@ -10,8 +10,10 @@ import asw1009.viewmodel.request.EditUserRequestViewModel;
 import asw1009.viewmodel.request.LoginRequestViewModel;
 import asw1009.viewmodel.request.SignUpRequestViewModel;
 import asw1009.viewmodel.response.BaseResponseViewModel;
+import asw1009.viewmodel.response.CategoriesListResponseViewModel;
 import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
+import asw1009.viewmodel.response.UsersListResponseViewModel;
 import com.thoughtworks.xstream.XStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -261,6 +263,13 @@ public class UsersManager extends FileManager {
             viewModel.setErrorMessage("Login failed");
         }
         
+        return viewModel;
+    }
+    
+    public UsersListResponseViewModel usersList() {
+        UsersListResponseViewModel viewModel = new UsersListResponseViewModel();
+        viewModel.setError(false);
+        viewModel.setUsers(_users.getItems());
         return viewModel;
     }
 
