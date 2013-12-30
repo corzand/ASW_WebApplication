@@ -147,7 +147,30 @@ function TasksViewModelDefinition() {
 				};
 			},
 			"callback": function(data) {
-
+				if (!data.error) {
+					var pushed = false;
+					for (var i = 0; i < self.Days().length && !pushed; i++) {
+						if (compareDate(data.task.date, self.Days()[i].day)) {
+							self.Days()[i].tasks.push({
+								id: ko.observable(data.task.id),
+								title: ko.observable(data.task.title),
+								description: ko.observable(data.task.description),
+								date: ko.observable(data.task.date),
+								done: ko.observable(data.task.done),
+								personal: ko.observable(data.task.personal),
+								userId: ko.observable(data.task.userId),
+								assignedUserId: ko.observable(data.task.assignedUserId),
+								latitude: ko.observable(data.task.latitude),
+								longitude: ko.observable(data.task.longitude),
+								categoryId: ko.observable(data.task.categoryId),
+								attachment: ko.observable(data.task.attachment)
+							});
+							pushed = true;
+						}
+					}
+				} else {
+					alert(data.errorMessage);
+				}
 			}
 		},
 		"edit": {
@@ -156,6 +179,7 @@ function TasksViewModelDefinition() {
 				rSettings.url = '/tasks/edit/';
 				rSettings.requestData = JSON.stringify(self.services.edit.requestData(task));
 				rSettings.successCallback = self.services.edit.callback;
+				rSettings.callbackParameter = task;
 				return sendRequest(rSettings);
 			},
 			"requestData": function(task) {
@@ -173,21 +197,19 @@ function TasksViewModelDefinition() {
 					attachment: task.attachment()
 				};
 			},
-			"callback": function(data) {
+			"callback": function(data, task) {
 				if (!data.error) {
-					title: ko.observable(data.task.title);
-					description: ko.observable(data.tasks.description);
-					date: ko.observable(data.task.date);
-					done: ko.observable(data.task.done);
-					personal: ko.observable(data.task.personal);
-					userId: ko.observable(data.task.userId);
-					assignedUserId: ko.observable(data.task.assignedUserId);
-					latitude: ko.observable(data.task.latitude);
-					longitude: ko.observable(data.task.longitude);
-					categoryId: ko.observable(data.task.categoryId);
-					attachment: ko.observable(data.task.attachment);
-
-					window.location.href = "/application/index";
+					task.title(data.task.title);
+					task.description(data.tasks.description);
+					task.date(data.task.date);
+					task.done(data.task.done);
+					task.personal(data.task.personal);
+					task.userId(data.task.userId);
+					task.assignedUserId(data.task.assignedUserId);
+					task.latitude(data.task.latitude);
+					task.longitude(data.task.longitude);
+					task.categoryId(data.task.categoryId);
+					task.attachment(data.task.attachment);
 				} else {
 					alert(data.errorMessage);
 				}
@@ -206,7 +228,7 @@ function TasksViewModelDefinition() {
 			self.services.search.request();
 		};
 		actions.markTask = function(taskToMark) {
-			self.services.edit.request();
+			self.services.edit.request(taskToMark);
 		};
 	};
 	self.domUtils = new function() {
