@@ -11,7 +11,7 @@ function TasksViewModelDefinition() {
     self.Categories = ko.observableArray([]);
     self.Users = ko.observableArray([]);
     self.Days = ko.observableArray([]);
-    self.startDate = new Date();//settare a ieri
+    self.startDate = new Date();
     self.endDate = new Date();
 
     self.NewTask = new function() {
@@ -154,6 +154,33 @@ function TasksViewModelDefinition() {
             "callback": function(data) {
 
             }
+        },
+		"edit": {
+            "request": function(task) {
+                var rSettings = new requestSettings();
+                rSettings.url = '/tasks/edit/';
+                rSettings.requestData = JSON.stringify(self.services.edit.requestData(task));
+                rSettings.successCallback = self.services.edit.callback;
+                return sendRequest(rSettings);
+            },
+            "requestData": function(task) {
+                return {
+                    title: task.title(),
+                    description:  task.description(),
+                    date:  task.date,
+                    done:  task.done(),
+                    personal:  task.personal(),
+                    userId: loggedUser.id,
+                    assignedUserId:  task.assignedUserId(),
+                    latitude: task.latitude(),
+                    longitude: task.longitude(),
+                    categoryId: task.categoryId(),
+                    attachment: task.attachment()
+                };
+            },
+            "callback": function(data) {
+
+            }
         }
     };
 
@@ -168,6 +195,9 @@ function TasksViewModelDefinition() {
         actions.search = function() {
             self.services.search.request();
         };
+		actions.markTask = function(taskToMark){
+			self.services.edit.request();
+		};
     };
 
     self.domUtils = new function() {

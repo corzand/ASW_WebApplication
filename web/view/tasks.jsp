@@ -66,7 +66,7 @@
                             <ul>
                                 <li class="task">
                                     <div>
-                                        <input type="checkbox" data-bind="value : id, checked : done, click : actions.edit" />
+                                        <input type="checkbox" data-bind="value : id, checked : done, click : actions.markTask" />
                                         <a href="#" data-bind="text : title, click : actions.edit"></a>
                                         <div data-bind="visible : assigned">
                                             <img data-bind=" attr : { src : assignedUserPicture }" />
