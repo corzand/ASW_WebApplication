@@ -42,16 +42,16 @@ public class Application extends HttpServlet {
         String action = request.getPathInfo().replace("/", "");
         switch (action) {
             case ACTION_LOGIN:
-                forward(request, response, "/View/login.jsp");
+                forward(request, response, "/view/login.jsp");
                 break;
             case ACTION_SIGNUP:
-                forward(request, response, "/View/signup.jsp");
+                forward(request, response, "/view/signup.jsp");
                 break;
             case ACTION_TASKS:
-                forward(request, response, "/View/tasks.jsp");
+                forward(request, response, "/view/tasks.jsp");
                 break;
             case ACTION_USER:
-                forward(request, response, "/View/user.jsp");
+                forward(request, response, "/view/user.jsp");
                 break;
                 
         }
