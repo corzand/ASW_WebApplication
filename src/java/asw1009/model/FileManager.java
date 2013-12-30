@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystem;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -39,7 +40,7 @@ public class FileManager {
     public void init(String directoryPath, String fileName){        
         this.directoryPath = directoryPath;
         this.fileName = fileName;
-        this.xml = new File(this.directoryPath + "\\" + this.fileName + ".xml");
+        this.xml = new File(this.directoryPath + System.getProperty("file.separator") + this.fileName + ".xml");
         this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();
