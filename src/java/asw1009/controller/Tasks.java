@@ -3,6 +3,8 @@ package asw1009.controller;
 import asw1009.model.CategoriesManager;
 import asw1009.model.TasksManager;
 import asw1009.viewmodel.request.AddTaskRequestViewModel;
+import asw1009.viewmodel.request.EditTaskRequestViewModel;
+import asw1009.viewmodel.response.EditTaskResponseViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import asw1009.viewmodel.response.AddTaskResponseViewModel;
 import asw1009.viewmodel.response.CategoriesListResponseViewModel;
@@ -52,6 +54,11 @@ public class Tasks extends HttpServlet {
                     jsonResponse = gson.toJson(addTask(requestData), AddTaskResponseViewModel.class);
                     break;
                 }
+				case ACTION_EDIT: {
+                    EditTaskRequestViewModel requestData = gson.fromJson(json, EditTaskRequestViewModel.class);
+                    jsonResponse = gson.toJson(editTask(requestData), EditTaskResponseViewModel.class);
+                    break;
+                }
             }
 
             response.getOutputStream().print(jsonResponse);
@@ -84,6 +91,20 @@ public class Tasks extends HttpServlet {
         AddTaskResponseViewModel response = new AddTaskResponseViewModel();
         if(request != null){
             response = TasksManager.getInstance().addTask(request);            
+            response.setError(false);
+        }else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        
+        return response;
+    }
+	
+	private EditTaskResponseViewModel editTask(EditTaskRequestViewModel request){
+        
+        EditTaskResponseViewModel response = new EditTaskResponseViewModel();
+        if(request != null){
+            response = TasksManager.getInstance().editTask(request);            
             response.setError(false);
         }else {
             response.setError(true);
