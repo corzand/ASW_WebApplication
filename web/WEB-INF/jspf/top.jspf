@@ -12,7 +12,7 @@
             <a href="/application/user" > <img data-bind="attr: {src: User.picture}" width="50" height="auto"/></a>
             <span data-bind="text: User.firstName"></span>
             <span data-bind="text : User.lastName"></span>
-            <a href="#" data-bind="click : Application.logout">Logout</a>
+            <a href="#" data-bind="click : Application.actions.logout">Logout</a>
         <% } %>  
     </div>
 </div>

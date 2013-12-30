@@ -33,7 +33,7 @@
             <div>Vecchia Password: </div><div><input data-bind="value : oldPassword" type="password" /></div>
             <div>Password : </div><div><input data-bind="value : newPassword" type="password" /></div>
             <div>Confirm Password : </div><div><input data-bind="value : confirmNewPassword" type="password" /></div>
-            <button data-bind="click : editUser" >Modifica</button>
+            <button data-bind="click : actions.editUser" >Modifica</button>
         </div>  
     </body>
 </html>

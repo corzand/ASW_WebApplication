@@ -27,7 +27,7 @@
             <div>Username : </div><div><input data-bind="value : username" type="text" /></div>
             <div>Password : </div><div><input data-bind="value : password" type="password" /></div>
             <div>Confirm Password : </div><div><input data-bind="value : confirmPassword" type="password" /></div>
-            <button data-bind="click : signUp" >Registrati</button>
+            <button data-bind="click : actions.signUp" >Registrati</button>
         </div>  
     </body>
 </html>

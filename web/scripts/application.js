@@ -17,30 +17,43 @@ function applicationViewModelDefinition() {
         user.password = ko.observable(loggedUser.password);
         user.username = ko.observable(loggedUser.username);
         user.email = ko.observable(loggedUser.email);
-        
+
         if (loggedUser.picture !== '') {
             user.picture = ko.observable(loggedUser.picture);
         } else {
-            user.picture = ko.observable('/style/images/user50.png');         
+            user.picture = ko.observable('/style/images/user50.png');
         }
     };
 
     self.Application = new function() {
         var app = this;
 
-        app.logout = function() {
-            var rSettings = new requestSettings();
-            rSettings.url = '/users/logout/';
-            rSettings.successCallback = app.logoutCallback;
-            sendRequest(rSettings);
+        app.services = {
+            "logout": {
+                "request": function() {
+                    var rSettings = new requestSettings();
+                    rSettings.url = '/users/logout/';
+                    rSettings.successCallback = app.services.logout.callback;
+                    sendRequest(rSettings);
+                },
+                "requestData": function() {
+                    return null;
+                },
+                "callback": function(data) {
+                    if (!data.error) {
+                        window.location.href = "/application/login";
+                    } else {
+                        alert(data.errorMessage);
+                    }
+                }
+            }
         };
 
-        app.logoutCallback = function(data) {
-            if (!data.error) {
-                window.location.href = "/application/login";
-            } else {
-                alert(data.errorMessage);
-            }
+        app.actions = new function() {
+            var actions = this;
+            actions.logout = function() {
+                app.services.logout.request();
+            };
         };
     };
 }
