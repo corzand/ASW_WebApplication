@@ -25,13 +25,13 @@
         <div class="container">
             <div class="categories">
                 <div class="private-filter">
-                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : personal" />I miei task</div>
-                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : personal" />Tutti i task</div>                    
+                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : personal, checkedValue : true " />I miei task</div>
+                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : personal, checkedValue : false " />Tutti i task</div>                    
                 </div>
                 <div class="categories-filter">
                     <ul data-bind="foreach : Categories">
                         <li>
-                            <input type="checkbox" data-bind="attr : { name : title }, value : id, checked : state"/><span data-bind="text : title"></span>
+                            <input type="checkbox" data-bind="attr : { name : title }, checked : state"/><span data-bind="text : title"></span>
                         </li>
                     </ul> 
                 </div>
@@ -62,19 +62,19 @@
                         </div>
                     </div>
                     <div class="timeline" data-bind="foreach : Days">
-                        <div class="day" data-bind="foreach : Tasks">
-                            <ul>
-                                <li class="task">
+                        <ul>
+                            <div class="day" data-bind="foreach : Tasks">
+                                <li class="task" data-bind="visible: visible">
                                     <div>
-                                        <input type="checkbox" data-bind="value : id, checked : done, click : actions.markTask" />
-                                        <a href="#" data-bind="text : title, click : actions.edit"></a>
-                                        <div data-bind="visible : assigned">
-                                            <img data-bind=" attr : { src : assignedUserPicture }" />
+                                        <input type="checkbox" data-bind="value : id, checked : done, click : $root.actions.markTask" />
+                                        <a data-bind="text : title, click : $root.actions.edit"></a>
+                                        <div data-bind="if : assigned">
+                                            <img data-bind=" attr : { src : AssignedUser().picture }" />
                                         </div>
                                     </div>
-                                </li>                                
-                            </ul>
-                        </div>
+                                </li>  
+                            </div>                              
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -104,17 +104,13 @@
                 <div class="row">
                     <div>Categoria</div>
                     <div>
-                        <select data-bind="foreach : Categories">
-                            <option data-bind="text : title, attr : {'data-id' : id}"></option>
-                        </select>
+                        <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
                     </div>
                 </div>
                 <div class="row">
                     <div>Utente assegnato</div>
                     <div>
-                        <select data-bind="foreach : Users">
-                            <option data-bind="text : username, attr : {'data-id' : id}"></option>
-                        </select>
+                        <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
                     </div>
                 </div>
                 <div>

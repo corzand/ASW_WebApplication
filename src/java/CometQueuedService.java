@@ -1,5 +1,4 @@
 
-
 import asw1009.ManageXML;
 import java.io.*;
 import java.util.*;
@@ -41,86 +40,89 @@ public class CometQueuedService extends HttpServlet {
         String user;
         Document answer = null;
         OutputStream os;
-        if (operation.equals("login")) {
-            user = ((Text) root.getChildNodes().item(0)).getData();
-            System.out.println("login received: " + user);
-            synchronized (this) {
-                contexts.put(user, new LinkedList<Document>());
-            }
-            session.setAttribute("user", user);
-            answer = mngXML.newDocument();
-            answer.appendChild(answer.createElement("logged"));
-            os = response.getOutputStream();
-            mngXML.transform(os, answer);
-            os.close();
-        } else if (operation.equals("push")) {
-            System.out.println("push received");
-            synchronized (this) {
-                for (String destUser : contexts.keySet()) {
-                    Object value = contexts.get(destUser);
-                    if (value instanceof AsyncContext) {
-                        OutputStream aos = ((AsyncContext) value).getResponse().getOutputStream();
-                        mngXML.transform(aos, data);
-                        aos.close();
-                        ((AsyncContext) value).complete();
-                        contexts.put(destUser, new LinkedList<Document>());
-                    } else {
-                        ((LinkedList<Document>) value).addLast(data);
-                    }
+        switch (operation) {
+            case "login":
+                user = ((Text) root.getChildNodes().item(0)).getData();
+                System.out.println("login received: " + user);
+                synchronized (this) {
+                    contexts.put(user, new LinkedList<Document>());
                 }
-            }
-            answer = mngXML.newDocument();
-            answer.appendChild(answer.createElement("ok"));
-            os = response.getOutputStream();
-            mngXML.transform(os, answer);
-            os.close();
-        } else if (operation.equals("pop")) {
-            user = (String) session.getAttribute("user");
-            System.out.println("pop received from: " + user);
-
-            boolean async;
-            synchronized (this) {
-                LinkedList<Document> list = (LinkedList<Document>) contexts.get(user);
-                if (async = list.isEmpty()) {
-                    AsyncContext asyncContext = request.startAsync();
-                    asyncContext.setTimeout(10 * 1000);
-                    asyncContext.addListener(new AsyncAdapter() {
-                        @Override
-                        public void onTimeout(AsyncEvent e) {
-                            try {
-                                AsyncContext asyncContext = e.getAsyncContext();
-                                String user = (String) ((HttpServletRequest) asyncContext.getRequest()).getSession().getAttribute("user");
-                                System.out.println("timeout event launched for: " + user);
-                                ManageXML mngXML = new ManageXML();
-                                Document answer = mngXML.newDocument();
-                                answer.appendChild(answer.createElement("timeout"));
-                                boolean confirm;
-                                synchronized (CometQueuedService.this) {
-                                    if (confirm = (contexts.get(user) instanceof AsyncContext)) {
-                                        contexts.put(user, new LinkedList<Document>());
-                                    }
-                                }
-                                if (confirm) {
-                                    OutputStream tos = asyncContext.getResponse().getOutputStream();
-                                    mngXML.transform(tos, answer);
-                                    tos.close();
-                                    asyncContext.complete();
-                                }
-                            } catch (Exception ex) {
-                                System.out.println(ex);
-                            }
-                        }
-                    });
-                    contexts.put(user, asyncContext);
-                } else {
-                    answer = list.removeFirst();
-                }
-            }
-            if (!async) {
+                session.setAttribute("user", user);
+                answer = mngXML.newDocument();
+                answer.appendChild(answer.createElement("logged"));
                 os = response.getOutputStream();
                 mngXML.transform(os, answer);
                 os.close();
-            }
+                break;
+            case "push":
+                System.out.println("push received");
+                synchronized (this) {
+                    for (String destUser : contexts.keySet()) {
+                        Object value = contexts.get(destUser);
+                        if (value instanceof AsyncContext) {
+                            OutputStream aos = ((AsyncContext) value).getResponse().getOutputStream();
+                            mngXML.transform(aos, data);
+                            aos.close();
+                            ((AsyncContext) value).complete();
+                            contexts.put(destUser, new LinkedList<Document>());
+                        } else {
+                            ((LinkedList<Document>) value).addLast(data);
+                        }
+                    }
+                }
+                answer = mngXML.newDocument();
+                answer.appendChild(answer.createElement("ok"));
+                os = response.getOutputStream();
+                mngXML.transform(os, answer);
+                os.close();
+                break;
+            case "pop":
+                user = (String) session.getAttribute("user");
+                System.out.println("pop received from: " + user);
+                boolean async;
+                synchronized (this) {
+                    LinkedList<Document> list = (LinkedList<Document>) contexts.get(user);
+                    if (async = list.isEmpty()) {
+                        AsyncContext asyncContext = request.startAsync();
+                        asyncContext.setTimeout(10 * 1000);
+                        asyncContext.addListener(new AsyncAdapter() {
+                            @Override
+                            public void onTimeout(AsyncEvent e) {
+                                try {
+                                    AsyncContext asyncContext = e.getAsyncContext();
+                                    String user = (String) ((HttpServletRequest) asyncContext.getRequest()).getSession().getAttribute("user");
+                                    System.out.println("timeout event launched for: " + user);
+                                    ManageXML mngXML = new ManageXML();
+                                    Document answer = mngXML.newDocument();
+                                    answer.appendChild(answer.createElement("timeout"));
+                                    boolean confirm;
+                                    synchronized (CometQueuedService.this) {
+                                        if (confirm = (contexts.get(user) instanceof AsyncContext)) {
+                                            contexts.put(user, new LinkedList<Document>());
+                                        }
+                                    }
+                                    if (confirm) {
+                                        OutputStream tos = asyncContext.getResponse().getOutputStream();
+                                        mngXML.transform(tos, answer);
+                                        tos.close();
+                                        asyncContext.complete();
+                                    }
+                                } catch (Exception ex) {
+                                    System.out.println(ex);
+                                }
+                            }
+                        });
+                        contexts.put(user, asyncContext);
+                    } else {
+                        answer = list.removeFirst();
+                    }
+                }
+                if (!async) {
+                    os = response.getOutputStream();
+                    mngXML.transform(os, answer);
+                    os.close();
+                }
+                break;
         }
     }
 }
