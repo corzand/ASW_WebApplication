@@ -321,8 +321,21 @@ function TasksViewModelDefinition() {
         actions.edit = function(taskToEdit) {
             self.domUtils.openDialog(taskToEdit);
         };
-        actions.add = function() {
-            self.services.add.request();
+        actions.addFast = function() {
+            if(self.utils.validateAdd()){
+                self.services.add.request();
+            }
+            else {
+                alert("Il nuovo task deve avere un titolo!");
+            }
+        };
+        actions.addDialog = function($dialog){
+          if(self.utils.validateAdd()){
+              self.services.add.request($dialog);
+          }
+          else {
+              alert("Il nuovo task deve avere un titolo!");
+          }
         };
         actions.search = function() {
             self.services.search.request();
@@ -361,7 +374,7 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class : "addButton",
                         click: function() {
-                            self.services.add.request($dialog);
+                            self.actions.addDialog($dialog);
                         }
                     },
                     {
@@ -470,6 +483,11 @@ function TasksViewModelDefinition() {
             self.NewTask.AssignedUser();
             self.NewTask.Category();
             self.NewTask.attachment("");
+        };
+        
+        utils.validateAdd = function() {
+            if (self.NewTask.title() !== "") return true;
+            else false;
         };
 
 //        utils.isTaskAssigned = function(task) {

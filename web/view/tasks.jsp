@@ -49,7 +49,7 @@
                         <div>
                             <input type='text' id='fastAddDate' /><!-- Manual binding -->
                             <button data-bind="click : $root.actions.edit">Edit Icon</button>
-                            <button data-bind="click : $root.actions.add">Fine</button>
+                            <button data-bind="click : $root.actions.addFast">Fine</button>
                         </div>
                     </div>
                 </div>
