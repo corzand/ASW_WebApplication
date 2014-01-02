@@ -304,20 +304,33 @@ function TasksViewModelDefinition() {
 		}
 	};
 	self.actions = new function() {
-		var actions = this;
-		actions.edit = function(taskToEdit) {
-			self.domUtils.openDialog(taskToEdit);
-		};
-		actions.add = function() {
-			self.services.add.request();
-		};
-		actions.search = function() {
-			self.services.search.request();
-		};
-		actions.markTask = function(taskToMark) {
-			self.services.edit.request(taskToMark);
-		};
-	};
+        var actions = this;
+        actions.edit = function(taskToEdit) {
+            self.domUtils.openDialog(taskToEdit);
+        };
+        actions.addFast = function() {
+            if(self.utils.validateAdd()){
+                self.services.add.request();
+            }
+            else {
+                alert("Il nuovo task deve avere un titolo!");
+            }
+        };
+        actions.addDialog = function($dialog){
+          if(self.utils.validateAdd()){
+              self.services.add.request($dialog);
+          }
+          else {
+              alert("Il nuovo task deve avere un titolo!");
+          }
+        };
+        actions.search = function() {
+            self.services.search.request();
+        };
+        actions.markTask = function(taskToMark) {
+            self.services.edit.request(taskToMark);
+        };
+    };
 	self.domUtils = new function() {
 		var domUtils = this;
 		domUtils.openDialog = function(task) {
@@ -485,6 +498,11 @@ function TasksViewModelDefinition() {
 			self.NewTask.Category();
 			self.NewTask.attachment("");
 		};
+		
+		utils.validateAdd = function() {
+            if (self.NewTask.title() !== "") return true;
+            else false;
+        };
 
 		utils.popTask = function(task) {
 			var popped = false;

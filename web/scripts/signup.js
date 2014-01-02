@@ -6,14 +6,13 @@
 
 function signUpViewModelDefinition() {
     var self = this;
-
     self.firstName = ko.observable('');
     self.lastName = ko.observable('');
     self.email = ko.observable('');
     self.username = ko.observable('');
     self.password = ko.observable('');
     self.confirmPassword = ko.observable('');
-
+    
     self.services = {
         "signUp": {
             "request": function() {
@@ -41,16 +40,37 @@ function signUpViewModelDefinition() {
             }
         }
     };
-
     self.actions = new function() {
         var actions = this;
         actions.signUp = function() {
-            self.services.signUp.request();
+            //validazione prima di request if (validate) then request
+            if (self.utils.validate()) self.services.signUp.request();
+            else {
+                alert("Ricontrollare i campi!");
+            }
+        };
+    };
+    
+    self.utils = new function() {
+        var utils = this;
+        
+        utils.validate = function() {
+            if (self.firstName() === "" || self.lastName() ===  "" ||
+                    self.email() ===  "" || self.username() ===  "" ||
+                    self.password() ===  "" || self.confirmPassword() ===  "" ||
+                    self.password() !== self.confirmPassword()){
+                return false;
+            }
+            else {
+                return true;
+            }
         };
     };
 }
+
+
 $(document).ready(function() {
-    //init view model and stuff
+//init view model and stuff
     var signUpViewModel = new signUpViewModelDefinition();
     ko.applyBindings(signUpViewModel, $(".signUpDiv")[0]);
 });
