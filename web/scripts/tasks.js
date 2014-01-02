@@ -290,30 +290,30 @@ function TasksViewModelDefinition() {
             }
         },
         "delete": {
-			request: function(taskId, timeStamp) {
-				var rSettings = new requestSettings();
-				rSettings.url = '/tasks/delete/';
-				rSettings.requestData = JSON.stringify(self.services.delete.requestData());
-				rSettings.successCallback = self.services.delete.callback;
-				if ($dialog) {
-					rSettings.callbackParameter = $dialog;
-				}
-				return sendRequest(rSettings);
-			},
-			requestData: function(taskId, timeStamp) {
-				return {
-					taskId: taskId,
-				};
-			},
-			callback: function(data) {
-				if (!data.error) {
-					alert("Eliminazione riuscita");
-				} else {
-					alert(data.errorMessage);
-				}
-			}
-		}
-	};
+            request: function(taskId, timeStamp) {
+                var rSettings = new requestSettings();
+                rSettings.url = '/tasks/delete/';
+                rSettings.requestData = JSON.stringify(self.services.delete.requestData());
+                rSettings.successCallback = self.services.delete.callback;
+                if ($dialog) {
+                    rSettings.callbackParameter = $dialog;
+                }
+                return sendRequest(rSettings);
+            },
+            requestData: function(taskId, timeStamp) {
+                return {
+                    taskId: taskId,
+                };
+            },
+            callback: function(data) {
+                if (!data.error) {
+                    alert("Eliminazione riuscita");
+                } else {
+                    alert(data.errorMessage);
+                }
+            }
+        }
+    };
     self.actions = new function() {
         var actions = this;
         actions.edit = function(taskToEdit) {
@@ -399,7 +399,7 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class: "addButton",
                         click: function() {
-                            if(self.utils.validateAdd(task)){
+                            if (self.utils.validateAdd(task)) {
                                 self.services.add.request($dialog, task);
                             }
                         }
@@ -421,6 +421,7 @@ function TasksViewModelDefinition() {
                 ],
                 close: function(event, ui) {
                     $dialog.dialog("destroy");
+                    $("#taskDate").datepicker("destroy");
                     ko.cleanNode($dialog[0]);
                 }
             });
@@ -436,16 +437,6 @@ function TasksViewModelDefinition() {
                 }
             });
             $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-            $("#taskDate").datepicker({
-                showOn: "button",
-                buttonImage: "/style/images/calendar.png",
-                buttonImageOnly: true,
-                onSelect: function() {
-                    self.NewTask.date = $("#taskDate").datepicker("getDate");
-                    $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-                }
-            });
-            $("#taskDate").datepicker("setDate", self.NewTask.date);
 
             $("#startDate").datepicker({
                 showOn: "button",
