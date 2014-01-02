@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><users>
+  <user>
+    <id>1</id>
+    <username>a</username>
+    <picture>/files/users/1.gif</picture>
+    <firstName>a</firstName>
+    <lastName>a</lastName>
+    <password>a</password>
+    <email>a</email>
+  </user>
+  <id>1</id>
+</users>
