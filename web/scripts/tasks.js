@@ -303,10 +303,12 @@ function TasksViewModelDefinition() {
 			requestData: function(taskId, timeStamp) {
 				return {
 					taskId: taskId,
+                                        timeStamp: timeStamp
 				};
 			},
 			callback: function(data) {
 				if (!data.error) {
+                                        self.utils.popTask(data.task);
 					alert("Eliminazione riuscita");
 				} else {
 					alert(data.errorMessage);
