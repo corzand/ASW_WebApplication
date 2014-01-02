@@ -62,7 +62,8 @@
                         </div>
                     </div>
                     <div class="timeline" data-bind="foreach : Days">
-                        <ul>
+                        <span data-bind="text: day"></span>
+						<ul>
                             <div class="day" data-bind="foreach : Tasks">
                                 <li class="task" data-bind="visible: visible">
                                     <div>
