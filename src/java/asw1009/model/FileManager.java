@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  */
 public class FileManager {
 
-    private String directoryPath;
+    protected String directoryPath;
     private String fileName;
     protected File xml;
     protected ManageXML xmlManager;
