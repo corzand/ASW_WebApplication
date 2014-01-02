@@ -22,6 +22,7 @@ function TasksViewModelDefinition() {
         task.latitude = ko.observable(params.latitude);
         task.longitude = ko.observable(params.longitude);
         task.attachment = ko.observable(params.attachment);
+        task.timeStamp = params.timeStamp;
 
         task.visible = ko.computed(function() {
             var categoryVisible = false;
@@ -163,82 +164,43 @@ function TasksViewModelDefinition() {
                         currentDay.setDate(currentDay.getDate() + 1);
                     }
 
+
+
                     for (i = 0; i < data.tasks.length; i++) {
-                        var pushed = false;
-                        for (var j = 0; j < self.Days().length && !pushed; j++) {
-                            if (compareDate(new Date(data.tasks[i].date), self.Days()[j].day)) {
-                                self.Days()[j].Tasks.push(
-                                        new self.Task({
-                                            id: data.tasks[i].id,
-                                            title: data.tasks[i].title,
-                                            description: data.tasks[i].description,
-                                            date: data.tasks[i].date,
-                                            done: data.tasks[i].done,
-                                            personal: data.tasks[i].personal,
-                                            userId: data.tasks[i].userId,
-                                            assignedUserId: data.tasks[i].assignedUserId,
-                                            categoryId: data.tasks[i].categoryId,
-                                            latitude: data.tasks[i].latitude,
-                                            longitude: data.tasks[i].longitude,
-                                            attachment: data.tasks[i].attachment
-                                        }));
-                                pushed = true;
-                            }
-                        }
+                        self.utils.pushTask(data.tasks[i]);
                     }
                 }
             }
         },
         "add": {
-            "request": function($dialog) {
+            "request": function($dialog, task) {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/add/';
-                rSettings.requestData = JSON.stringify(self.services.add.requestData());
+                rSettings.requestData = JSON.stringify(self.services.add.requestData(task));
                 rSettings.successCallback = self.services.add.callback;
                 if ($dialog) {
                     rSettings.callbackParameter = $dialog;
                 }
                 return sendRequest(rSettings);
             },
-            "requestData": function() {
+            "requestData": function(task) {
                 return {
-                    title: self.NewTask.title(),
-                    description: self.NewTask.description(),
-                    date: self.NewTask.date,
-                    done: self.NewTask.done(),
-                    personal: self.NewTask.personal(),
+                    title: task.title(),
+                    description: task.description(),
+                    date: task.date,
+                    done: task.done(),
+                    personal: task.personal(),
                     userId: loggedUser.id,
-                    assignedUserId: self.NewTask.AssignedUser() ? self.NewTask.AssignedUser().id() : -1,
-                    latitude: self.NewTask.latitude(),
-                    longitude: self.NewTask.longitude(),
-                    categoryId: self.NewTask.Category().id(),
-                    attachment: self.NewTask.attachment()
+                    assignedUserId: task.AssignedUser() ? task.AssignedUser().id() : -1,
+                    latitude: task.latitude(),
+                    longitude: task.longitude(),
+                    categoryId: task.Category() ? task.Category().id() : 1,
+                    attachment: task.attachment()
                 };
             },
             "callback": function(data, $dialog) {
                 if (!data.error) {
-                    var pushed = false;
-                    for (var i = 0; i < self.Days().length && !pushed; i++) {
-                        if (compareDate(new Date(data.task.date), self.Days()[i].day)) {
-                            self.Days()[i].Tasks.push(
-                                    new self.Task({
-                                        id: data.task.id,
-                                        title: data.task.title,
-                                        description: data.task.description,
-                                        date: data.task.date,
-                                        done: data.task.done,
-                                        personal: data.task.personal,
-                                        userId: data.task.userId,
-                                        assignedUserId: data.task.assignedUserId,
-                                        categoryId: data.task.categoryId,
-                                        latitude: data.task.latitude,
-                                        longitude: data.task.longitude,
-                                        attachment: data.task.attachment
-                                    }));
-                            pushed = true;
-                        }
-                    }
-
+                    self.utils.pushTask(data.task);
                     if ($dialog) {
                         $dialog.dialog("close");
                     }
@@ -273,14 +235,15 @@ function TasksViewModelDefinition() {
                     latitude: task.latitude(),
                     longitude: task.longitude(),
                     categoryId: task.Category().id(),
-                    attachment: task.attachment()
+                    attachment: task.attachment(),
+                    timeStamp: task.timeStamp
                 };
             },
             "callback": function(data, params) {
                 task = params.data;
                 if (!data.error) {
                     task.title(data.task.title);
-                    task.description(data.tasks.description);
+                    task.description(data.task.description);
                     task.date = new Date(data.task.date);
                     task.done(data.task.done);
                     task.personal(data.task.personal);
@@ -290,28 +253,63 @@ function TasksViewModelDefinition() {
                     task.longitude(data.task.longitude);
                     task.Category(self.utils.getCategoryById(data.task.categoryId));
                     task.attachment(data.task.attachment);
+                    task.timeStamp(data.task.timeStamp);
 
+
+                    if (task.date !== new Date(data.task.date())) {
+                        self.utils.popTask(data.task);
+                        self.utils.pushTask(data.task);
+                    }
                     //TODO: Gestire task con data modificata! (spostarlo)
                     //se la data nuova è diversa dalla data vecchia del task, lo tolgo dall'array del giorno
                     //lo metto nell'array del nuovo giorno
                     if (params.$dialog) {
                         $dialog.dialog("close");
                     }
+                } else if (data.task) {
+                    task.title(data.task.title);
+                    task.description(data.task.description);
+                    task.date = new Date(data.task.date);
+                    task.done(data.task.done);
+                    task.personal(data.task.personal);
+                    task.userId(data.task.userId);
+                    task.AssignedUser(self.utils.getUserById(data.task.assignedUserId));
+                    task.latitude(data.task.latitude);
+                    task.longitude(data.task.longitude);
+                    task.Category(self.utils.getCategoryById(data.task.categoryId));
+                    task.attachment(data.task.attachment);
+                    task.timeStamp(data.task.timeStamp);
+
+                    if (params.$dialog) {
+                        $dialog.dialog("close");
+                    }
+                    alert(data.errorMessage);
                 } else {
                     alert(data.errorMessage);
                 }
             }
         },
-        "delete" : {
-            request : function(taskId){
-                
+        "delete": {
+            request: function(taskId, timeStamp) {
+                var rSettings = new requestSettings();
+                rSettings.url = '/tasks/delete/';
+                rSettings.requestData = JSON.stringify(self.services.delete.requestData());
+                rSettings.successCallback = self.services.delete.callback;
+                if ($dialog) {
+                    rSettings.callbackParameter = $dialog;
+                }
+                return sendRequest(rSettings);
             },
-            requestData : function(){
-                
+            requestData: function(taskId, timeStamp) {
+                return {
+                    taskId: taskId,
+                };
             },
-            callback : function(data){
-                if(!data.error){
-                    
+            callback: function(data) {
+                if (!data.error) {
+                    alert("Eliminazione riuscita");
+                } else {
+                    alert(data.errorMessage);
                 }
             }
         }
@@ -322,20 +320,20 @@ function TasksViewModelDefinition() {
             self.domUtils.openDialog(taskToEdit);
         };
         actions.addFast = function() {
-            if(self.utils.validateAdd()){
-                self.services.add.request();
+            if (self.utils.validateAdd(self.NewTask)) {
+                self.services.add.request(null, self.NewTask);
             }
             else {
                 alert("Il nuovo task deve avere un titolo!");
             }
         };
-        actions.addDialog = function($dialog){
-          if(self.utils.validateAdd()){
-              self.services.add.request($dialog);
-          }
-          else {
-              alert("Il nuovo task deve avere un titolo!");
-          }
+        actions.addDialog = function($dialog, task) {
+            if (self.utils.validateAdd(task)) {
+                self.services.add.request($dialog, task);
+            }
+            else {
+                alert("Il nuovo task deve avere un titolo!");
+            }
         };
         actions.search = function() {
             self.services.search.request();
@@ -357,36 +355,65 @@ function TasksViewModelDefinition() {
                     if (task.id) {
                         //Hide add
                         $dialog.parent().find(".ui-dialog-buttonpane .addButton").hide();
-                    }else {
+                    } else {
                         //Hide edit e delete button
+
                         $dialog.parent().find(".ui-dialog-buttonpane .editButton").hide();
                         $dialog.parent().find(".ui-dialog-buttonpane .deleteButton").hide();
                     }
-                    var boundTask = $.extend(true, {}, task);
+
+                    //var boundTask = $.extend(true, {}, task);
+                    var boundTask = new self.Task({
+                        id: task.id ? task.id() : -1,
+                        title: task.title(),
+                        description: task.description(),
+                        date: task.date,
+                        done: task.done(),
+                        personal: task.personal(),
+                        userId: task.userId ? task.userId() : loggedUser.id,
+                        assignedUserId: task.AssignedUser() ? task.AssignedUser().id() : -1,
+                        categoryId: task.Category() ? task.Category().id() : 1,
+                        latitude: task.latitude(),
+                        longitude: task.longitude(),
+                        attachment: task.attachment(),
+                        timeStamp: task.timeStamp ? task.timeStamp : -1
+                    });
                     $.extend(boundTask, {
                         Categories: self.Categories(),
                         Users: self.Users()
                     });
+
+                    $("#taskDate").datepicker({
+                        showOn: "button",
+                        buttonImage: "/style/images/calendar.png",
+                        buttonImageOnly: true,
+                        onSelect: function() {
+                            boundTask.date = $("#taskDate").datepicker("getDate");
+                        }
+                    });
+                    $("#taskDate").datepicker("setDate", boundTask.date);
                     ko.applyBindings(boundTask, $dialog[0]);
                 },
                 buttons: [
                     {
                         text: "Aggiungi",
-                        class : "addButton",
+                        class: "addButton",
                         click: function() {
-                            self.actions.addDialog($dialog);
+                            if (self.utils.validateAdd(task)) {
+                                self.services.add.request($dialog, task);
+                            }
                         }
                     },
                     {
                         text: "Modifica",
-                        class : "editButton",
+                        class: "editButton",
                         click: function() {
                             self.services.edit.request(task, boundTask, $dialog);
                         }
-                    }, 
+                    },
                     {
                         text: "Elimina",
-                        class : "deleteButton",
+                        class: "deleteButton",
                         click: function() {
                             self.services.delete.request(task.id());
                         }
@@ -394,6 +421,7 @@ function TasksViewModelDefinition() {
                 ],
                 close: function(event, ui) {
                     $dialog.dialog("destroy");
+                    $("#taskDate").datepicker("destroy");
                     ko.cleanNode($dialog[0]);
                 }
             });
@@ -409,16 +437,6 @@ function TasksViewModelDefinition() {
                 }
             });
             $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-            $("#taskDate").datepicker({
-                showOn: "button",
-                buttonImage: "/style/images/calendar.png",
-                buttonImageOnly: true,
-                onSelect: function() {
-                    self.NewTask.date = $("#taskDate").datepicker("getDate");
-                    $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-                }
-            });
-            $("#taskDate").datepicker("setDate", self.NewTask.date);
 
             $("#startDate").datepicker({
                 showOn: "button",
@@ -484,10 +502,51 @@ function TasksViewModelDefinition() {
             self.NewTask.Category();
             self.NewTask.attachment("");
         };
-        
-        utils.validateAdd = function() {
-            if (self.NewTask.title() !== "") return true;
-            else false;
+
+        utils.validateAdd = function(task) {
+            if (task.title() !== "")
+                return true;
+            else
+                false;
+        };
+
+        utils.popTask = function(task) {
+            var popped = false;
+            for (var i = 0; i < self.Days().length && !popped; i++) {
+                for (j = 0; j < self.Days().tasks.length && !popped; j++) {
+                    if (task.id() === self.Days()[i].tasks[j].id()) {
+                        self.Days()[i].tasks[j].pop();
+                        popped = true;
+                    }
+                }
+
+            }
+        };
+
+        utils.pushTask = function(task) {
+            var pushed = false;
+            for (var i = 0; i < self.Days().length && !pushed; i++) {
+                console.log("ciclo numero" + i);
+                if (compareDate(new Date(task.date), self.Days()[i].day)) {
+                    self.Days()[i].Tasks.push(
+                            new self.Task({
+                                id: task.id,
+                                title: task.title,
+                                description: task.description,
+                                date: task.date,
+                                done: task.done,
+                                personal: task.personal,
+                                userId: task.userId,
+                                assignedUserId: task.assignedUserId,
+                                categoryId: task.categoryId,
+                                latitude: task.latitude,
+                                longitude: task.longitude,
+                                attachment: task.attachment,
+                                timeStamp: task.timeStamp
+                            }));
+                    pushed = true;
+                }
+            }
         };
 
 //        utils.isTaskAssigned = function(task) {

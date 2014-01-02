@@ -30,4 +30,5 @@ public class EntityList<T> {
         public int getNextId(){
             return ++id;
         }
+		
     }
