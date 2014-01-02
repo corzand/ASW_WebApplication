@@ -290,32 +290,29 @@ function TasksViewModelDefinition() {
             }
         },
         "delete": {
-			request: function(taskId, timeStamp) {
-				var rSettings = new requestSettings();
-				rSettings.url = '/tasks/delete/';
-				rSettings.requestData = JSON.stringify(self.services.delete.requestData());
-				rSettings.successCallback = self.services.delete.callback;
-				if ($dialog) {
-					rSettings.callbackParameter = $dialog;
-				}
-				return sendRequest(rSettings);
-			},
-			requestData: function(taskId, timeStamp) {
-				return {
-					taskId: taskId,
-                                        timeStamp: timeStamp
-				};
-			},
-			callback: function(data) {
-				if (!data.error) {
-                                        self.utils.popTask(data.task);
-					alert("Eliminazione riuscita");
-				} else {
-					alert(data.errorMessage);
-				}
-			}
-		}
-	};
+            request: function(task) {
+                var rSettings = new requestSettings();
+                rSettings.url = '/tasks/delete/';
+                rSettings.requestData = JSON.stringify(self.services.delete.requestData(task));
+                rSettings.successCallback = self.services.delete.callback;
+                return sendRequest(rSettings);
+            },
+            requestData: function(task) {
+                return {
+                    taskId: task.id(),
+                    timeStamp: task.timeStamp
+                };
+            },
+            callback: function(data) {
+                if (!data.error) {
+                    self.utils.popTask(data.task);
+                    alert("Eliminazione riuscita");
+                } else {
+                    alert(data.errorMessage);
+                }
+            }
+        }
+    };
     self.actions = new function() {
         var actions = this;
         actions.edit = function(taskToEdit) {
@@ -348,6 +345,7 @@ function TasksViewModelDefinition() {
         var domUtils = this;
         domUtils.openDialog = function(task) {
             var $dialog = $("#edit-task-popup");
+            var boundTask;
             $dialog.dialog({
                 autoOpen: true,
                 height: 300,
@@ -365,7 +363,7 @@ function TasksViewModelDefinition() {
                     }
 
                     //var boundTask = $.extend(true, {}, task);
-                    var boundTask = new self.Task({
+                    boundTask = new self.Task({
                         id: task.id ? task.id() : -1,
                         title: task.title(),
                         description: task.description(),
@@ -417,7 +415,7 @@ function TasksViewModelDefinition() {
                         text: "Elimina",
                         class: "deleteButton",
                         click: function() {
-                            self.services.delete.request(task.id());
+                            self.services.delete.request(boundTask);
                         }
                     }
                 ],
