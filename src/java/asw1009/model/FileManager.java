@@ -31,16 +31,16 @@ import org.xml.sax.SAXException;
  */
 public class FileManager {
 
-    protected String directoryPath;
+    protected String servletPath;
     private String fileName;
     protected File xml;
     protected ManageXML xmlManager;
     protected XStream _xstream ;
     
-    public void init(String directoryPath, String fileName){        
-        this.directoryPath = directoryPath;
+    public void init(String servletPath, String fileName){        
+        this.servletPath = servletPath;
         this.fileName = fileName;
-        this.xml = new File(this.directoryPath + System.getProperty("file.separator") + this.fileName + ".xml");
+        this.xml = new File(this.servletPath + System.getProperty("file.separator") + "data" + System.getProperty("file.separator") + this.fileName + ".xml");
         this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();
