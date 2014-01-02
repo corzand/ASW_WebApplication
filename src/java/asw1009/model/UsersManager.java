@@ -24,10 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- *
- * @author Andrea
- */
 public class UsersManager extends FileManager {
 
     //private List<User> users;
@@ -248,9 +244,11 @@ public class UsersManager extends FileManager {
 
             //creare file immagine da stringa base64
             //settare nell'oggetto user.setPicture() il percorso al file
-            String filePath = createImage(request.getPicture(), user.getId());
             
-            user.setPicture(filePath);
+            if(!request.getPicture().equals("")) {
+                String filePath = createImage(request.getPicture(), user.getId());
+                user.setPicture(filePath);
+            }
 
             viewModel.setLoggedUser(user);
             viewModel.setError(false);
@@ -287,7 +285,7 @@ public class UsersManager extends FileManager {
             byte[] imageByteArray = Base64.decodeBase64(splitted[1]);
             String filePath = "/files/users/" + id + extension;
             File file = new File(servletPath + filePath);
-            if(!file.exists()){
+            if (!file.exists()) {
                 file.createNewFile();
             }
             try (FileOutputStream imageOutFile = new FileOutputStream(
