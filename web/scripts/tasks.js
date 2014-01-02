@@ -333,14 +333,41 @@ function TasksViewModelDefinition() {
 						$dialog.parent().find(".ui-dialog-buttonpane .addButton").hide();
 					} else {
 						//Hide edit e delete button
+						
 						$dialog.parent().find(".ui-dialog-buttonpane .editButton").hide();
 						$dialog.parent().find(".ui-dialog-buttonpane .deleteButton").hide();
 					}
-					var boundTask = $.extend(true, {}, task);
+
+					//var boundTask = $.extend(true, {}, task);
+					var boundTask = new self.Task({
+						id: task.id ? task.id() : -1,
+						title: task.title(),
+						description: task.description(),
+						date: task.date,
+						done: task.done(),
+						personal: task.personal(),
+						userId: task.userId ? task.userId() : loggedUser.id,
+						assignedUserId: task.AssignedUser() ? task.AssignedUser().id() : -1,
+						categoryId: task.Category() ? task.Category().id : 1,
+						latitude: task.latitude(),
+						longitude: task.longitude(),
+						attachment: task.attachment(),
+						timeStamp: task.timeStamp ? task.timeStamp : -1
+					});
 					$.extend(boundTask, {
 						Categories: self.Categories(),
 						Users: self.Users()
 					});
+
+					$("#taskDate").datepicker({
+						showOn: "button",
+						buttonImage: "/style/images/calendar.png",
+						buttonImageOnly: true,
+						onSelect: function() {
+							boundTask.date = $("#taskDate").datepicker("getDate");
+						}
+					});
+					$("#taskDate").datepicker("setDate", boundTask.date);
 					ko.applyBindings(boundTask, $dialog[0]);
 				},
 				buttons: [
