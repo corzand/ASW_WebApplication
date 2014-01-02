@@ -399,8 +399,8 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class: "addButton",
                         click: function() {
-                            if (self.utils.validateAdd(task)) {
-                                self.services.add.request($dialog, task);
+                            if (self.utils.validateAdd(boundTask)) {
+                                self.services.add.request($dialog, boundTask);
                             }
                         }
                     },
