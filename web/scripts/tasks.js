@@ -290,30 +290,32 @@ function TasksViewModelDefinition() {
             }
         },
         "delete": {
-            request: function(taskId, timeStamp) {
-                var rSettings = new requestSettings();
-                rSettings.url = '/tasks/delete/';
-                rSettings.requestData = JSON.stringify(self.services.delete.requestData());
-                rSettings.successCallback = self.services.delete.callback;
-                if ($dialog) {
-                    rSettings.callbackParameter = $dialog;
-                }
-                return sendRequest(rSettings);
-            },
-            requestData: function(taskId, timeStamp) {
-                return {
-                    taskId: taskId,
-                };
-            },
-            callback: function(data) {
-                if (!data.error) {
-                    alert("Eliminazione riuscita");
-                } else {
-                    alert(data.errorMessage);
-                }
-            }
-        }
-    };
+			request: function(taskId, timeStamp) {
+				var rSettings = new requestSettings();
+				rSettings.url = '/tasks/delete/';
+				rSettings.requestData = JSON.stringify(self.services.delete.requestData());
+				rSettings.successCallback = self.services.delete.callback;
+				if ($dialog) {
+					rSettings.callbackParameter = $dialog;
+				}
+				return sendRequest(rSettings);
+			},
+			requestData: function(taskId, timeStamp) {
+				return {
+					taskId: taskId,
+                                        timeStamp: timeStamp
+				};
+			},
+			callback: function(data) {
+				if (!data.error) {
+                                        self.utils.popTask(data.task);
+					alert("Eliminazione riuscita");
+				} else {
+					alert(data.errorMessage);
+				}
+			}
+		}
+	};
     self.actions = new function() {
         var actions = this;
         actions.edit = function(taskToEdit) {
