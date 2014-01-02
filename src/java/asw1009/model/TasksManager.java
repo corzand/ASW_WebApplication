@@ -7,9 +7,11 @@ package asw1009.model;
 
 import asw1009.model.entities.Task;
 import asw1009.viewmodel.request.AddTaskRequestViewModel;
+import asw1009.viewmodel.request.DeleteTaskRequestViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import asw1009.viewmodel.response.AddTaskResponseViewModel;
 import asw1009.viewmodel.request.EditTaskRequestViewModel;
+import asw1009.viewmodel.response.DeleteTaskResponseViewModel;
 import asw1009.viewmodel.response.EditTaskResponseViewModel;
 import asw1009.viewmodel.response.SearchTasksResponseViewModel;
 import java.util.ArrayList;
@@ -194,9 +196,9 @@ public class TasksManager extends FileManager {
 				viewModel.setError(false);
 				viewModel.setErrorMessage("");
 			} else {
-				viewModel.setError(true);
-			 	viewModel.setErrorMessage("Aggiornamento fallito");
 				viewModel.setTask(task);
+				viewModel.setError(true);
+				viewModel.setErrorMessage("Aggiornamento fallito");
 				return viewModel;
 			}
 		} else {
@@ -207,4 +209,33 @@ public class TasksManager extends FileManager {
 		_updateXML();
 		return viewModel;
 	}
-}
+
+	public DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request) {
+		DeleteTaskResponseViewModel viewModel = new DeleteTaskResponseViewModel();
+
+		Task task = getTaskById(request.getId());
+
+			if (task != null) {
+				if (task.getTimeStamp() == request.getTimeStamp()) {
+					
+					_tasks.getItems().remove(task);
+					
+					viewModel.setTask(task);
+					viewModel.setError(false);
+					viewModel.setErrorMessage("");
+				} else {
+					viewModel.setTask(task);
+					viewModel.setError(true);
+					viewModel.setErrorMessage("Eliminazione fallita");
+					return viewModel;
+				}
+			} else {
+				viewModel.setError(true);
+				viewModel.setErrorMessage("Eliminazione fallita");
+			}
+
+			_updateXML();
+			return viewModel;
+		}
+
+	}
