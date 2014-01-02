@@ -5,12 +5,15 @@ function userViewModelDefinition() {
     self.lastName = ko.observable(loggedUser.lastName);
     self.username = ko.observable(loggedUser.username);
     self.email = ko.observable(loggedUser.email);
-
-    if (loggedUser.picture !== '') {
-        self.picture = ko.observable(loggedUser.picture);
-    } else {
-        self.picture = ko.observable('/style/images/user50.png');
-    }
+    self.userPicture = ko.observable(loggedUser.picture);
+    self.newPicture = "";
+    self.picture = ko.computed(function() {
+        if (self.userPicture() !== '') {
+            return self.userPicture();
+        } else {
+            return '/style/images/user50.png';
+        }
+    });
 
     self.oldPassword = ko.observable("");
     self.newPassword = ko.observable("");
@@ -19,15 +22,11 @@ function userViewModelDefinition() {
     self.services = {
         "editUserData": {
             "request": function() {
-                if (self.utils.validate()) {
-                    var rSettings = new requestSettings();
-                    rSettings.url = '/users/edituser/';
-                    rSettings.requestData = JSON.stringify(self.services.editUserData.requestData());
-                    rSettings.successCallback = self.services.editUserData.callback;
-                    sendRequest(rSettings);
-                } else {
-                    alert("Validazione Fallita!");
-                }
+                var rSettings = new requestSettings();
+                rSettings.url = '/users/edituser/';
+                rSettings.requestData = JSON.stringify(self.services.editUserData.requestData());
+                rSettings.successCallback = self.services.editUserData.callback;
+                sendRequest(rSettings);
             },
             "requestData": function() {
                 return {
@@ -36,7 +35,7 @@ function userViewModelDefinition() {
                     email: self.email(),
                     username: self.username(),
                     password: self.newPassword(),
-                    picture: self.picture()
+                    picture: self.newPicture
                 };
             },
             "callback": function(data) {
@@ -52,15 +51,22 @@ function userViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.editUser = function() {
-            self.services.editUserData.request();
+            if (self.utils.validate()) {
+                self.services.editUserData.request();
+            }
+            else {
+                alert("Ricontrollare i campi!");
+            }
         };
     };
 
     self.utils = new function() {
         var utils = this;
+
         utils.validate = function() {
-            if (self.oldPassword() === loggedUser.password
-                    && self.newPassword() === self.confirmNewPassword()) {
+            if (self.oldPassword() === loggedUser.password &&
+                    self.newPassword() === self.confirmNewPassword() &&
+                    ((self.firstName() !== "" && self.lastName() !== "" && self.email() !== ""))) {
                 return true;
             } else {
                 return false;
@@ -76,7 +82,8 @@ $(document).ready(function() {
         var reader = new FileReader();
 
         reader.onload = function(e) {
-            userViewModel.picture(reader.result);
+            userViewModel.newPicture = reader.result;
+            userViewModel.userPicture(reader.result);
         };
 
         reader.readAsDataURL(file);

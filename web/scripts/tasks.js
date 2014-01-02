@@ -401,7 +401,7 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class: "addButton",
                         click: function() {
-                            if(self.utils.validateAdd(task)){
+                            if (self.utils.validateAdd(task)) {
                                 self.services.add.request($dialog, task);
                             }
                         }
@@ -423,6 +423,7 @@ function TasksViewModelDefinition() {
                 ],
                 close: function(event, ui) {
                     $dialog.dialog("destroy");
+                    $("#taskDate").datepicker("destroy");
                     ko.cleanNode($dialog[0]);
                 }
             });
@@ -438,16 +439,6 @@ function TasksViewModelDefinition() {
                 }
             });
             $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-            $("#taskDate").datepicker({
-                showOn: "button",
-                buttonImage: "/style/images/calendar.png",
-                buttonImageOnly: true,
-                onSelect: function() {
-                    self.NewTask.date = $("#taskDate").datepicker("getDate");
-                    $("#fastAddDate").datepicker("setDate", self.NewTask.date);
-                }
-            });
-            $("#taskDate").datepicker("setDate", self.NewTask.date);
 
             $("#startDate").datepicker({
                 showOn: "button",
