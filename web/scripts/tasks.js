@@ -143,9 +143,7 @@ function TasksViewModelDefinition() {
                 return {
                     startDate: self.startDate,
                     endDate: self.endDate,
-                    userId: loggedUser.id,
-                    //categories: self.utils.getActiveCategories(),
-                    //personal: self.personal()
+                    userId: loggedUser.id
                 };
             },
             "callback": function(data, pollingRequestData) {
@@ -156,15 +154,13 @@ function TasksViewModelDefinition() {
                     self.Days.removeAll();
                     var currentDay = new Date(self.startDate);
                     var range = dateDiff(self.startDate, self.endDate);
-                    for (var i = 0; i < range; i++) {
+                    for (var i = 0; i <= range; i++) {
                         self.Days.push({
                             day: new Date(currentDay),
                             Tasks: ko.observableArray([])
                         });
                         currentDay.setDate(currentDay.getDate() + 1);
                     }
-
-
 
                     for (i = 0; i < data.tasks.length; i++) {
                         self.utils.pushTask(data.tasks[i]);
@@ -225,6 +221,7 @@ function TasksViewModelDefinition() {
             },
             "requestData": function(task) {
                 return {
+                    id: task.id(),
                     title: task.title(),
                     description: task.description(),
                     date: task.date,
@@ -240,8 +237,8 @@ function TasksViewModelDefinition() {
                 };
             },
             "callback": function(data, params) {
-                task = params.data;
-                if (!data.error) {
+                var task = params.task;
+                if (data.task) {
                     task.title(data.task.title);
                     task.description(data.task.description);
                     task.date = new Date(data.task.date);
@@ -253,60 +250,47 @@ function TasksViewModelDefinition() {
                     task.longitude(data.task.longitude);
                     task.Category(self.utils.getCategoryById(data.task.categoryId));
                     task.attachment(data.task.attachment);
-                    task.timeStamp(data.task.timeStamp);
+                    task.timeStamp = data.task.timeStamp;
 
+                    if (task.date.getMilliseconds() !== new Date(data.task.date).getMilliseconds()) {
+                        self.utils.removeTask(data.task);
+                        if (self.startDate <= new Date(data.task.date) <= self.endDate) {
+                            self.utils.pushTask(data.task);
+                        }
+                    }
+                }
 
-                    if (task.date !== new Date(data.task.date())) {
-                        self.utils.popTask(data.task);
-                        self.utils.pushTask(data.task);
-                    }
-                    //TODO: Gestire task con data modificata! (spostarlo)
-                    //se la data nuova è diversa dalla data vecchia del task, lo tolgo dall'array del giorno
-                    //lo metto nell'array del nuovo giorno
-                    if (params.$dialog) {
-                        $dialog.dialog("close");
-                    }
-                } else if (data.task) {
-                    task.title(data.task.title);
-                    task.description(data.task.description);
-                    task.date = new Date(data.task.date);
-                    task.done(data.task.done);
-                    task.personal(data.task.personal);
-                    task.userId(data.task.userId);
-                    task.AssignedUser(self.utils.getUserById(data.task.assignedUserId));
-                    task.latitude(data.task.latitude);
-                    task.longitude(data.task.longitude);
-                    task.Category(self.utils.getCategoryById(data.task.categoryId));
-                    task.attachment(data.task.attachment);
-                    task.timeStamp(data.task.timeStamp);
-
-                    if (params.$dialog) {
-                        $dialog.dialog("close");
-                    }
+                if (data.error) {
                     alert(data.errorMessage);
-                } else {
-                    alert(data.errorMessage);
+                }
+
+                if (params.$dialog) {
+                    params.$dialog.dialog("close");
                 }
             }
         },
         "delete": {
-            request: function(task) {
+            request: function(task, $dialog) {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/delete/';
                 rSettings.requestData = JSON.stringify(self.services.delete.requestData(task));
                 rSettings.successCallback = self.services.delete.callback;
+                rSettings.callbackParameter = $dialog;
                 return sendRequest(rSettings);
             },
             requestData: function(task) {
                 return {
-                    taskId: task.id(),
+                    id: task.id(),
                     timeStamp: task.timeStamp
                 };
             },
-            callback: function(data) {
+            callback: function(data, $dialog) {
                 if (!data.error) {
-                    self.utils.popTask(data.task);
-                    alert("Eliminazione riuscita");
+                    self.utils.removeTask(data.task);
+                    if ($dialog) {
+                        $dialog.dialog("close");
+                    }
+                    //alert("Eliminazione riuscita");
                 } else {
                     alert(data.errorMessage);
                 }
@@ -314,31 +298,38 @@ function TasksViewModelDefinition() {
         }
     };
     self.actions = new function() {
+        
         var actions = this;
+        
         actions.edit = function(taskToEdit) {
             self.domUtils.openDialog(taskToEdit);
         };
+        
         actions.addFast = function() {
-            if (self.utils.validateAdd(self.NewTask)) {
+            if (self.utils.validate(self.NewTask)) {
                 self.services.add.request(null, self.NewTask);
-            }
-            else {
-                alert("Il nuovo task deve avere un titolo!");
             }
         };
         actions.addDialog = function($dialog, task) {
-            if (self.utils.validateAdd(task)) {
+            if (self.utils.validate(task)) {
                 self.services.add.request($dialog, task);
             }
-            else {
-                alert("Il nuovo task deve avere un titolo!");
+
+        };
+        actions.save = function(task, boundTask, $dialog) {
+            if (self.utils.validate(boundTask)) {
+                self.services.edit.request(task, boundTask, $dialog);
             }
         };
         actions.search = function() {
             self.services.search.request();
         };
         actions.markTask = function(taskToMark) {
-            self.services.edit.request(taskToMark);
+            self.services.edit.request(taskToMark, taskToMark);
+            return true;
+        };
+        actions.delete = function(taskToDelete, $dialog) {
+            self.services.delete.request(taskToDelete, $dialog);
         };
     };
     self.domUtils = new function() {
@@ -358,7 +349,7 @@ function TasksViewModelDefinition() {
                     } else {
                         //Hide edit e delete button
 
-                        $dialog.parent().find(".ui-dialog-buttonpane .editButton").hide();
+                        $dialog.parent().find(".ui-dialog-buttonpane .saveButton").hide();
                         $dialog.parent().find(".ui-dialog-buttonpane .deleteButton").hide();
                     }
 
@@ -399,23 +390,21 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class: "addButton",
                         click: function() {
-                            if (self.utils.validateAdd(boundTask)) {
-                                self.services.add.request($dialog, boundTask);
-                            }
+                            self.actions.addDialog($dialog, boundTask);                            
                         }
                     },
                     {
-                        text: "Modifica",
-                        class: "editButton",
+                        text: "Salva",
+                        class: "saveButton",
                         click: function() {
-                            self.services.edit.request(task, boundTask, $dialog);
+                            self.actions.save(task, boundTask, $dialog);
                         }
                     },
                     {
                         text: "Elimina",
                         class: "deleteButton",
                         click: function() {
-                            self.services.delete.request(boundTask);
+                            self.actions.delete(boundTask, $dialog);
                         }
                     }
                 ],
@@ -464,15 +453,6 @@ function TasksViewModelDefinition() {
             self.startDate = getMidnightDate(new Date(self.startDate.setDate(self.startDate.getDate() - 1)));
             self.endDate = getMidnightDate(new Date(self.endDate.setDate(self.endDate.getDate() + 10)));
         };
-//        utils.getActiveCategories = function() {
-//            var activeCategories = [];
-//            for (var i = 0; i < self.Categories().length; i++) {
-//                if (self.Categories()[i].state() === true) {
-//                    activeCategories.push(ko.toJS(self.Categories()[i])); //bisogna passare un oggetto che non abbia observables?
-//                }
-//            }
-//            return activeCategories;
-//        };
         utils.getUserById = function(id) {
             for (var i = 0; i < self.Users().length; i++) {
                 if (self.Users()[i].id() === id) {
@@ -489,7 +469,6 @@ function TasksViewModelDefinition() {
             }
             return null;
         };
-
         utils.resetNewTask = function() {
             self.NewTask.title("");
             self.NewTask.description("");
@@ -502,27 +481,25 @@ function TasksViewModelDefinition() {
             self.NewTask.Category();
             self.NewTask.attachment("");
         };
-
-        utils.validateAdd = function(task) {
-            if (task.title() !== "")
+        utils.validate = function(task) {
+            if (task.title() !== "") {
                 return true;
-            else
-                false;
-        };
-
-        utils.popTask = function(task) {
-            var popped = false;
-            for (var i = 0; i < self.Days().length && !popped; i++) {
-                for (j = 0; j < self.Days().tasks.length && !popped; j++) {
-                    if (task.id() === self.Days()[i].tasks[j].id()) {
-                        self.Days()[i].tasks[j].pop();
-                        popped = true;
-                    }
-                }
-
+            } else {
+                alert("Il nuovo task deve avere un titolo!");
             }
         };
-
+        utils.removeTask = function(task) {
+            var removed = false;
+            for (var i = 0; i < self.Days().length && !removed; i++) {
+                for (var j = 0; j < self.Days()[i].Tasks().length && !removed; j++) {
+                    //var task = self.Days()[i].tasks()[j];
+                    if (task.id === self.Days()[i].Tasks()[j].id()) {
+                        self.Days()[i].Tasks.splice(j, 1);
+                        removed = true;
+                    }
+                }
+            }
+        };
         utils.pushTask = function(task) {
             var pushed = false;
             for (var i = 0; i < self.Days().length && !pushed; i++) {
@@ -548,32 +525,6 @@ function TasksViewModelDefinition() {
                 }
             }
         };
-
-//        utils.isTaskAssigned = function(task) {
-//            return task.AssignedUser() !== null;
-//        };
-
-//        utils.isTaskVisible = function(task) {
-//            if (utils.isActiveCategory(task.Category().id())) {
-//                if (self.personal()) {
-//                    return task.userId() === loggedUser.id
-//                            || task.AssignedUser().id() === loggedUser.id;
-//                } else {
-//                    return task.userId() === loggedUser.id
-//                            || task.AssignedUser().id() === loggedUser.id
-//                            || !task.personal();
-//                }
-//            } else {
-//                return false;
-//            }
-//        };
-//        utils.isActiveCategory = function(id) {
-//            for (var i = 0; i < self.Categories().length; i++) {
-//                if (id === self.Categories()[i].id()) {
-//                    return self.Categories()[i].state();
-//                }
-//            }
-//        };
     };
 }
 
