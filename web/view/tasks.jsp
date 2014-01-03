@@ -36,7 +36,7 @@
                     </ul> 
                 </div>
             </div>
-            <div class="task">
+            <div class="tasks">
                 <div class='users-bar' data-bind="foreach : Users">
                     <div><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
                 </div>
