@@ -4,11 +4,13 @@ import asw1009.model.CategoriesManager;
 import asw1009.model.TasksManager;
 import asw1009.model.entities.Task;
 import asw1009.viewmodel.request.AddTaskRequestViewModel;
+import asw1009.viewmodel.request.DeleteTaskRequestViewModel;
 import asw1009.viewmodel.request.EditTaskRequestViewModel;
 import asw1009.viewmodel.response.EditTaskResponseViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import asw1009.viewmodel.response.AddTaskResponseViewModel;
 import asw1009.viewmodel.response.CategoriesListResponseViewModel;
+import asw1009.viewmodel.response.DeleteTaskResponseViewModel;
 import asw1009.viewmodel.response.SearchTasksResponseViewModel;
 import asw1009.viewmodel.response.TaskChangedPushNotificationViewModel;
 import com.google.gson.Gson;
@@ -32,6 +34,7 @@ public class Tasks extends HttpServlet {
     private final String ACTION_ADD = "add";
     private final String ACTION_EDIT = "edit";
     private final String ACTION_POLLING = "polling";
+    private final String ACTION_DELETE = "delete";
 
     private List<TaskPollingAsyncRequest> contexts;
     private Semaphore semaphore;
@@ -102,7 +105,15 @@ public class Tasks extends HttpServlet {
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Tasks.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                    break;
+                }
+                case ACTION_DELETE: {
+                    DeleteTaskRequestViewModel requestData = gson.fromJson(json, DeleteTaskRequestViewModel.class);
+                    DeleteTaskResponseViewModel responseData = deleteTask(requestData);
+                    jsonResponse = gson.toJson(responseData, DeleteTaskResponseViewModel.class);
+                    if (!responseData.hasError()) {
+                        //new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), true).start();                        
+                    }
                 }
             }
 
@@ -142,6 +153,18 @@ public class Tasks extends HttpServlet {
             response.setErrorMessage("Invalid data");
         }
 
+        return response;
+    }
+    
+    private DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request){
+        DeleteTaskResponseViewModel response = new DeleteTaskResponseViewModel();
+        if(request != null){
+            response = TasksManager.getInstance().deleteTask(request);
+        }else {
+            response.setError(true);
+            response.setErrorMessage("Invalid data");
+        }
+        
         return response;
     }
 
