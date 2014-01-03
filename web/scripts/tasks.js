@@ -357,7 +357,12 @@ function TasksViewModelDefinition() {
         };
 
         actions.search = function() {
-            self.services.search.request();
+            if (self.utils.checkDates()) {
+                self.services.search.request();
+            }
+            else {
+                 alert("La data di fine ricerca deve essere maggiore della data di inizio ricerca!");
+            }
         };
 
         actions.markTask = function(taskToMark) {
@@ -484,10 +489,21 @@ function TasksViewModelDefinition() {
     };
     self.utils = new function() {
         var utils = this;
+        
         utils.initDates = function() {
             self.startDate = getMidnightDate(new Date(self.startDate.setDate(self.startDate.getDate() - 1)));
             self.endDate = getMidnightDate(new Date(self.endDate.setDate(self.endDate.getDate() + 10)));
         };
+        
+        utils.checkDates = function(){
+            if (self.startDate > self.endDate) {
+                return false;             
+            }
+            else {
+                return true;
+            }
+        };
+        
         utils.getUserById = function(id) {
             for (var i = 0; i < self.Users().length; i++) {
                 if (self.Users()[i].id() === id) {

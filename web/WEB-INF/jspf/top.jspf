@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
 <div class="navigation">
-    <img class="logo" src="/style/images/logo.png"/>
+    <a href="/application/tasks"> <img class="logo" src="/style/images/logo.png"/></a>
     <div class="items">       
         <%if(session.getAttribute("user") == null){ %> 
             <a href="/application/login">Login</a>
