@@ -116,16 +116,48 @@ function TasksViewModelDefinition() {
                 rSettings.url = '/tasks/polling/';
                 rSettings.requestData = requestData;
                 rSettings.callbackParameter = requestData;
-                rSettings.successCallback = self.services.search.callback;
+                rSettings.successCallback = self.services.polling.callback;
                 return sendRequest(rSettings);
             },
             "callback": function(data, requestData) {
                 self.services.polling.request(requestData);
                 if (!data.error) {
-                    if (data.isNew) {
-                        //add
-                    } else {
-                        //edit
+                    switch (data.operation) {
+                        case 0:
+                            //Add
+                            alert("Task aggiunto");
+                            self.utils.pushTask(data.task);
+                            break;
+                        case 1:
+                            //Edit
+                            alert("Task modificato");
+                            var task = self.utils.getTaskById(data.task.id);
+
+                            if (task.date.getTime() !== new Date(data.task.date).getTime()) {
+                                self.utils.removeTask(data.task);
+                                //if (self.startDate <= new Date(data.task.date) <= self.endDate) {
+                                self.utils.pushTask(data.task);
+                                //}
+                            } else {
+                                task.title(data.task.title);
+                                task.description(data.task.description);
+                                task.date = new Date(data.task.date);
+                                task.done(data.task.done);
+                                task.personal(data.task.personal);
+                                task.userId(data.task.userId);
+                                task.AssignedUser(self.utils.getUserById(data.task.assignedUserId));
+                                task.latitude(data.task.latitude);
+                                task.longitude(data.task.longitude);
+                                task.Category(self.utils.getCategoryById(data.task.categoryId));
+                                task.attachment(data.task.attachment);
+                                task.timeStamp = data.task.timeStamp;
+                            }
+                            break;
+                        case 2:
+                            //Delete
+                            alert("Task eliminato");
+                            self.utils.removeTask(data.task);
+                            break;
                     }
                 }
             }
@@ -149,7 +181,7 @@ function TasksViewModelDefinition() {
             "callback": function(data, pollingRequestData) {
                 if (!data.error) {
 
-                    //self.services.polling.request(pollingRequestData);
+                    self.services.polling.request(pollingRequestData);
 
                     self.Days.removeAll();
                     var currentDay = new Date(self.startDate);
@@ -239,24 +271,24 @@ function TasksViewModelDefinition() {
             "callback": function(data, params) {
                 var task = params.task;
                 if (data.task) {
-                    task.title(data.task.title);
-                    task.description(data.task.description);
-                    task.date = new Date(data.task.date);
-                    task.done(data.task.done);
-                    task.personal(data.task.personal);
-                    task.userId(data.task.userId);
-                    task.AssignedUser(self.utils.getUserById(data.task.assignedUserId));
-                    task.latitude(data.task.latitude);
-                    task.longitude(data.task.longitude);
-                    task.Category(self.utils.getCategoryById(data.task.categoryId));
-                    task.attachment(data.task.attachment);
-                    task.timeStamp = data.task.timeStamp;
-
-                    if (task.date.getMilliseconds() !== new Date(data.task.date).getMilliseconds()) {
+                    if (task.date.getTime() !== new Date(data.task.date).getTime()) {
                         self.utils.removeTask(data.task);
                         if (self.startDate <= new Date(data.task.date) <= self.endDate) {
                             self.utils.pushTask(data.task);
                         }
+                    } else {
+                        task.title(data.task.title);
+                        task.description(data.task.description);
+                        task.date = new Date(data.task.date);
+                        task.done(data.task.done);
+                        task.personal(data.task.personal);
+                        task.userId(data.task.userId);
+                        task.AssignedUser(self.utils.getUserById(data.task.assignedUserId));
+                        task.latitude(data.task.latitude);
+                        task.longitude(data.task.longitude);
+                        task.Category(self.utils.getCategoryById(data.task.categoryId));
+                        task.attachment(data.task.attachment);
+                        task.timeStamp = data.task.timeStamp;
                     }
                 }
 
@@ -281,7 +313,8 @@ function TasksViewModelDefinition() {
             requestData: function(task) {
                 return {
                     id: task.id(),
-                    timeStamp: task.timeStamp
+                    timeStamp: task.timeStamp,
+                    userId: loggedUser.id
                 };
             },
             callback: function(data, $dialog) {
@@ -290,7 +323,6 @@ function TasksViewModelDefinition() {
                     if ($dialog) {
                         $dialog.dialog("close");
                     }
-                    //alert("Eliminazione riuscita");
                 } else {
                     alert(data.errorMessage);
                 }
@@ -298,36 +330,41 @@ function TasksViewModelDefinition() {
         }
     };
     self.actions = new function() {
-        
+
         var actions = this;
-        
+
         actions.edit = function(taskToEdit) {
             self.domUtils.openDialog(taskToEdit);
         };
-        
+
         actions.addFast = function() {
             if (self.utils.validate(self.NewTask)) {
                 self.services.add.request(null, self.NewTask);
             }
         };
+
         actions.addDialog = function($dialog, task) {
             if (self.utils.validate(task)) {
                 self.services.add.request($dialog, task);
             }
 
         };
+
         actions.save = function(task, boundTask, $dialog) {
             if (self.utils.validate(boundTask)) {
                 self.services.edit.request(task, boundTask, $dialog);
             }
         };
+
         actions.search = function() {
             self.services.search.request();
         };
+
         actions.markTask = function(taskToMark) {
             self.services.edit.request(taskToMark, taskToMark);
             return true;
         };
+
         actions.delete = function(taskToDelete, $dialog) {
             self.services.delete.request(taskToDelete, $dialog);
         };
@@ -348,12 +385,10 @@ function TasksViewModelDefinition() {
                         $dialog.parent().find(".ui-dialog-buttonpane .addButton").hide();
                     } else {
                         //Hide edit e delete button
-
                         $dialog.parent().find(".ui-dialog-buttonpane .saveButton").hide();
                         $dialog.parent().find(".ui-dialog-buttonpane .deleteButton").hide();
                     }
 
-                    //var boundTask = $.extend(true, {}, task);
                     boundTask = new self.Task({
                         id: task.id ? task.id() : -1,
                         title: task.title(),
@@ -390,7 +425,7 @@ function TasksViewModelDefinition() {
                         text: "Aggiungi",
                         class: "addButton",
                         click: function() {
-                            self.actions.addDialog($dialog, boundTask);                            
+                            self.actions.addDialog($dialog, boundTask);
                         }
                     },
                     {
@@ -488,6 +523,16 @@ function TasksViewModelDefinition() {
                 alert("Il nuovo task deve avere un titolo!");
             }
         };
+        utils.getTaskById = function(id) {
+            for (var i = 0; i < self.Days().length; i++) {
+                for (var j = 0; j < self.Days()[i].Tasks().length; j++) {
+                    if (id === self.Days()[i].Tasks()[j].id()) {
+                        return self.Days()[i].Tasks()[j];
+                    }
+                }
+            }
+            return null;
+        };
         utils.removeTask = function(task) {
             var removed = false;
             for (var i = 0; i < self.Days().length && !removed; i++) {
@@ -503,7 +548,6 @@ function TasksViewModelDefinition() {
         utils.pushTask = function(task) {
             var pushed = false;
             for (var i = 0; i < self.Days().length && !pushed; i++) {
-                console.log("ciclo numero" + i);
                 if (compareDate(new Date(task.date), self.Days()[i].day)) {
                     self.Days()[i].Tasks.push(
                             new self.Task({
