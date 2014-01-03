@@ -22,14 +22,12 @@ import org.xml.sax.SAXException;
 
 @WebServlet(urlPatterns = {"/users/*"})
 public class Users extends HttpServlet {
-    
-    
+
     private final String ACTION_LOGOUT = "logout";
     private final String ACTION_LOGIN = "login";
     private final String ACTION_SIGNUP = "signup";
     private final String ACTION_EDITUSER = "edituser";
     private final String ACTION_USERS = "users";
-    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -65,7 +63,7 @@ public class Users extends HttpServlet {
                     jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
                     break;
                 }
-                case ACTION_USERS:{
+                case ACTION_USERS: {
                     jsonResponse = gson.toJson(usersList(), UsersListResponseViewModel.class);
                     break;
                 }
@@ -109,31 +107,31 @@ public class Users extends HttpServlet {
                     Element errorMessage = answer.createElement("errorMessage");
                     errorMessage.setTextContent(loginResponseViewModel.getErrorMessage());
 
-                    Element loggedUser = answer.createElement("loggedUser");
-
-                    Element id = answer.createElement("id");
-                    id.setTextContent(loginResponseViewModel.getLoggedUser().getId() + "");
-                    Element firstName = answer.createElement("firstName");
-                    firstName.setTextContent(loginResponseViewModel.getLoggedUser().getFirstName());
-                    Element lastName = answer.createElement("lastName");
-                    lastName.setTextContent(loginResponseViewModel.getLoggedUser().getLastName());
-                    Element username = answer.createElement("username");
-                    username.setTextContent(loginResponseViewModel.getLoggedUser().getUsername());
-                    Element email = answer.createElement("email");
-                    email.setTextContent(loginResponseViewModel.getLoggedUser().getEmail());
-                    Element pictureUrl = answer.createElement("pictureUrl");
-                    pictureUrl.setTextContent(loginResponseViewModel.getLoggedUser().getPicture());
-
-                    loggedUser.appendChild(id);
-                    loggedUser.appendChild(firstName);
-                    loggedUser.appendChild(lastName);
-                    loggedUser.appendChild(username);
-                    loggedUser.appendChild(email);
-                    loggedUser.appendChild(pictureUrl);
-
+                    if (!loginResponseViewModel.hasError()) {
+                        Element loggedUser = answer.createElement("loggedUser");
+                        Element id = answer.createElement("id");
+                        id.setTextContent(loginResponseViewModel.getLoggedUser().getId() + "");
+                        Element firstName = answer.createElement("firstName");
+                        firstName.setTextContent(loginResponseViewModel.getLoggedUser().getFirstName());
+                        Element lastName = answer.createElement("lastName");
+                        lastName.setTextContent(loginResponseViewModel.getLoggedUser().getLastName());
+                        Element username = answer.createElement("username");
+                        username.setTextContent(loginResponseViewModel.getLoggedUser().getUsername());
+                        Element email = answer.createElement("email");
+                        email.setTextContent(loginResponseViewModel.getLoggedUser().getEmail());
+                        Element pictureUrl = answer.createElement("pictureUrl");
+                        pictureUrl.setTextContent(loginResponseViewModel.getLoggedUser().getPicture());
+                        
+                        loggedUser.appendChild(id);
+                        loggedUser.appendChild(firstName);
+                        loggedUser.appendChild(lastName);
+                        loggedUser.appendChild(username);
+                        loggedUser.appendChild(email);
+                        loggedUser.appendChild(pictureUrl);
+                        root.appendChild(loggedUser);
+                    }
                     root.appendChild(hasError);
                     root.appendChild(errorMessage);
-                    root.appendChild(loggedUser);
 
                     answer.appendChild(root);
                 }
@@ -152,7 +150,7 @@ public class Users extends HttpServlet {
         BaseResponseViewModel response = new BaseResponseViewModel();
         if (data != null) {
             response = UsersManager.getInstance()._signUp(data);
-        }else {
+        } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
         }
@@ -174,8 +172,8 @@ public class Users extends HttpServlet {
         //return JSON string
         return response;
     }
-    
-    private EditUserResponseViewModel editUser(EditUserRequestViewModel request){
+
+    private EditUserResponseViewModel editUser(EditUserRequestViewModel request) {
         EditUserResponseViewModel response = new EditUserResponseViewModel();
         if (request != null) {
             response = UsersManager.getInstance()._editUser(request);
@@ -185,9 +183,9 @@ public class Users extends HttpServlet {
         }
         return response;
     }
-    
-    private UsersListResponseViewModel usersList(){
-        UsersListResponseViewModel response = UsersManager.getInstance().usersList();        
+
+    private UsersListResponseViewModel usersList() {
+        UsersListResponseViewModel response = UsersManager.getInstance().usersList();
         response.setError(false);
         return response;
     }
