@@ -18,6 +18,7 @@ function userViewModelDefinition() {
     self.oldPassword = ko.observable("");
     self.newPassword = ko.observable("");
     self.confirmNewPassword = ko.observable("");
+    
 
     self.services = {
         "editUserData": {
@@ -47,15 +48,16 @@ function userViewModelDefinition() {
             }
         }
     };
-
     self.actions = new function() {
         var actions = this;
         actions.editUser = function() {
-            if (self.utils.validate()) {
+            var errorMessage = self.utils.validate();
+            
+            if (errorMessage === "") {
                 self.services.editUserData.request();
             }
             else {
-                alert("Ricontrollare i campi!");
+                alert(errorMessage);
             }
         };
     };
@@ -64,24 +66,55 @@ function userViewModelDefinition() {
         var utils = this;
 
         utils.validate = function() {
-            if (self.oldPassword() === loggedUser.password && self.firstName() !== "" && self.lastName() !== "" && self.email() !== "" && utils.checkMail(self.email())) {
-                if (self.newPassword() !== "") {
-                    if(self.newPassword() === self.confirmNewPassword()){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                    return true;
-                }
-            } else {
-                return false;
+            errorMessage = "";
+            if(!utils.checkName(self.firstName())){
+                errorMessage = errorMessage + "Inserisci un nome corretto\n";
             }
+            if(!utils.checkSurname(self.lastName())){
+                errorMessage = errorMessage + "Inserisci un cognonome corretto\n";
+            }
+            if(!utils.checkMail(self.email())){
+                errorMessage = errorMessage + "Inserisci un'email corretta\n";
+            }
+            if(!utils.checkOldPassword(self.oldPassword())){
+                errorMessage = errorMessage + "Inserisci la tua password attuale\n";
+            }
+            if(!utils.checkNewPassword(self.newPassword(), self.confirmNewPassword())){
+                errorMessage = errorMessage + "Inserisci correttamente la nuova password";
+            }
+            return errorMessage;
         };
 
+        utils.checkName = function(name) {
+            return  (name !== "");
+        };
+        
+        utils.checkSurname = function(surname) {
+            return  (surname !== "");
+        };
+        
         utils.checkMail = function(email) {
 
             return  /^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+.([a-zA-Z])+([a-zA-Z])+/.test(email);
 
+        };
+        
+        utils.checkOldPassword = function(password) {
+            return  (password === loggedUser.password) ;
+        };
+        
+        utils.checkNewPassword = function(newPassword, confirmNewPassword) {
+            if(newPassword === ""){
+                if(confirmNewPassword !== ""){
+                    return false;
+                }
+            }else{
+                if(newPassword !== confirmNewPassword){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
         };
 
     };
