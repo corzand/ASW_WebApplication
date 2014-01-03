@@ -17,7 +17,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,7 +39,7 @@ public class Tasks extends HttpServlet {
     private final String ACTION_POLLING = "polling";
     private final String ACTION_DELETE = "delete";
 
-    private List<TaskPollingAsyncRequest> contexts;
+    private HashMap<Integer, TaskPollingAsyncRequest> contexts;
     private Semaphore semaphore;
     private Gson gson;
 
@@ -44,7 +47,7 @@ public class Tasks extends HttpServlet {
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
         gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
-        contexts = new ArrayList<>();
+        contexts = new HashMap<>();
         semaphore = new Semaphore(1);
     }
 
@@ -101,7 +104,9 @@ public class Tasks extends HttpServlet {
                         //il timeout a noi non serve... semplicemente se non ho nulla da
                         //mandare al client, il client resta lì in attesa "infinita"
                         semaphore.acquire();
-                        contexts.add(new TaskPollingAsyncRequest(asyncContext, requestData));
+                        
+                        contexts.put(requestData.getUserId(), new TaskPollingAsyncRequest(asyncContext, requestData));
+                        
                         semaphore.release();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Tasks.class.getName()).log(Level.SEVERE, null, ex);
@@ -202,12 +207,14 @@ public class Tasks extends HttpServlet {
         public void run() {
             try {
                 semaphore.acquire();
-                for (int i = contexts.size() - 1; i >= 0; i--) {
-                    TaskPollingAsyncRequest asyncRequest = contexts.get(i);
+                Iterator<Entry<Integer,TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Entry<Integer,TaskPollingAsyncRequest> entry = iter.next();
+                    TaskPollingAsyncRequest asyncRequest = entry.getValue();
                     if (userId != asyncRequest.getRequestViewModel().getUserId()
                             && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
                         //Notify!
-                        contexts.remove(i);
+                        iter.remove();
                         AsyncContext context = asyncRequest.getContext();
                         HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
 
@@ -219,6 +226,23 @@ public class Tasks extends HttpServlet {
                         context.complete();
                     }
                 }
+//                for (int i = contexts.size() - 1; i >= 0; i--) {
+//                    TaskPollingAsyncRequest asyncRequest = contexts.get(i);
+//                    if (userId != asyncRequest.getRequestViewModel().getUserId()
+//                            && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
+//                        //Notify!
+//                        contexts.remove(i);
+//                        AsyncContext context = asyncRequest.getContext();
+//                        HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
+//
+//                        TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
+//                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
+//                        clientToPush.getOutputStream().print(jsonResponse);
+//                        clientToPush.getOutputStream().flush();
+//
+//                        context.complete();
+//                    }
+//                }
                 semaphore.release();
 
             } catch (InterruptedException | IOException ex) {

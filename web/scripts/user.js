@@ -64,14 +64,26 @@ function userViewModelDefinition() {
         var utils = this;
 
         utils.validate = function() {
-            if (self.oldPassword() === loggedUser.password &&
-                    self.newPassword() === self.confirmNewPassword() &&
-                    ((self.firstName() !== "" && self.lastName() !== "" && self.email() !== ""))) {
-                return true;
+            if (self.oldPassword() === loggedUser.password && self.firstName() !== "" && self.lastName() !== "" && self.email() !== "" && utils.checkMail(self.email())) {
+                if (self.newPassword() !== "") {
+                    if(self.newPassword() === self.confirmNewPassword()){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    return true;
+                }
             } else {
                 return false;
             }
         };
+
+        utils.checkMail = function(email) {
+
+            return  /^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+.([a-zA-Z])+([a-zA-Z])+/.test(email);
+
+        };
+
     };
 }
 
