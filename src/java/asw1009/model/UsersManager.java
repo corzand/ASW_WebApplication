@@ -239,8 +239,14 @@ public class UsersManager extends FileManager {
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
             user.setEmail(request.getEmail());
-            user.setPassword(request.getPassword());
-
+            
+            if(request.getPassword().equals("")){
+                user.setPassword(user.getPassword());
+            }else{
+                user.setPassword(request.getPassword());
+            }
+            //COME CAZZO FA A CAMBIARE ANCHE _USER???
+                    
             //creare file immagine da stringa base64
             //settare nell'oggetto user.setPicture() il percorso al file
             
@@ -296,7 +302,5 @@ public class UsersManager extends FileManager {
             System.out.println("Exception while reading the Image " + ioe);
             return null;
         }
-
     }
-
 }

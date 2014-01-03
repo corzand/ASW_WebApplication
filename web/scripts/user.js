@@ -107,6 +107,8 @@ function userViewModelDefinition() {
             if(newPassword === ""){
                 if(confirmNewPassword !== ""){
                     return false;
+                }else{
+                    return true;
                 }
             }else{
                 if(newPassword !== confirmNewPassword){
