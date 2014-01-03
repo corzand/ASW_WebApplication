@@ -222,7 +222,6 @@ public class UsersManager extends FileManager {
                     viewModel.setErrorMessage("Utente inesistente");
                 }
             } catch (IOException | SAXException ex) {
-
             }
         } else {
             viewModel.setError(true);
