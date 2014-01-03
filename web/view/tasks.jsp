@@ -67,7 +67,7 @@
                             <div class="day" data-bind="foreach : Tasks">
                                 <li class="task" data-bind="visible: visible">
                                     <div>
-                                        <input type="checkbox" data-bind="value : id, checked : done, click : $root.actions.markTask" />
+                                        <input type="checkbox" data-bind="checked : done, click : $root.actions.markTask" />
                                         <a data-bind="text : title, click : $root.actions.edit"></a>
                                         <div data-bind="if : assigned">
                                             <img data-bind=" attr : { src : AssignedUser().picture }" />
