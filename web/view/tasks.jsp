@@ -88,7 +88,7 @@
                 </div>
                 <div class="row">
                     <div>Descrizione</div>
-                    <div><textarea data-bind="text : description" ></textarea></div>
+                    <div><textarea data-bind="value : description" ></textarea></div>
                 </div>
                 <div class="row">
                     <div>Data</div>

@@ -77,7 +77,7 @@ public class Tasks extends HttpServlet {
                     AddTaskResponseViewModel responseData = addTask(requestData);
                     jsonResponse = gson.toJson(responseData, AddTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
-                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), true).start();                        
+                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 0).start();                        
                     }
                     break;
                 }
@@ -87,7 +87,7 @@ public class Tasks extends HttpServlet {
                     jsonResponse = gson.toJson(responseData, EditTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
 
-                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), false).start();
+                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 1).start();
                         //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
                         //da adesso alla prossima polling request per questo client?
                     }
@@ -97,6 +97,7 @@ public class Tasks extends HttpServlet {
                     SearchTasksRequestViewModel requestData = gson.fromJson(json, SearchTasksRequestViewModel.class);
                     AsyncContext asyncContext = request.startAsync(request, response);
                     try {
+                        asyncContext.setTimeout(0);
                         //il timeout a noi non serve... semplicemente se non ho nulla da
                         //mandare al client, il client resta lì in attesa "infinita"
                         semaphore.acquire();
@@ -112,7 +113,10 @@ public class Tasks extends HttpServlet {
                     DeleteTaskResponseViewModel responseData = deleteTask(requestData);
                     jsonResponse = gson.toJson(responseData, DeleteTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
-                        //new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), true).start();                        
+
+                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 2).start();
+                        //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
+                        //da adesso alla prossima polling request per questo client?
                     }
                 }
             }
@@ -186,19 +190,19 @@ public class Tasks extends HttpServlet {
 
         int userId;
         Task task;
-        boolean isNew;
+        int operation;
 
-        public pushTaskChangedNotificationThread(int userId, Task task, boolean isNew) {
+        public pushTaskChangedNotificationThread(int userId, Task task, int operation) {
             this.userId = userId;
             this.task = task;
-            this.isNew = isNew;
+            this.operation = operation;
         }
 
         @Override
         public void run() {
             try {
                 semaphore.acquire();
-                for (int i = contexts.size() - 1; i >= 0; i++) {
+                for (int i = contexts.size() - 1; i >= 0; i--) {
                     TaskPollingAsyncRequest asyncRequest = contexts.get(i);
                     if (userId != asyncRequest.getRequestViewModel().getUserId()
                             && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
@@ -207,8 +211,8 @@ public class Tasks extends HttpServlet {
                         AsyncContext context = asyncRequest.getContext();
                         HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
 
-                        TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(isNew, task);
-                        String jsonResponse = gson.toJson(responseData, AddTaskResponseViewModel.class);
+                        TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
+                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
                         clientToPush.getOutputStream().print(jsonResponse);
                         clientToPush.getOutputStream().flush();
 
