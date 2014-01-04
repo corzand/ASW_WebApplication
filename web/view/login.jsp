@@ -1,8 +1,4 @@
-<%-- 
-    Document   : page
-    Created on : 29-nov-2013, 10.11.41
-    Author     : Andrea
---%>
+
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>

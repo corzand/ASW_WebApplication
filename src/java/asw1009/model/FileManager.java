@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package asw1009.model;
 
 import asw1009.ManageXML;
@@ -25,10 +21,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-/**
- *
- * @author Luca
- */
 public class FileManager {
 
     protected String servletPath;

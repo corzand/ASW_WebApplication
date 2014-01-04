@@ -1,9 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : 20-dic-2013, 17.21.07
-    Author     : Andrea
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
