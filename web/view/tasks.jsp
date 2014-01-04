@@ -60,8 +60,8 @@
                         <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
                             <div class="day fixed-box-pack">
                                 <span data-bind="text: day"></span>
-                                <ul data-bind="foreach : Tasks">
-                                    <li class="task" data-bind="visible: visible">
+                                <ul class="vertical-box" data-bind="foreach : Tasks">
+                                    <li class="task fixed-box-pack" data-bind="visible: visible">
                                         <div>
                                             <input type="checkbox" data-bind="checked : done, click : $root.actions.markTask" />
                                             <a data-bind="text : title, click : $root.actions.edit"></a>
