@@ -157,6 +157,11 @@ body {
     text-align: center;
 }
 
+.applet{
+    width: 270px;
+    height: 110px;
+}
+
 /*signup.jsp*/
 
 .signUpDiv {
@@ -165,7 +170,30 @@ body {
 
 /*edituser.jsp*/
 .editUserDiv {
+    margin-top: 15px;
+    margin-left: 30px;
+}
 
+.editUserDiv > .image {
+    margin-top: 20px;
+    float: left;
+}
+
+.editUserDiv > .image img {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    max-width: 200px;
+    height: auto;
+}
+
+.editUserDiv > .data {
+    margin-top: 20px;
+    width: 200px;
+    float: left;
+}
+
+.editUserDiv > .data > .password {
+    margin-top: 25px;
 }
 
 /*tasks.jsp*/

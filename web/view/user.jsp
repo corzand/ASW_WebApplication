@@ -16,24 +16,29 @@
     <body>
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
-        <div class="editUserDiv">
-            <div>Immagine : </div> 
-            <div>
+        <div class="editUserDiv">       
+            <div>Username: <div data-bind="text: username"></div></div>
+            <div class="data">
+                <div>Nome : </div><div><input data-bind="value : firstName" type="text" /></div>
+                <div>Cognome : </div><div><input data-bind="value : lastName" type="text" /></div>
+                <div>Email : </div><div><input data-bind="value : email" type="text" /></div>
+                <div class="password">
+                    <div>Password: </div><div><input data-bind="value : oldPassword" type="password" /></div>
+                    <div>Nuova Password : </div><div><input data-bind="value : newPassword" type="password" /></div>
+                    <div>Conferma Password : </div><div><input data-bind="value : confirmNewPassword" type="password" /></div>
+                    <button data-bind="click : actions.editUser" >Modifica</button>
+                </div>
+            </div>
+            <div class="image">
+                <div>Nuova immagine: </div> 
                 <div>
-                    <img data-bind="attr : {src: picture}" width="50" height="auto"/>
+                    <img data-bind="attr : {src: picture}"/>
                 </div>
                 <div>
                     <input type="file" id="pictureButton" accept="image/x-png, image/gif, image/jpeg" />
                 </div>
             </div>
-            <div>Nome : </div><div><input data-bind="value : firstName" type="text" /></div>
-            <div>Cognome : </div><div><input data-bind="value : lastName" type="text" /></div>
-            <div>Email : </div><div><input data-bind="value : email" type="text" /></div>
-            <div>Username : </div><div><input readonly data-bind="value : username" type="text" /></div>
-            <div>Vecchia Password: </div><div><input data-bind="value : oldPassword" type="password" /></div>
-            <div>Password : </div><div><input data-bind="value : newPassword" type="password" /></div>
-            <div>Confirm Password : </div><div><input data-bind="value : confirmNewPassword" type="password" /></div>
-            <button data-bind="click : actions.editUser" >Modifica</button>
-        </div>  
+        </div>
+
     </body>
 </html>

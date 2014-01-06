@@ -59,6 +59,7 @@ public class Users extends HttpServlet {
                 case ACTION_EDITUSER: {
                     EditUserRequestViewModel requestData = gson.fromJson(json, EditUserRequestViewModel.class);
                     EditUserResponseViewModel response_edit = editUser(requestData);
+                    response_edit.getLoggedUser().setPassword("");
                     session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
                     jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
                     break;
@@ -92,10 +93,7 @@ public class Users extends HttpServlet {
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    if (!loginResponseViewModel.hasError()) {
-                        Gson gson = new Gson();
-                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
-                    }
+                    
 
                     answer = mngXML.newDocument();
 
@@ -134,6 +132,14 @@ public class Users extends HttpServlet {
                     root.appendChild(errorMessage);
 
                     answer.appendChild(root);
+                    
+                    loginRequestViewModel.setPassword("");
+                    
+                    if (!loginResponseViewModel.hasError()) {
+                        Gson gson = new Gson();
+                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
+                    }
+                    
                 }
 
                 mngXML.transform(os, answer);

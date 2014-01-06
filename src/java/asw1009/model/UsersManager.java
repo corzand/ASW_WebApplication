@@ -237,14 +237,10 @@ public class UsersManager extends FileManager {
             user.setEmail(request.getEmail());
             
             if(request.getPassword().equals("")){
-                user.setPassword(user.getPassword());
+                user.setPassword(user.getPassword()); 
             }else{
                 user.setPassword(request.getPassword());
             }
-            //COME CAZZO FA A CAMBIARE ANCHE _USER???
-                    
-            //creare file immagine da stringa base64
-            //settare nell'oggetto user.setPicture() il percorso al file
             
             if(!request.getPicture().equals("")) {
                 String filePath = createImage(request.getPicture(), user.getId());
