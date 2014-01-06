@@ -23,11 +23,12 @@
                     <div class="row"><input type="radio" name="private" value="false" data-bind="checked : personal, checkedValue : false " />Tutti i task</div>                    
                 </div>
                 <div class="categories-filter">
-                    <ul data-bind="foreach : Categories">
-                        <li>
+                    <div><h2>Categorie</h2></div>
+                    <div data-bind="foreach : Categories">
+                        <div class="row">
                             <input type="checkbox" data-bind="attr : { name : title }, checked : state"/><span data-bind="text : title"></span>
-                        </li>
-                    </ul> 
+                        </div>
+                    </div> 
                 </div>
             </div>
             <div class="tasks fill-box-pack vertical-box">
