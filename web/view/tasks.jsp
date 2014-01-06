@@ -12,6 +12,7 @@
         <script src="/scripts/tasks.js"></script>
         <link type="text/css" rel="stylesheet" href="/style/jquery-ui/jquery-ui-1.10.3.custom.css" />
         <link type="text/css" rel="stylesheet" href="/style/style.css" />
+        <link href='http://fonts.googleapis.com/css?family=Cabin:400,500,600' rel='stylesheet' type='text/css'>
     </head>
     <body class="vertical-box"> 
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
@@ -53,7 +54,7 @@
                     </div>
                 </div>          
                 <div class='days-list fill-box-pack vertical-box'>
-                    <div class="filters fixed-box-pack">
+                    <div class="filters fixed-box-pack toolbar">
                         <div>
                             <input type='text' id='startDate' /><!-- Manual binding -->
                             <input type='text' id='endDate' /><!-- Manual binding -->

@@ -47,6 +47,14 @@ table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+a, a:visited {
+    color:inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    color:inherit;
+}
 
 /*END RESET STYLE*/
 
@@ -54,12 +62,15 @@ table {
 /* MAIN LAYOUT */
 
 body {
-    font:14px Arial,sans-serif;
+    font-family: Cabin, Verdana, sans-serif;
+    font-size: 14px;
+    color: #202D44;
     top:0;
     bottom:0;
     right: 0;
     width: 100%;
     height: 100%;
+    background: #FFFFFF;
     position:absolute;
 }
 
@@ -71,8 +82,7 @@ body {
     height: 70px;
 }
 
-.container {    
-    background-color: #fcefa1;
+.container {
 }
 /* END MAIN LAYOUT */
 
@@ -105,13 +115,40 @@ body {
 }
 
 .navigation > .items {
-    line-height: 70px;
+    line-height: 20px;
     margin-right: 30px;
     float:right;
 }
 
-.navigation .logged-user img {
+.navigation .logged-user {
+    float: left;
+    margin-right: 20px;
+}
+
+.navigation .logged-user > a {
+    display:table;
+    height: 70px;
+}
+
+.navigation .picture {
+    display: table-cell;
     vertical-align: middle;
+}
+
+.navigation .name {
+    padding-left: 10px;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.navigation .logged-user img {
+    vertical-align: baseline;
+    width: 50px;
+    height: auto;
+}
+
+.navigation .actions {
+    float:right;
 }
 
 /* login.jsp */
@@ -134,9 +171,11 @@ body {
 /*tasks.jsp*/
 
 .container > .categories {
-    background-color: blue;
+    background-color: #6DBCDB;
     width: 130px;
     padding: 10px;
+    color: #FFFFFF;
+    font-size: 16px;
 } 
 
 .container > .categories > .private-filter {
@@ -147,43 +186,37 @@ body {
     margin-top: 10px;
 }
 
-.container > .tasks {
-    background-color: red;    
+.container > .tasks {  
     width: 100%;
 }
 
 .container > .tasks  .users-bar {
-    background-color: yellowgreen;
     height:50px;
 }
 
 .container > .tasks  .add-bar {
+    background-color: #6DBCDB;
     padding: 10px;
     margin: 10px auto;
     width: 300px;
     text-align: center;
-    background-color: yellow;
 }
 
 .container > .tasks  .days-list {
-    background-color: orange;
 }
 
 .container > .tasks  .days-list > .filters {
-    background-color: aqua;
     padding:10px;
 }
 
 .container > .tasks  .days-list .timeline {
     overflow-x:auto;
     padding:10px;
-    background-color: yellow;
 }
 
 .container > .tasks  .days-list .timeline > .day {
     margin: 0 5px;
-    width: 300px;    
-    background-color: pink;
+    width: 300px;
 }
 
 
@@ -198,6 +231,12 @@ body {
 }
 
 /* COMMON RULES */
+
+.toolbar {    
+    background: #202D44;
+    color: #FFFFFF;
+    font-size: 16px;
+}
 
 .row {
     margin: 5px 0;
@@ -220,4 +259,19 @@ body {
 
 .fill-box-pack {
     flex: 1 1 100%;
+}
+
+.button {
+    background-color: #FC4349;
+    width: 90px;
+    display:block;
+    height: 20px;
+    line-height: 20px;
+    padding: 10px;
+    margin: 15px;
+    float: left;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: #FFFFFF;
 }

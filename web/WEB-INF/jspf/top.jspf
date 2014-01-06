@@ -1,5 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<div class="navigation fixed-box-pack">
+<div class="navigation fixed-box-pack toolbar">
     <div class="logo"><a href="/application/tasks"> <img src="/style/images/logo.png"/></a></div>
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
@@ -10,11 +10,18 @@
             loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
         </script>
         <div class="logged-user">
-            <a href="/application/user" > <img data-bind="attr: {src: User.picture}" width="50" height="auto"/>
-                <span data-bind="text: User.firstName"></span>
-                <span data-bind="text : User.lastName"></span>
-            </a>
-            <a href="#" data-bind="click : Application.actions.logout">Logout</a>
+            <a href="/application/user" > 
+                <div class="picture">
+                    <img data-bind="attr: {src: User.picture}"/>
+                </div>
+                <div class="name">
+                    <div><span data-bind="text: User.firstName"></span></div>
+                    <div><span data-bind="text : User.lastName"></span></div>
+                </div>
+            </a>            
+        </div>
+        <div class="actions">
+            <a href="#" class="button" data-bind="click : Application.actions.logout">Logout</a>
         </div>
         <% }%>  
     </div>
