@@ -13,7 +13,7 @@
         <div class="content">
             <div class="login">
                 <%@ include file="/WEB-INF/jspf/title.jspf" %>              
-                <applet class="applet" style="width: 200px; height: 50px" codebase="/applet/" code="LoginApplet.class" archive="ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" width=350 height=200>
+                <applet class="applet" codebase="/applet/" code="LoginApplet.class" archive="ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar">
                     <param name="sessionId" value="<%= session.getId()%>" />
                 </applet>
             </div>

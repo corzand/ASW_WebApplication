@@ -59,6 +59,7 @@ public class Users extends HttpServlet {
                 case ACTION_EDITUSER: {
                     EditUserRequestViewModel requestData = gson.fromJson(json, EditUserRequestViewModel.class);
                     EditUserResponseViewModel response_edit = editUser(requestData);
+                    response_edit.getLoggedUser().setPassword("");
                     session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
                     jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
                     break;
@@ -88,7 +89,7 @@ public class Users extends HttpServlet {
                 if (action.equals(ACTION_LOGIN)) {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
-                    loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
+                    loginRequestViewModel.setPassword("");
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
