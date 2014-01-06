@@ -120,6 +120,11 @@ body {
     text-align: center;
 }
 
+.applet{
+    width: 270px;
+    height: 110px;
+}
+
 /*signup.jsp*/
 
 .signUpDiv {
