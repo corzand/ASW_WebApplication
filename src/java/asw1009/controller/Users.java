@@ -89,14 +89,11 @@ public class Users extends HttpServlet {
                 if (action.equals(ACTION_LOGIN)) {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
-                    loginRequestViewModel.setPassword("");
+                    loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    if (!loginResponseViewModel.hasError()) {
-                        Gson gson = new Gson();
-                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
-                    }
+                    
 
                     answer = mngXML.newDocument();
 
@@ -135,6 +132,14 @@ public class Users extends HttpServlet {
                     root.appendChild(errorMessage);
 
                     answer.appendChild(root);
+                    
+                    loginRequestViewModel.setPassword("");
+                    
+                    if (!loginResponseViewModel.hasError()) {
+                        Gson gson = new Gson();
+                        session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
+                    }
+                    
                 }
 
                 mngXML.transform(os, answer);
