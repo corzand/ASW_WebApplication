@@ -55,24 +55,24 @@ table {
 
 body {
     font:14px Arial,sans-serif;
+    top:0;
+    bottom:0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    position:absolute;
 }
 
 .navigation{
-    position: fixed;
+    /*position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    height: 100px;
+    right: 0;*/
+    height: 70px;
 }
 
-.content {
-    overflow:auto;
+.container {    
     background-color: #fcefa1;
-    position: absolute;
-    bottom:0;
-    left: 0;
-    right: 0;
-    top:100px;
 }
 /* END MAIN LAYOUT */
 
@@ -97,7 +97,7 @@ body {
 .navigation > .logo {
     margin-left: 30px;
     float: left;
-    line-height: 100px;
+    line-height: 70px;
 }
 
 .navigation > .logo img {
@@ -105,7 +105,7 @@ body {
 }
 
 .navigation > .items {
-    line-height: 100px;
+    line-height: 70px;
     margin-right: 30px;
     float:right;
 }
@@ -138,15 +138,10 @@ body {
 
 /*tasks.jsp*/
 
-.container {
-    width: 100%;
-    height: 100%;
-}
-
 .container > .categories {
     background-color: blue;
-    width: 150px;
-    height: 100%;
+    width: 130px;
+    padding: 10px;
 } 
 
 .container > .categories > .private-filter {
@@ -154,54 +149,52 @@ body {
 }
 
 .container > .categories > .categories-filter {
-
+    margin-top: 10px;
 }
 
 .container > .tasks {
-    background-color: red;
+    background-color: red;    
     width: 100%;
 }
 
 .container > .tasks  .users-bar {
     background-color: yellowgreen;
-}
-
-.container > .tasks  .add-bar-wrapper {
-    
+    height:50px;
 }
 
 .container > .tasks  .add-bar {
-    padding: 20px;
-    margin: 20px auto;
+    padding: 10px;
+    margin: 10px auto;
     width: 300px;
     text-align: center;
     background-color: yellow;
 }
 
-.container > .tasks  .task-list {
+.container > .tasks  .days-list {
     background-color: orange;
 }
 
-.container > .tasks  .task-list > .filters {
+.container > .tasks  .days-list > .filters {
     background-color: aqua;
-    padding:20px;
+    padding:10px;
 }
 
-.container > .tasks  .task-list  > .timeline {
+.container > .tasks  .days-list .timeline {
     overflow-x:auto;
+    padding:10px;
+    background-color: yellow;
 }
 
-.container > .tasks  .task-list > .timeline > .day {
-    margin:10px;
-    background: fuchsia;
-    min-height: calc(100% - 45px);
+.container > .tasks  .days-list .timeline > .day {
+    margin: 0 5px;
+    width: 300px;    
+    background-color: pink;
 }
 
-.container > .tasks  .task-list > .timeline > .day > .task {
 
+.container > .tasks  .days-list .timeline > .day > .task-list {
+    overflow-y: auto;
 }
-
-.row {}
 
 /*POP-UP ADD TASK*/
 
@@ -209,74 +202,27 @@ body {
 
 }
 
-.vertical-box{
-    height:100%;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    -webkit-box-direction: normal;
-    -moz-box-direction: normal;
-    -webkit-box-orient: vertical;
-    -moz-box-orient: vertical;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    -webkit-box-pack: start;
-    -moz-box-pack: start;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    -webkit-align-content: stretch;
-    -ms-flex-line-pack: stretch;
-    -webkit-box-align: stretch;
-    -moz-box-align: stretch;
-    -webkit-align-items: stretch;
-    -ms-flex-align: stretch;
+/* COMMON RULES */
+
+.row {
+    margin: 5px 0;
 }
 
-.horizontal-box{
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    -webkit-box-direction: normal;
-    -moz-box-direction: normal;
-    -webkit-box-orient: horizontal;
-    -moz-box-orient: horizontal;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
-    -webkit-flex-wrap: nowrap;
-    -ms-flex-wrap: nowrap;
-    -webkit-box-pack: start;
-    -moz-box-pack: start;
-    -webkit-justify-content: flex-start;
-    -ms-flex-pack: start;
-    -webkit-box-align: start;
-    -moz-box-align: start;
-    -webkit-align-items: flex-start;
-    -ms-flex-align: start;
+.horizontal-box {
+    display: flex;
+    flex-direction: row;
 }
+
+.vertical-box {
+    display: flex;
+    flex-direction: column;
+}
+
+
 .fixed-box-pack {
--webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    -webkit-box-flex: 0;
-    -moz-box-flex: 0;
-    -webkit-flex: 0 0 auto;
-    -ms-flex: 0 0 auto;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
+    flex: 0 0 auto;
 }
 
 .fill-box-pack {
-    -webkit-box-ordinal-group: 1;
-    -moz-box-ordinal-group: 1;
-    -webkit-order: 0;
-    -ms-flex-order: 0;
-    -webkit-box-flex: 1;
-    -moz-box-flex: 1;
-    -webkit-flex: 1 1 auto;
-    -ms-flex: 1 1 auto;
-    -webkit-align-self: auto;
-    -ms-flex-item-align: auto;
+    flex: 1 1 100%;
 }
