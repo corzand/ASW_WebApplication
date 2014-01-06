@@ -1,5 +1,5 @@
 <%@ page pageEncoding="UTF-8" %>
-<div class="navigation">
+<div class="navigation fixed-box-pack-new">
     <div class="logo"><a href="/application/tasks"> <img src="/style/images/logo.png"/></a></div>
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
