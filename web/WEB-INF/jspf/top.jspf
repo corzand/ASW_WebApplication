@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
 <div class="navigation fixed-box-pack toolbar">
-    <div class="logo"><a href="/application/tasks"> <img src="/style/images/logo.png"/></a></div>
+    <div class="logo"><a href="/application/tasks"> <img src="/style/images/logo.png"/></a><span class="title">Multi-User Task List</span></div>
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
         <a href="/application/login">Login</a>
@@ -21,7 +21,7 @@
             </a>            
         </div>
         <div class="actions">
-            <a href="#" class="button" data-bind="click : Application.actions.logout">Logout</a>
+            <a href="#" class="button logout-button" data-bind="click : Application.actions.logout">Logout</a>
         </div>
         <% }%>  
     </div>

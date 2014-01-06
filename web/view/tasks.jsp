@@ -40,16 +40,16 @@
                     <div>
                         <h1>Nuovo Task</h1>
                         <div class="row">
-                            <span>Titolo</span>
-                            <input type="text" data-bind="value : title" />
+                            <div class="cell label">Titolo</div>
+                            <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                         </div>
                         <div class="row">
-                            <span>Data</span>
-                            <input type='text' id='fastAddDate' /><!-- Manual binding -->                            
+                            <div class="cell label">Data</div>
+                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>                                                        
                         </div>
-                        <div class="row">
-                            <button data-bind="click : $root.actions.edit">Edit Icon</button>
-                            <button data-bind="click : $root.actions.addFast">Fine</button>
+                        <div class="row buttons">
+                            <a class="button edit-button" data-bind="click : $root.actions.edit"></a>
+                            <a class="button" data-bind="click : $root.actions.addFast">Aggiungi</a>
                         </div>
                     </div>
                 </div>          
@@ -58,7 +58,7 @@
                         <div>
                             <input type='text' id='startDate' /><!-- Manual binding -->
                             <input type='text' id='endDate' /><!-- Manual binding -->
-                            <button data-bind="click : actions.search">Applica</button>
+                            <a class="button" data-bind="click : actions.search">Applica</a>
                         </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
