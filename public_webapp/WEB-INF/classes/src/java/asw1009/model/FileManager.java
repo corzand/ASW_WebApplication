@@ -32,7 +32,7 @@ public class FileManager {
     public void init(String servletPath, String fileName){        
         this.servletPath = servletPath;
         this.fileName = fileName;
-        this.xml = new File(this.servletPath + System.getProperty("file.separator") + "data" + System.getProperty("file.separator") + this.fileName + ".xml");
+        this.xml = new File(this.servletPath + System.getProperty("file.separator") + "WEB-INF"+ System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
         this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();

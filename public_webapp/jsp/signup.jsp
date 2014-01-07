@@ -1,14 +1,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="/style/style.css" rel="stylesheet" type="text/css">
+    <head>      
         <title>Signup</title>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
-        <script src="/scripts/utility.js"></script>
+        <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
         <script src="/scripts/signup.js"></script>
     </head>
     <body>

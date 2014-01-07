@@ -1,6 +1,6 @@
 <%@ page pageEncoding="UTF-8" %>
 <div class="navigation fixed-box-pack toolbar">
-    <div class="logo"><a href="/application/tasks"> <img src="/style/images/logo.png"/></a><span class="title">Multi-User Task List</span></div>
+    <div class="logo"><a href="/application/tasks"> <img src="/style-sheets/images/logo.png"/></a><span class="title">Multi-User Task List</span></div>
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
         <a href="/application/login">Login</a>

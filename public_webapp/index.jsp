@@ -4,9 +4,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="/style/style.css" rel="stylesheet" type="text/css">
         <title>Login</title>
+        <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
     </head>
     <body>
         <%@ include file="/WEB-INF/jspf/top.jspf" %>

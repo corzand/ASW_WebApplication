@@ -15,7 +15,7 @@ function applicationViewModelDefinition() {
         if (loggedUser.picture !== '') {
             user.picture = ko.observable(loggedUser.picture);
         } else {
-            user.picture = ko.observable('/style/images/user50.png');
+            user.picture = ko.observable('/style-sheets/images/user50.png');
         }
     };
 

@@ -280,7 +280,7 @@ public class UsersManager extends FileManager {
 
             // Converting a Base64 String into Image byte array
             byte[] imageByteArray = Base64.decodeBase64(splitted[1]);
-            String filePath = "/files/users/" + id + extension;
+            String filePath = "/multimedia/users/" + id + extension;
             File file = new File(servletPath + filePath);
             if (!file.exists()) {
                 file.createNewFile();

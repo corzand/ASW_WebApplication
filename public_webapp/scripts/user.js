@@ -11,7 +11,7 @@ function userViewModelDefinition() {
         if (self.userPicture() !== '') {
             return self.userPicture();
         } else {
-            return '/style/images/user50.png';
+            return '/style-sheets/images/user50.png';
         }
     });
 
