@@ -18,7 +18,7 @@ function userViewModelDefinition() {
     self.oldPassword = ko.observable("");
     self.newPassword = ko.observable("");
     self.confirmNewPassword = ko.observable("");
-    
+
 
     self.services = {
         "editUserData": {
@@ -51,14 +51,21 @@ function userViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.editUser = function() {
-            var errorMessage = self.utils.validate();
-            
-            if (errorMessage === "") {
+            if ($(".editUserForm").validate().form()) {
                 self.services.editUserData.request();
+            } else {
+                alert("campi sbagliati");
             }
-            else {
-                alert(errorMessage);
-            }
+            /*
+             var errorMessage = self.utils.validate();
+             
+             if (errorMessage === "") {
+             self.services.editUserData.request();
+             }
+             else {
+             alert(errorMessage);
+             }
+             */
         };
     };
 
@@ -66,59 +73,93 @@ function userViewModelDefinition() {
         var utils = this;
 
         utils.validate = function() {
+
             errorMessage = "";
-            if(!utils.checkName(self.firstName())){
+            if (!utils.required(self.firstName())) {
                 errorMessage = errorMessage + "Inserisci un nome corretto\n";
             }
-            if(!utils.checkSurname(self.lastName())){
+            if (!utils.required(self.lastName())) {
                 errorMessage = errorMessage + "Inserisci un cognonome corretto\n";
             }
-            if(!utils.checkMail(self.email())){
+            if (!utils.checkMail(self.email())) {
                 errorMessage = errorMessage + "Inserisci un'email corretta\n";
             }
-            if(!utils.checkOldPassword(self.oldPassword())){
+            if (!utils.required(self.oldPassword())) {
                 errorMessage = errorMessage + "Inserisci la tua password attuale\n";
             }
-            if(!utils.checkNewPassword(self.newPassword(), self.confirmNewPassword())){
+            if (!utils.checkNewPassword(self.newPassword(), self.confirmNewPassword())) {
                 errorMessage = errorMessage + "Inserisci correttamente la nuova password";
             }
             return errorMessage;
         };
 
-        utils.checkName = function(name) {
-            return  (name !== "");
+        utils.required = function(text) {
+            return  (text !== "");
         };
-        
-        utils.checkSurname = function(surname) {
-            return  (surname !== "");
-        };
-        
+
         utils.checkMail = function(email) {
 
             return  /^([a-zA-Z0-9_.-])+@([a-zA-Z0-9_.-])+.([a-zA-Z])+([a-zA-Z])+/.test(email);
 
         };
-        
-        utils.checkOldPassword = function(password) {
-            return  (password === loggedUser.password) ;
-        };
-        
+
         utils.checkNewPassword = function(newPassword, confirmNewPassword) {
-            if(newPassword === ""){
-                if(confirmNewPassword !== ""){
+            if (newPassword === "") {
+                if (confirmNewPassword !== "") {
                     return false;
-                }else{
+                } else {
                     return true;
                 }
-            }else{
-                if(newPassword !== confirmNewPassword){
+            } else {
+                if (newPassword !== confirmNewPassword) {
                     return false;
-                }else{
+                } else {
                     return true;
                 }
             }
         };
 
+        utils.initValidation = function() {
+            $(".editUserForm").validate({
+                rules: {
+                    firstName: "required",
+                    lastName: "required",
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    oldPassword: {
+                        required: true
+                    },
+                    confirmNewPassword: {
+                        equalTo: function(element) {
+                            if ($("#newPassword").val() !== "") {
+                                return "#newPassword";
+                            }
+                            else
+                            {
+                                return "#confirmNewPassword";
+                            }
+
+                        }
+                    }
+                },
+                messages: {
+                    firstName: "Inserisci il nome",
+                    lastName: "Inserisci il cognome",
+                    email: {
+                        required: "Inserisci un email",
+                        email: "L'email deve avere il seguente formato nome@dominio.com"
+                    },
+                    oldPassword: {
+                        required: "Inserisci la tua password attuale"
+                    },
+                    confirmNewPassword: {
+                        equalTo: "Le due password devono coincidere"
+                    }
+                }
+            });
+        };
     };
 }
 
@@ -137,6 +178,8 @@ $(document).ready(function() {
     });
     var userViewModel = new userViewModelDefinition();
     ko.applyBindings(userViewModel, $(".editUserDiv")[0]);
+
+    userViewModel.utils.initValidation();
 });
 
 

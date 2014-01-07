@@ -137,26 +137,31 @@ body {
     margin-left: 30px;
 }
 
-.editUserDiv > .image {
+.editUserDiv .image {
     margin-top: 20px;
     float: left;
 }
 
-.editUserDiv > .image img {
+.editUserDiv .image img {
     margin-top: 10px;
     margin-bottom: 10px;
     max-width: 200px;
     height: auto;
 }
 
-.editUserDiv > .data {
+.editUserDiv .data {
     margin-top: 20px;
     width: 200px;
     float: left;
 }
 
-.editUserDiv > .data > .password {
+.editUserDiv .data > .password {
     margin-top: 25px;
+}
+
+.error{
+    border-color: #cd0a0a;
+    color: #cd0a0a;
 }
 
 /*tasks.jsp*/
