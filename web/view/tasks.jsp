@@ -12,6 +12,7 @@
         <script src="/scripts/tasks.js"></script>
         <link type="text/css" rel="stylesheet" href="/style/jquery-ui/jquery-ui-1.10.3.custom.css" />
         <link type="text/css" rel="stylesheet" href="/style/style.css" />
+        <link href='http://fonts.googleapis.com/css?family=Cabin:400,500,600' rel='stylesheet' type='text/css'>
     </head>
     <body class="vertical-box"> 
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
@@ -39,25 +40,25 @@
                     <div>
                         <h1>Nuovo Task</h1>
                         <div class="row">
-                            <span>Titolo</span>
-                            <input type="text" data-bind="value : title" />
+                            <div class="cell label">Titolo</div>
+                            <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                         </div>
                         <div class="row">
-                            <span>Data</span>
-                            <input type='text' id='fastAddDate' /><!-- Manual binding -->                            
+                            <div class="cell label">Data</div>
+                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>                                                        
                         </div>
-                        <div class="row">
-                            <button data-bind="click : $root.actions.edit">Edit Icon</button>
-                            <button data-bind="click : $root.actions.addFast">Fine</button>
+                        <div class="row buttons">
+                            <a class="button edit-button" data-bind="click : $root.actions.edit"></a>
+                            <a class="button" data-bind="click : $root.actions.addFast">Aggiungi</a>
                         </div>
                     </div>
                 </div>          
                 <div class='days-list fill-box-pack vertical-box'>
-                    <div class="filters fixed-box-pack">
+                    <div class="filters fixed-box-pack toolbar">
                         <div>
                             <input type='text' id='startDate' /><!-- Manual binding -->
                             <input type='text' id='endDate' /><!-- Manual binding -->
-                            <button data-bind="click : actions.search">Applica</button>
+                            <a class="button" data-bind="click : actions.search">Applica</a>
                         </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
