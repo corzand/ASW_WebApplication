@@ -9,7 +9,7 @@ function applicationViewModelDefinition() {
         user.firstName = ko.observable(loggedUser.firstName);
         user.lastName = ko.observable(loggedUser.lastName);
         user.password = ko.observable(loggedUser.password);
-        user.username = ko.observable(loggedUser.username);
+        user.username = loggedUser.username;
         user.email = ko.observable(loggedUser.email);
 
         if (loggedUser.picture !== '') {

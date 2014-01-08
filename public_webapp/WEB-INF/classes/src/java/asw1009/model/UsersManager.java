@@ -1,6 +1,7 @@
 
 package asw1009.model;
 
+import asw1009.model.entities.Task;
 import org.apache.commons.codec.binary.Base64;
 import asw1009.model.entities.User;
 import asw1009.viewmodel.request.EditUserRequestViewModel;
@@ -54,7 +55,7 @@ public class UsersManager extends FileManager {
         user.setId(getNextId());
         users.add(user);
 
-        updateXML();
+        _updateXML();
     }
 
     private User _getUserByUsername(String username) {
@@ -69,7 +70,7 @@ public class UsersManager extends FileManager {
         return null;
     }
 
-    private void updateXML() {
+    private void _updateXML() {
         writeXML(users, User.class);
     }
 
@@ -111,35 +112,55 @@ public class UsersManager extends FileManager {
         return viewModel;
     }
 
-    public EditUserResponseViewModel _editUser(EditUserRequestViewModel request) {
+public EditUserResponseViewModel _editUser(EditUserRequestViewModel request) {
         EditUserResponseViewModel viewModel = new EditUserResponseViewModel();
         User user = _getUserByUsername(request.getUsername());
+        User sessionUser = new User();
 
         if (user != null) {
-            user.setFirstName(request.getFirstName());
-            user.setLastName(request.getLastName());
-            user.setEmail(request.getEmail());
-            
-            if(request.getPassword().equals("")){
-                user.setPassword(user.getPassword()); 
-            }else{
-                user.setPassword(request.getPassword());
-            }
-            
-            if(!request.getPicture().equals("")) {
-                String filePath = createImage(request.getPicture(), user.getId());
-                user.setPicture(filePath);
+
+            if (request.getOldPassword().equals(user.getPassword())) {
+                user.setFirstName(request.getFirstName());
+                sessionUser.setFirstName(request.getFirstName());
+                
+                user.setLastName(request.getLastName());
+                sessionUser.setLastName(request.getLastName());
+                
+                user.setEmail(request.getEmail());
+                sessionUser.setEmail(request.getEmail());
+                
+                sessionUser.setId(user.getId());
+                
+                sessionUser.setUsername(user.getUsername());
+                
+                if (!request.getPicture().equals("")) {
+                    String filePath = createImage(request.getPicture(), user.getId());
+                    user.setPicture(filePath);
+                    sessionUser.setPicture(filePath);
+                }
+
+                if (request.getNewPassword().equals("")) {
+                    sessionUser.setPassword(user.getPassword());
+                } else {
+                    user.setPassword(request.getNewPassword());
+                    sessionUser.setPassword(request.getNewPassword());
+                }
+                
+                
+                viewModel.setLoggedUser(sessionUser);
+                viewModel.setError(false);
+                viewModel.setErrorMessage("");
+            } else {
+                viewModel.setError(true);
+                viewModel.setErrorMessage("Password errata");
             }
 
-            viewModel.setLoggedUser(user);
-            viewModel.setError(false);
-            viewModel.setErrorMessage("");
         } else {
             viewModel.setError(true);
             viewModel.setErrorMessage("Login failed");
         }
 
-        updateXML();
+        _updateXML();
         return viewModel;
     }
 
