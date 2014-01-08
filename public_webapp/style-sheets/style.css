@@ -330,7 +330,7 @@ html {
 } 
 
 .container > .categories .categories-content {
-    min-width: 120px;
+    width: 120px;
 }
 
 .container > .categories .categories-content span {
