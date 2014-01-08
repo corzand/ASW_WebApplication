@@ -11,6 +11,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,16 +50,26 @@ public class FileManager {
     }
 
     protected void writeXML(List list, Class type) {
-        String itemName = type.getSimpleName();
-        Field[] fields = type.getDeclaredFields();
+        String itemName = type.getSimpleName();      
+        
+        List<Field> allFields = new LinkedList<>(Arrays.asList(type.getDeclaredFields()));
+        Class superclass = type.getSuperclass();
+        
+        if(superclass != null){
+            allFields.addAll(Arrays.asList(superclass.getDeclaredFields()));
+        }
+        
         Document document = xmlManager.newDocument();
         Element root = document.createElement(this.fileName);
         document.appendChild(root);
+        
         for (Object instance : list) {
-            Element[] itemFields = new Element[fields.length];
-            for (int i = 0; i < fields.length; i++) {
+            Element[] itemFields = new Element[allFields.size()];
+            
+            for (int i = 0; i < allFields.size(); i++) {
+                
                 try {
-                    Field field = fields[i];
+                    Field field = allFields.get(i);
                     field.setAccessible(true);
                     String fieldName = field.getName();
                     itemFields[i] = document.createElement(fieldName);
@@ -91,7 +103,7 @@ public class FileManager {
             //parse xml document
             InputStream in = new FileInputStream(xml);
             Document document = xmlManager.parse(in);
-            NodeList nodeItems = document.getElementsByTagName(type.getSimpleName().toLowerCase());
+            NodeList nodeItems = document.getElementsByTagName(type.getSimpleName());
             for (int i = 0; i < nodeItems.getLength(); i++) {
                 Node childNode = nodeItems.item(i);
 

@@ -1,15 +1,15 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><categories>
-  <category>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Categories>
+  <Category>
     <id>1</id>
     <title>Casa</title>
     <state>true</state>
     <color>#acacac</color>
-  </category>
-  <category>
+  </Category>
+  <Category>
     <id>2</id>
     <title>Lavoro</title>
     <state>false</state>
     <color>#12C587</color>
-  </category>
+  </Category>
   <id>2</id>
-</categories>
+</Categories>
