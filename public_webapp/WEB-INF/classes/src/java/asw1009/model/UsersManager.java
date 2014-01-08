@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -22,24 +24,22 @@ import org.xml.sax.SAXException;
 
 public class UsersManager extends FileManager {
 
-    //private List<User> users;
-    private EntityList<User> _users;
+    private List<User> users;
     private static UsersManager instance;
 
     public UsersManager() {
-        //users = new ArrayList<>();
-        _users = new EntityList<>();
+        users = new ArrayList<>();
     }
 
     @Override
     public void init(String directoryPath, String fileName) {
         super.init(directoryPath, fileName); //To change body of generated methods, choose Tools | Templates.
-
-        _xstream.alias("user", User.class);
-        _xstream.alias("users", EntityList.class);
-        _xstream.addImplicitCollection(EntityList.class, "list");
-        _readXML();
-        //Eventualmente, leggere il contenuto del file Users.xml e impostare gli oggetti in memoria.
+        
+        if (xml.exists()) {
+            users = readXML(User.class);
+        } else {
+            users = new ArrayList<>();
+        }
     }
 
     public static synchronized UsersManager getInstance() {
@@ -51,24 +51,16 @@ public class UsersManager extends FileManager {
     }
 
     public void addUser(User user) {
-        //crea l'XML e scrivilo
-//        users.add(user);
-        user.setId(_users.getNextId());
-        _users.getItems().add(user);
+        user.setId(getNextId());
+        users.add(user);
 
-        _updateXML();
+        updateXML();
     }
 
     private User _getUserByUsername(String username) {
 
-//        for (int i = 0; i < users.size(); i++) {
-//            User user = users.get(i);
-//            if (user.getUsername().equals(username)) {
-//                return user;
-//            }
-//        }
-        for (int i = 0; i < _users.getItems().size(); i++) {
-            User user = _users.getItems().get(i);
+        for (int i = 0; i < users.size(); i++) {
+            User user = users.get(i);
             if (user.getUsername().equals(username)) {
                 return user;
             }
@@ -77,16 +69,8 @@ public class UsersManager extends FileManager {
         return null;
     }
 
-    private void _readXML() {
-        if (xml.exists()) {
-            _users = (EntityList<User>) readXML();
-        } else {
-            _users = new EntityList<>();
-        }
-    }
-
-    private void _updateXML() {
-        writeXML(_xstream.toXML(_users));
+    private void updateXML() {
+        writeXML(users, User.class);
     }
 
     public BaseResponseViewModel _signUp(SignUpRequestViewModel request) {
@@ -111,59 +95,6 @@ public class UsersManager extends FileManager {
         return viewModel;
     }
 
-    public BaseResponseViewModel signUp(SignUpRequestViewModel request) {
-        BaseResponseViewModel viewModel = new BaseResponseViewModel();
-
-        if (xml.exists()) {
-            try {
-                InputStream in = new FileInputStream(xml);
-                Document document = xmlManager.parse(in);
-                Element root = document.getDocumentElement();
-                NodeList userNodes = root.getElementsByTagName("User");
-                boolean found = false;
-                for (int i = 0; i < userNodes.getLength() && !found; i++) {
-                    Element user = (Element) userNodes.item(i);
-                    if (user.getElementsByTagName("username").item(0).getTextContent().equals(request.getUsername())) {
-                        found = true;
-                    }
-                }
-                if (found) {
-                    viewModel.setError(true);
-                    viewModel.setErrorMessage("L'utente esiste già");
-                } else {
-
-                    User userToAdd = new User();
-                    userToAdd.setEmail(request.getEmail());
-                    userToAdd.setFirstName(request.getFirstName());
-                    userToAdd.setLastName(request.getLastName());
-                    userToAdd.setUsername(request.getUsername());
-
-                    userToAdd.setPassword(request.getPassword());
-
-                    addItem(userToAdd, userToAdd.getClass());
-                    addUser(userToAdd);
-
-                    viewModel.setError(false);
-                }
-            } catch (IOException | SAXException ex) {
-
-            }
-        } else {
-            User userToAdd = new User();
-            userToAdd.setEmail(request.getEmail());
-            userToAdd.setFirstName(request.getFirstName());
-            userToAdd.setLastName(request.getLastName());
-            userToAdd.setUsername(request.getUsername());
-            userToAdd.setPassword(request.getPassword());
-
-            addItem(userToAdd, userToAdd.getClass());
-            viewModel.setError(false);
-        }
-
-        _updateXML();
-        return viewModel;
-    }
-
     public LoginResponseViewModel _login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
         User user = _getUserByUsername(request.getUsername());
@@ -175,53 +106,6 @@ public class UsersManager extends FileManager {
         } else {
             viewModel.setError(true);
             viewModel.setErrorMessage("Login failed");
-        }
-
-        return viewModel;
-    }
-
-    public LoginResponseViewModel login(LoginRequestViewModel request) {
-        LoginResponseViewModel viewModel = new LoginResponseViewModel();
-
-        if (xml.exists()) {
-            try {
-                InputStream in = new FileInputStream(xml);
-                Document document = xmlManager.parse(in);
-                Element root = document.getDocumentElement();
-                NodeList users = root.getElementsByTagName("User");
-                boolean found = false;
-                for (int i = 0; i < users.getLength() && !found; i++) {
-                    Element user = (Element) users.item(i);
-                    if (user.getElementsByTagName("username").item(0).getTextContent().equals(request.getUsername())) {
-                        found = true;
-                        if (user.getElementsByTagName("password").item(0).getTextContent().equals(request.getPassword())) {
-                            viewModel.setError(false);
-                            viewModel.setErrorMessage("");
-
-                            User loggedUser = new User();
-                            loggedUser.setFirstName(user.getElementsByTagName("firstName").item(0).getTextContent());
-                            loggedUser.setLastName(user.getElementsByTagName("lastName").item(0).getTextContent());
-                            loggedUser.setEmail(user.getElementsByTagName("email").item(0).getTextContent());
-                            loggedUser.setId(Integer.parseInt(user.getElementsByTagName("id").item(0).getTextContent()));
-                            loggedUser.setPicture(user.getElementsByTagName("picture").item(0).getTextContent());
-                            loggedUser.setUsername(user.getElementsByTagName("username").item(0).getTextContent());
-
-                            viewModel.setLoggedUser(loggedUser);
-                        } else {
-                            viewModel.setError(true);
-                            viewModel.setErrorMessage("Password errata.");
-                        }
-                    }
-                }
-                if (!found) {
-                    viewModel.setError(true);
-                    viewModel.setErrorMessage("Utente inesistente");
-                }
-            } catch (IOException | SAXException ex) {
-            }
-        } else {
-            viewModel.setError(true);
-            viewModel.setErrorMessage("Utente inesistente");
         }
 
         return viewModel;
@@ -255,14 +139,14 @@ public class UsersManager extends FileManager {
             viewModel.setErrorMessage("Login failed");
         }
 
-        _updateXML();
+        updateXML();
         return viewModel;
     }
 
     public UsersListResponseViewModel usersList() {
         UsersListResponseViewModel viewModel = new UsersListResponseViewModel();
         viewModel.setError(false);
-        viewModel.setUsers(_users.getItems());
+        viewModel.setUsers(users);
         return viewModel;
     }
 

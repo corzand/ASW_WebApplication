@@ -17,23 +17,21 @@ import java.util.List;
 
 public class TasksManager extends FileManager {
 
-    //private List<User> users;
-    private EntityList<Task> _tasks;
+    private List<Task> _tasks;
     private static TasksManager instance;
 
     public TasksManager() {
-        //users = new ArrayList<>();
-        _tasks = new EntityList<>();
+        _tasks = new ArrayList<>();
     }
 
     @Override
     public void init(String directoryPath, String fileName) {
         super.init(directoryPath, fileName); //To change body of generated methods, choose Tools | Templates.
-
-        _xstream.alias("task", Task.class);
-        _xstream.alias("tasks", EntityList.class);
-        _xstream.addImplicitCollection(EntityList.class, "list");
-        _readXML();
+        if (xml.exists()) {
+            _tasks = (List<Task>) readXML(Task.class);
+        } else {
+            _tasks = new ArrayList<>();
+        }
         //Eventualmente, leggere il contenuto del file Users.xml e impostare gli oggetti in memoria.
     }
 
@@ -47,8 +45,8 @@ public class TasksManager extends FileManager {
 
     private Task getTaskById(int id) {
 
-        for (int i = 0; i < _tasks.getItems().size(); i++) {
-            Task task = _tasks.getItems().get(i);
+        for (int i = 0; i < _tasks.size(); i++) {
+            Task task = _tasks.get(i);
             if (task.getId() == id) {
                 return task;
             }
@@ -57,16 +55,9 @@ public class TasksManager extends FileManager {
         return null;
     }
 
-    private void _readXML() {
-        if (xml.exists()) {
-            _tasks = (EntityList<Task>) readXML();
-        } else {
-            _tasks = new EntityList<>();
-        }
-    }
 
     private void _updateXML() {
-        writeXML(_xstream.toXML(_tasks));
+        writeXML(_tasks, Task.class);
     }
 
     public boolean isTaskMatchingRequest(Task task, SearchTasksRequestViewModel request) {
@@ -125,9 +116,9 @@ public class TasksManager extends FileManager {
     public SearchTasksResponseViewModel searchTasks(SearchTasksRequestViewModel request) {
         SearchTasksResponseViewModel response = new SearchTasksResponseViewModel();
         List<Task> tasksToAdd = new ArrayList<>();
-        for (int i = 0; i < _tasks.getItems().size(); i++) {
+        for (int i = 0; i < _tasks.size(); i++) {
 
-            Task currentTask = _tasks.getItems().get(i);
+            Task currentTask = _tasks.get(i);
             if (isTaskMatchingRequest(currentTask, request)) {
                 tasksToAdd.add(currentTask);
             }
@@ -142,11 +133,11 @@ public class TasksManager extends FileManager {
         AddTaskResponseViewModel response = new AddTaskResponseViewModel();
         Date date = new Date();
         Task task = new Task();
-        task.setId(_tasks.getNextId());
+        task.setId(getNextId());
         task.setAssignedUserId(request.getAssignedUserId());
         task.setAttachment(request.getAttachment());
         task.setCategoryId(request.getCategoryId());
-        task.setDate(request.getDate());
+        task.setDate(request.getDate().getTime());
         task.setDescription(request.getDescription());
         task.setDone(request.getDone());
         task.setLatitude(request.getLatitude());
@@ -156,7 +147,7 @@ public class TasksManager extends FileManager {
         task.setUserId(request.getUserId());
         task.setTimeStamp(date.getTime());
 
-        _tasks.getItems().add(task);
+        _tasks.add(task);
 
         response.setTask(task);
         response.setError(false);
@@ -175,7 +166,7 @@ public class TasksManager extends FileManager {
                 Date date = new Date();
                 task.setTitle(request.getTitle());
                 task.setDescription(request.getDescription());
-                task.setDate(request.getDate());
+                task.setDate(request.getDate().getTime());
                 task.setDone(request.getDone());
                 task.setCategoryId(request.getCategoryId());
                 task.setUserId(request.getUserId());
@@ -212,7 +203,7 @@ public class TasksManager extends FileManager {
         if (task != null) {
             if (task.getTimeStamp() == request.getTimeStamp()) {
 
-                _tasks.getItems().remove(task);
+                _tasks.remove(task);
 
                 viewModel.setTask(task);
                 viewModel.setError(false);
