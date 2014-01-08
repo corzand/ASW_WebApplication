@@ -56,8 +56,6 @@ function userViewModelDefinition() {
         actions.editUser = function() {
             if ($(".editUserForm").validate().form()) {
                 self.services.editUserData.request();
-            } else {
-                alert("campi sbagliati");
             }
         };
     };
@@ -78,8 +76,8 @@ function userViewModelDefinition() {
                         required: true
                     },
                     confirmNewPassword: {
-                        equalTo: function(element) {
-                            if ($("#newPassword").val() !== "") {
+                        equalTo: function() {
+                            if (self.newPassword() !== "") {
                                 return "#newPassword";
                             }
                             else

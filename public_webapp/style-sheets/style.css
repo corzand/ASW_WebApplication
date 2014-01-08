@@ -79,6 +79,10 @@ input {
     border: 2px solid #D7DADB;
 }
 
+input.hasDatepicker {
+    
+}
+
 input:focus{
     border: 2px solid #202D44; 
 }
@@ -268,6 +272,28 @@ input:focus{
     padding:10px;
 }
 
+.container > .tasks  .days-list > .filters .arrow {
+    display: block;
+    height: 24px;
+    width: 24px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 24px 24px;
+}
+
+.container > .tasks  .days-list > .filters .arrow.arrow-down {
+    background-image: url(images/arrow_down.png);
+}
+
+.container > .tasks  .days-list > .filters .arrow.arrow-up {
+    background-image: url(images/arrow_up.png);
+}
+
+.container > .tasks  .days-list > .filters .table-row .cell{
+    padding: 5px;
+}
+
 .container > .tasks  .days-list .timeline {
     overflow-x:auto;
     padding:10px;
@@ -296,6 +322,14 @@ input:focus{
     background-color: #202D44;
     color: #FFFFFF;
     font-size: 16px;
+}
+
+.table {
+    display: table;
+}
+
+.table-row {
+    display: table-row;
 }
 
 .cell {
@@ -350,4 +384,13 @@ input:focus{
 .error{
     border-color: #cd0a0a;
     color: #cd0a0a;
+}
+
+.hidden {
+    display: none;
+}
+
+.ui-datepicker-trigger {
+    vertical-align: middle;
+    margin-left: 5px;
 }

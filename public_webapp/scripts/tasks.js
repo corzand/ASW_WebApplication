@@ -355,7 +355,7 @@ function TasksViewModelDefinition() {
                 self.services.search.request();
             }
             else {
-                 alert("La data di fine ricerca deve essere maggiore della data di inizio ricerca!");
+                alert("La data di fine ricerca deve essere maggiore della data di inizio ricerca!");
             }
         };
 
@@ -367,6 +367,10 @@ function TasksViewModelDefinition() {
         actions.delete = function(taskToDelete, $dialog) {
             self.services.delete.request(taskToDelete, $dialog);
         };
+
+        actions.toggleFilters = function() {
+            self.domUtils.toggleFilters();
+        }
     };
     self.domUtils = new function() {
         var domUtils = this;
@@ -410,8 +414,9 @@ function TasksViewModelDefinition() {
 
                     $("#taskDate").datepicker({
                         showOn: "button",
-                        buttonImage: "/style-sheets/images/calendar.png",
+                        buttonImage: "/style-sheets/images/calendar_dark.png",
                         buttonImageOnly: true,
+                        dateFormat: "dd/mm/yy",
                         onSelect: function() {
                             boundTask.date = $("#taskDate").datepicker("getDate");
                         }
@@ -452,8 +457,9 @@ function TasksViewModelDefinition() {
         domUtils.initDatePickers = function() {
             $("#fastAddDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar.png",
+                buttonImage: "/style-sheets/images/calendar_dark.png",
                 buttonImageOnly: true,
+                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.NewTask.date = $("#fastAddDate").datepicker("getDate");
                     $("#taskDate").datepicker("setDate", self.NewTask.date);
@@ -463,8 +469,9 @@ function TasksViewModelDefinition() {
 
             $("#startDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar.png",
+                buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
+                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.startDate = $("#startDate").datepicker("getDate");
                 }
@@ -472,32 +479,42 @@ function TasksViewModelDefinition() {
             $("#startDate").datepicker("setDate", self.startDate);
             $("#endDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar.png",
+                buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
+                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.endDate = $("#endDate").datepicker("getDate");
                 }
             });
             $("#endDate").datepicker("setDate", self.endDate);
         };
+        domUtils.toggleFilters = function() {
+            $(".filters-content").toggle("slow", function() {
+                if ($(".arrow").hasClass("arrow-up")) {
+                    $(".arrow").removeClass("arrow-up").addClass("arrow-down");
+                } else {
+                    $(".arrow").removeClass("arrow-down").addClass("arrow-up");
+                }
+            });
+        };
     };
     self.utils = new function() {
         var utils = this;
-        
+
         utils.initDates = function() {
             self.startDate = getMidnightDate(new Date(self.startDate.setDate(self.startDate.getDate() - 1)));
             self.endDate = getMidnightDate(new Date(self.endDate.setDate(self.endDate.getDate() + 10)));
         };
-        
-        utils.checkDates = function(){
+
+        utils.checkDates = function() {
             if (self.startDate > self.endDate) {
-                return false;             
+                return false;
             }
             else {
                 return true;
             }
         };
-        
+
         utils.getUserById = function(id) {
             for (var i = 0; i < self.Users().length; i++) {
                 if (self.Users()[i].id() === id) {

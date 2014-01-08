@@ -3,7 +3,7 @@
 <html>
     <head>
         <title>Multi-User Task List</title>
-         <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
+        <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
         <script src="/scripts/tasks.js"></script>
     </head>
     <body class="vertical-box"> 
@@ -48,9 +48,26 @@
                 <div class='days-list fill-box-pack vertical-box'>
                     <div class="filters fixed-box-pack toolbar">
                         <div>
-                            <input type='text' id='startDate' /><!-- Manual binding -->
-                            <input type='text' id='endDate' /><!-- Manual binding -->
-                            <a class="button" data-bind="click : actions.search">Applica</a>
+                            <a class="arrow arrow-down" data-bind="click: actions.toggleFilters "></a>
+                        </div>
+                        <div class="filters-content hidden">
+                            <div class="table-row">
+                                <div class="cell">
+                                    <span>Data Inizio</span>
+                                </div>
+                                <div class="cell">
+                                    <span>Data Fine</span>
+                                </div>    
+                            </div>
+                            <div class="table-row">
+                                <div class="cell">
+                                    <input type='text' id='startDate' /><!-- Manual binding -->
+                                </div>
+                                <div class="cell">
+                                    <input type='text' id='endDate' /><!-- Manual binding -->
+                                </div> 
+                                <a class="button" data-bind="click : actions.search">Applica</a>  
+                            </div>
                         </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
