@@ -368,9 +368,13 @@ function TasksViewModelDefinition() {
             self.services.delete.request(taskToDelete, $dialog);
         };
 
-        actions.toggleFilters = function() {
-            self.domUtils.toggleFilters();
-        }
+        actions.toggleFilters = function(data, event) {
+            self.domUtils.toggleFilters(event.target);
+        };
+        
+        actions.toggleCategories = function(data, event) {
+            self.domUtils.toggleCategories(event.target);
+        };
     };
     self.domUtils = new function() {
         var domUtils = this;
@@ -416,7 +420,6 @@ function TasksViewModelDefinition() {
                         showOn: "button",
                         buttonImage: "/style-sheets/images/calendar_dark.png",
                         buttonImageOnly: true,
-                        dateFormat: "dd/mm/yy",
                         onSelect: function() {
                             boundTask.date = $("#taskDate").datepicker("getDate");
                         }
@@ -459,7 +462,6 @@ function TasksViewModelDefinition() {
                 showOn: "button",
                 buttonImage: "/style-sheets/images/calendar_dark.png",
                 buttonImageOnly: true,
-                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.NewTask.date = $("#fastAddDate").datepicker("getDate");
                     $("#taskDate").datepicker("setDate", self.NewTask.date);
@@ -471,7 +473,6 @@ function TasksViewModelDefinition() {
                 showOn: "button",
                 buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
-                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.startDate = $("#startDate").datepicker("getDate");
                 }
@@ -481,21 +482,41 @@ function TasksViewModelDefinition() {
                 showOn: "button",
                 buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
-                dateFormat: "dd/mm/yy",
                 onSelect: function() {
                     self.endDate = $("#endDate").datepicker("getDate");
                 }
             });
             $("#endDate").datepicker("setDate", self.endDate);
         };
-        domUtils.toggleFilters = function() {
-            $(".filters-content").toggle("slow", function() {
-                if ($(".arrow").hasClass("arrow-up")) {
-                    $(".arrow").removeClass("arrow-up").addClass("arrow-down");
-                } else {
-                    $(".arrow").removeClass("arrow-down").addClass("arrow-up");
-                }
-            });
+        domUtils.toggleFilters = function(element) {
+            var $arrow = $(element);
+            var hide = $arrow.hasClass("arrow-up");
+            if(hide){
+                $(".filters-content").animate({ opacity: 0}, "fast", function (){
+                    $arrow.removeClass("arrow-up").addClass("arrow-down");
+                    $(".filters-content").animate({ height: "toggle" }, "slow");
+                });
+            }else {
+                $(".filters-content").animate({ height: "toggle" }, "slow", function(){
+                    $arrow.removeClass("arrow-down").addClass("arrow-up");                    
+                    $(".filters-content").animate({ opacity: 1}, "fast");
+                });
+            }
+        };
+        domUtils.toggleCategories = function(element){
+            var $arrow = $(element);
+            var hide = $arrow.hasClass("arrow-left");
+            if(hide){
+                $(".categories-content").animate({ opacity: 0}, "fast", function (){
+                    $arrow.removeClass("arrow-left").addClass("arrow-right");
+                    $(".categories-content").animate({ width: "toggle" }, "slow");
+                });
+            }else {
+                $(".categories-content").animate({ width: "toggle" }, "slow", function(){
+                    $arrow.removeClass("arrow-right").addClass("arrow-left");
+                    $(".categories-content").animate({ opacity: 1}, "fast");
+                });
+            }
         };
     };
     self.utils = new function() {
@@ -596,6 +617,9 @@ function TasksViewModelDefinition() {
                 }
             }
         };
+        utils.getDayHeader = function(day){
+            return decodeHtmlEntity($.datepicker.formatDate("DD d MM", day.day));
+        };
     };
 }
 
@@ -604,7 +628,8 @@ $(document).ready(function() {
 //init view model and stuff
     var tasksViewModel = new TasksViewModelDefinition();
     $.when(tasksViewModel.services.getCategories.request(), tasksViewModel.services.getUsers.request()).done(function() {
-        ko.applyBindings(tasksViewModel, $(".container")[0]);
+        ko.applyBindings(tasksViewModel, $(".container")[0]);        
+        $.datepicker.setDefaults($.datepicker.regional["it"]);
         tasksViewModel.utils.initDates();
         tasksViewModel.domUtils.initDatePickers();
         tasksViewModel.services.search.request();

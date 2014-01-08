@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><Users>
   <User>
     <id>1</id>
-    <username>a</username>
-    <picture>/style/images/user50.png</picture>
-    <firstName>a</firstName>
-    <lastName>a</lastName>
-    <password>a</password>
-    <email>a</email>
+    <username>username</username>
+    <picture></picture>
+    <firstName>Nome</firstName>
+    <lastName>Cognome</lastName>
+    <password>password</password>
+    <email>email@email.com</email>
   </User>
   <id>1</id>
 </Users>

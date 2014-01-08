@@ -11,33 +11,48 @@
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <div class="container horizontal-box fill-box-pack">
             <div class="categories fixed-box-pack">
-                <div class="private-filter">
-                    <div class="row"><input type="radio" name="private" value="true" data-bind="checked : personal, checkedValue : true " />I miei task</div>
-                    <div class="row"><input type="radio" name="private" value="false" data-bind="checked : personal, checkedValue : false " />Tutti i task</div>                    
+                <div class="toggle-arrow">
+                    <a class="arrow arrow-left" data-bind="click: actions.toggleCategories "></a>
                 </div>
-                <div class="categories-filter">
-                    <div><h2>Categorie</h2></div>
-                    <div data-bind="foreach : Categories">
+                <div class="categories-content">
+                    <div class="private-filter">
                         <div class="row">
-                            <input type="checkbox" data-bind="attr : { name : title }, checked : state"/><span data-bind="text : title"></span>
+                            <div class="radiobutton" data-bind="css : { checked : personal() }">
+                                <input id="private" type="radio" name="private" value="true" data-bind="checked : personal, checkedValue : true " />
+                                <label for="private"></label>
+                            </div>
+                            <span>I miei tasks</span>
                         </div>
-                    </div> 
+                        <div class="row">
+                            <div class="radiobutton"  data-bind="css : { checked : !personal() }">
+                                <input id="public" type="radio" name="private" value="false" data-bind="checked : personal, checkedValue : false " />
+                                <label for="public"></label>
+                            </div>
+                            <span>Tutti i tasks</span>
+                        </div>
+                    </div>
+                    <div class="categories-filter">                    
+                        <div><h2>Categorie</h2></div>
+                        <div data-bind="foreach : Categories">
+                            <div class="row">
+                                <div class="checkbox">
+                                    <input type="checkbox" data-bind="attr : { name : title, id : 'cat_'+id() }, checked : state"/><label data-bind="attr: { for : 'cat_'+id()} "></label>
+                                </div>
+                                <span data-bind="text : title"></span>
+                            </div>
+                        </div> 
+                    </div>
                 </div>
             </div>
-            <div class="tasks fill-box-pack vertical-box">
-                <div class='fixed-box-pack users-bar' data-bind="foreach : Users">
-                    <div><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
-                </div>
-                <div class='fixed-box-pack add-bar' data-bind="with : NewTask">
-                    <div>
+            <div class="tasks fill-box-pack vertical-box">                
+                <div class='fixed-box-pack' data-bind="with : NewTask">
+                    <div class="add-bar">
                         <h1>Nuovo Task</h1>
                         <div class="row">
                             <div class="cell label">Titolo</div>
                             <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
-                        </div>
-                        <div class="row">
                             <div class="cell label">Data</div>
-                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>                                                        
+                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>  
                         </div>
                         <div class="row buttons">
                             <a class="button edit-button" data-bind="click : $root.actions.edit"></a>
@@ -70,9 +85,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class='fixed-box-pack users-bar' data-bind="foreach : Users">
+                        <div><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
+                    </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
                         <div class="day fixed-box-pack vertical-box">
-                            <div class="fixed-box-pack" data-bind="text: day"></div>
+                            <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
                                 <div data-bind="visible: visible">
                                     <input type="checkbox" data-bind="checked : done, click : $root.actions.markTask" />
