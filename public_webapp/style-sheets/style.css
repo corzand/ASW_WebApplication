@@ -155,19 +155,22 @@ input:focus{
     float:right;
 }
 
-.navigation .actions .logout-button{
+.navigation .actions .top-button{
     margin-top: 20px;
 }
 
-/* login.jsp */
-.login{    
-    width: 100%;
+/* index.jsp */
+
+.content {
     text-align: center;
 }
 
+.login{  
+    width: 100%;
+}
+
 .applet{
-    width: 270px;
-    height: 110px;
+
 }
 
 /*signup.jsp*/
@@ -285,7 +288,7 @@ input:focus{
 
 
 .toolbar {    
-    background: #202D44;
+    background-color: #202D44;
     color: #FFFFFF;
     font-size: 16px;
 }

@@ -3,8 +3,10 @@
     <div class="logo"><a href="/application/tasks"> <img src="/style-sheets/images/logo.png"/></a><span class="title">Multi-User Task List</span></div>
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
-        <a href="/application/login">Login</a>
-        <a href="/application/signup">Sign Up</a>
+        <div class="actions">
+            <a href="/application/login" class="button top-button">Login</a>
+            <a href="/application/signup" class="button top-button">Sign Up</a>
+        </div>
         <% } else {%>
         <script type="text/javascript">
             loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
@@ -21,7 +23,7 @@
             </a>            
         </div>
         <div class="actions">
-            <a href="#" class="button logout-button" data-bind="click : Application.actions.logout">Logout</a>
+            <a href="#" class="button top-button" data-bind="click : Application.actions.logout">Logout</a>
         </div>
         <% }%>  
     </div>
