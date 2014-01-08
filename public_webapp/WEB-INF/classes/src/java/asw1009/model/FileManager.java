@@ -1,17 +1,17 @@
-
 package asw1009.model;
 
 import asw1009.ManageXML;
-import com.sun.xml.bind.StringInputStream;
-import com.thoughtworks.xstream.XStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.nio.file.FileSystem;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -19,6 +19,8 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class FileManager {
@@ -27,99 +29,112 @@ public class FileManager {
     private String fileName;
     protected File xml;
     protected ManageXML xmlManager;
-    protected XStream _xstream ;
-    
-    public void init(String servletPath, String fileName){        
+    private int id;
+
+    protected void init(String servletPath, String fileName) {
         this.servletPath = servletPath;
         this.fileName = fileName;
-        this.xml = new File(this.servletPath + System.getProperty("file.separator") + "WEB-INF"+ System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
-        this._xstream = new XStream();
+        this.xml = new File(this.servletPath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
+        //this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();
         } catch (TransformerConfigurationException | ParserConfigurationException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void addItem(Object instance, Class type) {
+
+    protected int getNextId() {
+        return ++id;
+    }
+
+    protected void writeXML(List list, Class type) {
         String itemName = type.getSimpleName();
         Field[] fields = type.getDeclaredFields();
-        Document document = null;
-        Element root = null;
-        
-        if (xml.exists()) {
-            //append
-            try (InputStream in = new FileInputStream(xml)) {
-                document = xmlManager.parse(in);
-                root = document.getDocumentElement();
-            } catch (IOException | SAXException ex) {
-                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        Document document = xmlManager.newDocument();
+        Element root = document.createElement(this.fileName);
+        document.appendChild(root);
+        for (Object instance : list) {
+            Element[] itemFields = new Element[fields.length];
+            for (int i = 0; i < fields.length; i++) {
+                try {
+                    Field field = fields[i];
+                    field.setAccessible(true);
+                    String fieldName = field.getName();
+                    itemFields[i] = document.createElement(fieldName);
+                    itemFields[i].setTextContent(field.get(instance).toString());
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        } else {
-            //create
-            document = xmlManager.newDocument();
-            root = document.createElement(this.fileName);
-            document.appendChild(root);
+            Element item = document.createElement(itemName);
+            for (Element itemField : itemFields) {
+                item.appendChild(itemField);
+            }
+
+            root.appendChild(item);
         }
-        
-        Element[] itemFields = new Element[fields.length];
-        for (int i = 0; i < fields.length; i++) {
-            try {
-                Field field = fields[i];
-                field.setAccessible(true);
-                String fieldName = field.getName();
-                Object fieldType = field.getType();
-                
-                itemFields[i] = document.createElement(fieldName);
-                itemFields[i].setAttribute("type", fieldType.toString());
-                itemFields[i].setTextContent(field.get(instance).toString());
-            } catch (IllegalArgumentException | IllegalAccessException ex) {
-                Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
-            }            
-        }
-        
-        Element item = document.createElement(itemName);
-        for (int i = 0; i < itemFields.length; i++) {
-            item.appendChild(itemFields[i]);
-        }
-        root.appendChild(item);
+        Element listId = document.createElement("id");
+        listId.setTextContent(this.id + "");
+        root.appendChild(listId);
+
         try (OutputStream out = new FileOutputStream(xml)) {
             xmlManager.transform(out, document);
+            out.flush();
         } catch (TransformerException | IOException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
-        }    
+        }
     }
-    
-    protected void writeXML(String xmlString){
+
+    protected List readXML(Class type) {
         try {
-            Document document;
-            try (InputStream in = new StringInputStream(xmlString)) {
-                document = xmlManager.parse(in);
+            List itemList = new ArrayList();
+            //parse xml document
+            InputStream in = new FileInputStream(xml);
+            Document document = xmlManager.parse(in);
+            NodeList nodeItems = document.getElementsByTagName(type.getSimpleName().toLowerCase());
+            for (int i = 0; i < nodeItems.getLength(); i++) {
+                Node childNode = nodeItems.item(i);
+
+                Constructor<?> ctor = type.getConstructor();
+                Object object = ctor.newInstance();
+
+                NodeList properties = childNode.getChildNodes();
+                for (int j = 0; j < properties.getLength(); j++) {
+                    Node property = properties.item(j);
+                    if (property.getNodeType() == Node.ELEMENT_NODE) {
+                        Field field;
+                        try{
+                            field = type.getDeclaredField(property.getNodeName());
+                        }catch(NoSuchFieldException ex){
+                            field = type.getSuperclass().getDeclaredField(property.getNodeName());
+                        }
+                        field.setAccessible(true);
+                        Class<?> fieldType = field.getType();
+
+                        if (int.class.isAssignableFrom(fieldType)) {
+                            field.set(object, Integer.parseInt(property.getTextContent()));
+                        } else if (double.class.isAssignableFrom(fieldType)) {
+                            field.set(object, Double.parseDouble(property.getTextContent()));
+                        } else if (long.class.isAssignableFrom(fieldType)) {
+                            field.set(object, Long.parseLong(property.getTextContent()));
+                        } else if (boolean.class.isAssignableFrom(fieldType)) {
+                            field.set(object, Boolean.parseBoolean(property.getTextContent()));
+                        } else {
+                            field.set(object, property.getTextContent());
+                        }
+                    }
+                }
+                itemList.add(object);
             }
-            try (OutputStream out = new FileOutputStream(xml)) {
-                xmlManager.transform(out, document);
-                out.flush();
-            }
-        } catch (IOException | SAXException | TransformerException ex) {
+
+            this.id = Integer.parseInt(document.getElementsByTagName("id").item(0).getTextContent());
+
+            return itemList;
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchFieldException | IOException | SAXException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    protected Object readXML(){
-        String xmlString;
-        try (InputStream in = new FileInputStream(xml)) {
-            StringBuilder builder = new StringBuilder();
-            int ch;
-            while((ch = in.read()) != -1){
-                builder.append((char)ch);
-            }
-            
-            xmlString = builder.toString();
-        
-            return _xstream.fromXML(xmlString);
-        } catch (IOException ex) {
-            Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
+        return null;
     }
 }
