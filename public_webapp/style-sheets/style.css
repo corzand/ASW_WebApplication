@@ -207,6 +207,11 @@ input:focus{
     margin-top: 25px;
 }
 
+.edit-button {
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
 
 /*tasks.jsp*/
 
