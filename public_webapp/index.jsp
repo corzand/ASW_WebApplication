@@ -11,12 +11,12 @@
             <div class="content fill-box-pack vertical-box">
                 <%@ include file="/WEB-INF/jspf/title.jspf" %>      
                 <div class="fixed-box-pack applet">
-                    <object type="application/x-java-applet">
+                    <applet type="application/x-java-applet">
                         <param name="code" value="LoginApplet.class" />
                         <param name="codebase" value="/applet/"/>   
                         <param name="archive" value = "ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" />
                         <param name="sessionId" value="<%= session.getId()%>" />
-                    </object> 
+                    </applet> 
                 </div>
             </div>
         </div>
