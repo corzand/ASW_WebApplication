@@ -37,10 +37,11 @@ function signUpViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.signUp = function() {
-            //validazione prima di request if (validate) then request
-            if (self.utils.validate()) self.services.signUp.request();
-            else {
-                alert("Ricontrollare i campi!");
+            
+            if($(".signUpDiv").validate().form()){
+                self.services.signUp.request();
+            }else{
+                alert("cazzzo");
             }
         };
     };
@@ -48,16 +49,47 @@ function signUpViewModelDefinition() {
     self.utils = new function() {
         var utils = this;
         
-        utils.validate = function() {
-            if (self.firstName() === "" || self.lastName() ===  "" ||
-                    self.email() ===  "" || self.username() ===  "" ||
-                    self.password() ===  "" || self.confirmPassword() ===  "" ||
-                    self.password() !== self.confirmPassword()){
-                return false;
-            }
-            else {
-                return true;
-            }
+        utils.initValidation = function() {
+            $(".signUpDiv").validate({
+                rules: {
+                    firstName: "required",
+                    lastName: "required",
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    username: {
+                        required: true,
+                        minlength: 3
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6
+                    },
+                    confirmPassword: {
+                        equalTo: "#password" 
+                    }
+                },
+                messages: {
+                    firstName: "Inserisci il nome",
+                    lastName: "Inserisci il cognome",
+                    email: {
+                        required: "Inserisci un email",
+                        email: "L'email deve avere il seguente formato nome@dominio.com"
+                    },
+                    username: {
+                        required: "Inserisci l'username che vuoi utilizzare",
+                        minlength: "L'username dev'essere lungo almeno 3 caratteri"
+                    },
+                    password: {
+                        required: "Scegli una password",
+                        minlength: "La password dev'essere lungo almeno 6 caratteri"
+                    },
+                    confirmPassword: {
+                        equalTo: "Le due password devono coincidere"
+                    }
+                }
+            });
         };
     };
 }
@@ -67,4 +99,6 @@ $(document).ready(function() {
 //init view model and stuff
     var signUpViewModel = new signUpViewModelDefinition();
     ko.applyBindings(signUpViewModel, $(".signUpDiv")[0]);
+    
+    signUpViewModel.utils.initValidation();
 });
