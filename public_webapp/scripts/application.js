@@ -1,21 +1,24 @@
 var loggedUser;
-var applicationViewModel;
 
 function applicationViewModelDefinition() {
     var self = this;
 
     self.User = new function() {
+        
         var user = this;
-        user.firstName = ko.observable(loggedUser.firstName);
-        user.lastName = ko.observable(loggedUser.lastName);
-        user.password = ko.observable(loggedUser.password);
-        user.username = loggedUser.username;
-        user.email = ko.observable(loggedUser.email);
+        
+        if (loggedUser !== undefined) {
+            user.firstName = ko.observable(loggedUser.firstName);
+            user.lastName = ko.observable(loggedUser.lastName);
+            user.password = ko.observable(loggedUser.password);
+            user.username = loggedUser.username;
+            user.email = ko.observable(loggedUser.email);
 
-        if (loggedUser.picture !== '') {
-            user.picture = ko.observable(loggedUser.picture);
-        } else {
-            user.picture = ko.observable('/style-sheets/images/user50.png');
+            if (loggedUser.picture !== '') {
+                user.picture = ko.observable(loggedUser.picture);
+            } else {
+                user.picture = ko.observable('/style-sheets/images/user50.png');
+            }
         }
     };
 
@@ -54,7 +57,7 @@ function applicationViewModelDefinition() {
 
 $(document).ready(function() {
     //init view model and stuff
-    applicationViewModel = new applicationViewModelDefinition();
+    var applicationViewModel = new applicationViewModelDefinition();
     ko.applyBindings(applicationViewModel, $(".navigation > .items")[0]);
 });
 
