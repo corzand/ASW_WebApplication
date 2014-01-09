@@ -371,7 +371,7 @@ function TasksViewModelDefinition() {
         actions.toggleFilters = function(data, event) {
             self.domUtils.toggleFilters(event.target);
         };
-        
+
         actions.toggleCategories = function(data, event) {
             self.domUtils.toggleCategories(event.target);
         };
@@ -491,32 +491,121 @@ function TasksViewModelDefinition() {
         domUtils.toggleFilters = function(element) {
             var $arrow = $(element);
             var hide = $arrow.hasClass("arrow-up");
-            if(hide){
-                $(".filters-content").animate({ opacity: 0}, "fast", function (){
+            if (hide) {
+                $(".filters-content").animate({opacity: 0}, "fast", function() {
                     $arrow.removeClass("arrow-up").addClass("arrow-down");
-                    $(".filters-content").animate({ height: "toggle" }, "slow");
+                    $(".filters-content").animate({height: "toggle"}, "slow");
                 });
-            }else {
-                $(".filters-content").animate({ height: "toggle" }, "slow", function(){
-                    $arrow.removeClass("arrow-down").addClass("arrow-up");                    
-                    $(".filters-content").animate({ opacity: 1}, "fast");
+            } else {
+                $(".filters-content").animate({height: "toggle"}, "slow", function() {
+                    $arrow.removeClass("arrow-down").addClass("arrow-up");
+                    $(".filters-content").animate({opacity: 1}, "fast");
                 });
             }
         };
-        domUtils.toggleCategories = function(element){
+        domUtils.toggleCategories = function(element) {
             var $arrow = $(element);
             var hide = $arrow.hasClass("arrow-left");
-            if(hide){
-                $(".categories-content").animate({ opacity: 0}, "fast", function (){
+            if (hide) {
+                $(".categories-content").animate({opacity: 0}, "fast", function() {
                     $arrow.removeClass("arrow-left").addClass("arrow-right");
-                    $(".categories-content").animate({ width: "toggle" }, "slow");
+                    $(".categories-content").animate({width: "toggle"}, "slow");
                 });
-            }else {
-                $(".categories-content").animate({ width: "toggle" }, "slow", function(){
+            } else {
+                $(".categories-content").animate({width: "toggle"}, "slow", function() {
                     $arrow.removeClass("arrow-right").addClass("arrow-left");
-                    $(".categories-content").animate({ opacity: 1}, "fast");
+                    $(".categories-content").animate({opacity: 1}, "fast");
                 });
             }
+        };
+
+        domUtils.initDragDrop = function() {
+            //$(".draggable").draggable({revert: "invalid"});
+            $(".task .assigned").droppable({accept: ".draggable"});
+
+            var verticalTriggerZone = 40;
+            var verticalScrollSpeed = 2;
+            var horizontalTriggerZone = 80;
+            var horizontalScrollSpeed = 4;
+            var bounds = [$('.days-list').offset().left, 
+                $('.days-list').offset().top, 
+                $('.days-list').offset().left + $('.days-list').width() - 60,
+                $('.days-list').offset().top + $('.days-list').height() - 60
+            ];
+            console.log(bounds);
+            $('.days-list').outerHeight();
+            $('.days-list').outerWidth();
+            $(".draggable").draggable({
+                scroll: false,
+                helper: "clone",
+                containment: bounds,
+                zIndex: 100,
+                drag: function(event, ui) {
+                    $(".task-list").each(function() {
+                        var $this = $(this);
+                        var cOffset = $this.offset();
+                        var bottomPos = cOffset.top + $this.height();
+                        clearInterval($this.data('timerScroll'));
+                        $this.data('timerScroll', false);
+                        if (event.pageX >= cOffset.left && event.pageX <= cOffset.left + $this.width())
+                        {
+                            if (event.pageY >= bottomPos - verticalTriggerZone && event.pageY <= bottomPos)
+                            {
+                                var moveUp = function() {
+                                    $this.scrollTop($this.scrollTop() + verticalScrollSpeed);
+                                };
+                                $this.data('timerScroll', setInterval(moveUp, 10));
+                                moveUp();
+                            }
+                            if (event.pageY >= cOffset.top && event.pageY <= cOffset.top + verticalTriggerZone)
+                            {
+                                var moveDown = function() {
+                                    $this.scrollTop($this.scrollTop() - verticalScrollSpeed);
+                                };
+                                $this.data('timerScroll', setInterval(moveDown, 10));
+                                moveDown();
+                            }
+                        }
+                    });
+                    $(".timeline").each(function() {
+                        var $this = $(this);
+                        var cOffset = $this.offset();
+                        var rightPos = cOffset.left + $this.width();
+                        clearInterval($this.data('timerScroll'));
+                        $this.data('timerScroll', false);
+                        if (event.pageY >= cOffset.top && event.pageY <= cOffset.top + $this.height())
+                        {
+                            if (event.pageX >= rightPos - horizontalTriggerZone && event.pageX <= rightPos)
+                            {
+                                var moveLeft = function() {
+                                    $this.scrollLeft($this.scrollLeft() + horizontalScrollSpeed);
+                                };
+                                $this.data('timerScroll', setInterval(moveLeft, 10));
+                                moveLeft();
+                            }
+                            if (event.pageX >= cOffset.left && event.pageX <= cOffset.left + horizontalTriggerZone)
+                            {
+                                var moveRight = function() {
+                                    $this.scrollLeft($this.scrollLeft() - horizontalScrollSpeed);
+                                };
+                                $this.data('timerScroll', setInterval(moveRight, 10));
+                                moveRight();
+                            }
+                        }
+                    });
+                },
+                stop: function() {
+                    $(".task-list").each(function() {
+                        clearInterval($(this).data('timerScroll'));
+                        $(this).data('timerScroll', false);
+                    });
+                    $(".timeline").each(function() {
+                        clearInterval($(this).data('timerScroll'));
+                        $(this).data('timerScroll', false);
+                    });
+                },
+                refreshPositions: true /* So as it detect the correct sub-element  */
+            });
         };
     };
     self.utils = new function() {
@@ -617,7 +706,7 @@ function TasksViewModelDefinition() {
                 }
             }
         };
-        utils.getDayHeader = function(day){
+        utils.getDayHeader = function(day) {
             return decodeHtmlEntity($.datepicker.formatDate("DD d MM", day.day));
         };
     };
@@ -628,11 +717,12 @@ $(document).ready(function() {
 //init view model and stuff
     var tasksViewModel = new TasksViewModelDefinition();
     $.when(tasksViewModel.services.getCategories.request(), tasksViewModel.services.getUsers.request()).done(function() {
-        ko.applyBindings(tasksViewModel, $(".container")[0]);        
+        ko.applyBindings(tasksViewModel, $(".container")[0]);
         $.datepicker.setDefaults($.datepicker.regional["it"]);
         tasksViewModel.utils.initDates();
         tasksViewModel.domUtils.initDatePickers();
         tasksViewModel.services.search.request();
+        tasksViewModel.domUtils.initDragDrop();
     });
 });
 

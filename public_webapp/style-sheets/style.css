@@ -408,7 +408,7 @@ html {
 
 .container > .tasks  .days-list .timeline {
     overflow-x:auto;
-    padding:10px;
+    padding:10px 0;
 }
 
 .container > .tasks  .days-list .timeline > .day {
@@ -434,7 +434,55 @@ html {
 
 .container > .tasks  .days-list .timeline > .day > .task-list {
     overflow-y: auto;
+    margin:10px;
+    padding: 10px;
 }
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task {
+    height: 50px;
+    display: table;
+    border-bottom: 2px solid #D7DADB;
+    border-left: 2px solid #D7DADB;
+    border-right: 2px solid #D7DADB;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):first-child {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border-top: 2px solid #D7DADB;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):last-child {
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned{
+    width:50px;  
+    vertical-align: middle; 
+    background-color: #D7DADB;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .drop-user{
+    width:40px;
+    height: 40px;
+    background-image: url(images/user_light.png);
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    margin-left: 5px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-title{
+    width:140px;
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-check{
+    vertical-align: middle;
+}
+
 
 /*POP-UP ADD TASK*/
 
@@ -453,6 +501,7 @@ html {
 
 .table {
     display: table;
+    border-collapse: collapse;
 }
 
 .table-row {

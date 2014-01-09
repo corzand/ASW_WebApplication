@@ -86,17 +86,30 @@
                         </div>
                     </div>
                     <div class='fixed-box-pack users-bar' data-bind="foreach : Users">
-                        <div><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
+                        <div class="draggable"><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
                         <div class="day fixed-box-pack vertical-box">
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
-                                <div data-bind="visible: visible">
-                                    <input type="checkbox" data-bind="checked : done, click : $root.actions.markTask" />
-                                    <a data-bind="text : title, click : $root.actions.edit"></a>
-                                    <div data-bind="if : assigned">
-                                        <img data-bind=" attr : { src : AssignedUser().picture }" />
+                                <div class="task" data-bind="visible: visible">
+                                    <div class="assigned cell">
+                                        <!-- ko if: assigned() -->
+                                        <div class="dropped-user">
+                                            <img data-bind=" attr : { src : AssignedUser().picture }" />
+                                        </div>
+                                        <!-- /ko -->
+                                        <!-- ko if: !assigned() -->
+                                        <div class="drop-user" title="Trascina un utente per assegnarlo al task"></div>
+                                        <!-- /ko -->
+                                    </div>
+                                    <div class="task-title cell">
+                                        <a data-bind="text : title, click : $root.actions.edit"></a>
+                                    </div>
+                                    <div class="task-check cell">
+                                        <div class="checkbox">
+                                            <input type="checkbox" data-bind="attr : { id : 'task_'+id() }, checked : done, click : $root.actions.markTask"/><label data-bind="attr: { for : 'task_'+id()} "></label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
