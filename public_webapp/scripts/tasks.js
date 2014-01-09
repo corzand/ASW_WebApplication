@@ -378,6 +378,7 @@ function TasksViewModelDefinition() {
     };
     self.domUtils = new function() {
         var domUtils = this;
+
         domUtils.openDialog = function(task) {
             var $dialog = $("#edit-task-popup");
             var boundTask;
@@ -457,6 +458,7 @@ function TasksViewModelDefinition() {
                 }
             });
         };
+
         domUtils.initDatePickers = function() {
             $("#fastAddDate").datepicker({
                 showOn: "button",
@@ -488,58 +490,81 @@ function TasksViewModelDefinition() {
             });
             $("#endDate").datepicker("setDate", self.endDate);
         };
+
         domUtils.toggleFilters = function(element) {
             var $arrow = $(element);
             var hide = $arrow.hasClass("arrow-up");
             if (hide) {
                 $(".filters-content").animate({opacity: 0}, "fast", function() {
                     $arrow.removeClass("arrow-up").addClass("arrow-down");
-                    $(".filters-content").animate({height: "toggle"}, "slow");
+                    $(".filters-content").animate({height: "toggle"}, "slow", function() {
+                        domUtils.setDragBounds();
+                    });
                 });
             } else {
                 $(".filters-content").animate({height: "toggle"}, "slow", function() {
                     $arrow.removeClass("arrow-down").addClass("arrow-up");
-                    $(".filters-content").animate({opacity: 1}, "fast");
+                    $(".filters-content").animate({opacity: 1}, "fast", function() {
+                        domUtils.setDragBounds();
+                    });
                 });
             }
+
         };
+
         domUtils.toggleCategories = function(element) {
             var $arrow = $(element);
             var hide = $arrow.hasClass("arrow-left");
             if (hide) {
                 $(".categories-content").animate({opacity: 0}, "fast", function() {
                     $arrow.removeClass("arrow-left").addClass("arrow-right");
-                    $(".categories-content").animate({width: "toggle"}, "slow");
+                    $(".categories-content").animate({width: "toggle"}, "slow", function() {
+                        domUtils.setDragBounds();
+                    });
                 });
             } else {
                 $(".categories-content").animate({width: "toggle"}, "slow", function() {
                     $arrow.removeClass("arrow-right").addClass("arrow-left");
-                    $(".categories-content").animate({opacity: 1}, "fast");
+                    $(".categories-content").animate({opacity: 1}, "fast", function() {
+                        domUtils.setDragBounds();
+                    });
                 });
             }
         };
 
-        domUtils.initDragDrop = function() {
-            //$(".draggable").draggable({revert: "invalid"});
-            $(".task .assigned").droppable({accept: ".draggable"});
-
-            var verticalTriggerZone = 40;
-            var verticalScrollSpeed = 2;
-            var horizontalTriggerZone = 80;
-            var horizontalScrollSpeed = 4;
-            var bounds = [$('.days-list').offset().left, 
-                $('.days-list').offset().top, 
+        domUtils.setDragBounds = function() {
+            $(".draggable").draggable("option", "containment", [$('.days-list').offset().left,
+                $('.days-list').offset().top,
                 $('.days-list').offset().left + $('.days-list').width() - 60,
                 $('.days-list').offset().top + $('.days-list').height() - 60
-            ];
-            console.log(bounds);
-            $('.days-list').outerHeight();
-            $('.days-list').outerWidth();
+            ]);
+        };
+
+        domUtils.initDroppable = function(element, task) {
+            $(element).droppable({
+                activeClass: "ui-state-hover",
+                hoverClass: "ui-state-active",
+                accept: ".draggable",
+                drop: function(event, ui){
+                    task.AssignedUser(self.utils.getUserById($(ui.helper).data('id')));
+                    self.services.edit.request(task, task);
+                }
+            });
+        };
+
+        domUtils.initDraggables = function() {
+
+            var horizontalTriggerZone = 80;
+            var verticalTriggerZone = 40;
+            var verticalScrollSpeed = 2;
+            var horizontalScrollSpeed = 4;
+
             $(".draggable").draggable({
                 scroll: false,
                 helper: "clone",
-                containment: bounds,
                 zIndex: 100,
+                snap: ".drop-user",
+                snapMode: "inner",
                 drag: function(event, ui) {
                     $(".task-list").each(function() {
                         var $this = $(this);
@@ -606,6 +631,8 @@ function TasksViewModelDefinition() {
                 },
                 refreshPositions: true /* So as it detect the correct sub-element  */
             });
+
+            domUtils.setDragBounds();
         };
     };
     self.utils = new function() {
@@ -684,10 +711,10 @@ function TasksViewModelDefinition() {
         };
         utils.pushTask = function(task) {
             var pushed = false;
+            var taskToPush;
             for (var i = 0; i < self.Days().length && !pushed; i++) {
                 if (compareDate(new Date(task.date), self.Days()[i].day)) {
-                    self.Days()[i].Tasks.push(
-                            new self.Task({
+                    taskToPush = new self.Task({
                                 id: task.id,
                                 title: task.title,
                                 description: task.description,
@@ -701,10 +728,13 @@ function TasksViewModelDefinition() {
                                 longitude: task.longitude,
                                 attachment: task.attachment,
                                 timeStamp: task.timeStamp
-                            }));
+                            });
+                    self.Days()[i].Tasks.push(taskToPush);
                     pushed = true;
                 }
             }
+
+            self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .assigned"), taskToPush);
         };
         utils.getDayHeader = function(day) {
             return decodeHtmlEntity($.datepicker.formatDate("DD d MM", day.day));
@@ -719,10 +749,21 @@ $(document).ready(function() {
     $.when(tasksViewModel.services.getCategories.request(), tasksViewModel.services.getUsers.request()).done(function() {
         ko.applyBindings(tasksViewModel, $(".container")[0]);
         $.datepicker.setDefaults($.datepicker.regional["it"]);
+
+
+        tasksViewModel.domUtils.initDraggables();
         tasksViewModel.utils.initDates();
         tasksViewModel.domUtils.initDatePickers();
         tasksViewModel.services.search.request();
-        tasksViewModel.domUtils.initDragDrop();
+        
+        $(".assigned").droppable({
+                activeClass: "ui-state-hover",
+                hoverClass: "ui-state-active",
+                accept: ".draggable",
+                drop: function(event, ui){
+                    $( this ).addClass( "ui-state-highlight" );
+                }
+            });
     });
 });
 

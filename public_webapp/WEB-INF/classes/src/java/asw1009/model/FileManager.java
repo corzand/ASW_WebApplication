@@ -10,10 +10,15 @@ import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
@@ -31,7 +36,8 @@ public class FileManager {
     private String fileName;
     protected File xml;
     protected ManageXML xmlManager;
-    private int id;
+    private int progId;
+    private DateFormat dateFormat;
 
     protected void init(String servletPath, String fileName) {
         this.servletPath = servletPath;
@@ -43,10 +49,13 @@ public class FileManager {
         } catch (TransformerConfigurationException | ParserConfigurationException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
+        this.progId = 0;
     }
 
     protected int getNextId() {
-        return ++id;
+        progId = progId + 1;
+        return progId;
     }
 
     protected void writeXML(List list, Class type) {
@@ -85,8 +94,8 @@ public class FileManager {
 
             root.appendChild(item);
         }
-        Element listId = document.createElement("id");
-        listId.setTextContent(this.id + "");
+        Element listId = document.createElement("progId");
+        listId.setTextContent(this.progId + "");
         root.appendChild(listId);
 
         try (OutputStream out = new FileOutputStream(xml)) {
@@ -131,6 +140,8 @@ public class FileManager {
                             field.set(object, Long.parseLong(property.getTextContent()));
                         } else if (boolean.class.isAssignableFrom(fieldType)) {
                             field.set(object, Boolean.parseBoolean(property.getTextContent()));
+                        } else if (Date.class.isAssignableFrom(fieldType)) {
+                            field.set(object, this.dateFormat.parse(property.getTextContent()));
                         } else {
                             field.set(object, property.getTextContent());
                         }
@@ -139,12 +150,12 @@ public class FileManager {
                 itemList.add(object);
             }
 
-            this.id = Integer.parseInt(document.getElementsByTagName("id").item(0).getTextContent());
+            this.progId = Integer.parseInt(document.getElementsByTagName("progId").item(0).getTextContent());
 
             return itemList;
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchFieldException | IOException | SAXException ex) {
+        } catch (NoSuchFieldException | IOException | SAXException | ParseException ex) {
             Logger.getLogger(FileManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;

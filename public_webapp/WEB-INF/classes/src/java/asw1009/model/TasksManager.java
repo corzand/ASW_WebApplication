@@ -137,7 +137,7 @@ public class TasksManager extends FileManager {
         task.setAssignedUserId(request.getAssignedUserId());
         task.setAttachment(request.getAttachment());
         task.setCategoryId(request.getCategoryId());
-        task.setDate(request.getDate().getTime());
+        task.setDate(request.getDate());
         task.setDescription(request.getDescription());
         task.setDone(request.getDone());
         task.setLatitude(request.getLatitude());
@@ -166,7 +166,7 @@ public class TasksManager extends FileManager {
                 Date date = new Date();
                 task.setTitle(request.getTitle());
                 task.setDescription(request.getDescription());
-                task.setDate(request.getDate().getTime());
+                task.setDate(request.getDate());
                 task.setDone(request.getDone());
                 task.setCategoryId(request.getCategoryId());
                 task.setUserId(request.getUserId());

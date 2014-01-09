@@ -354,7 +354,7 @@ html {
     width: 100%;
 }
 
-.container > .tasks  .users-bar img{
+.container > .tasks  .users-bar img.draggable{
     max-height:30px;
     max-width:30px;    
     margin: 5px;
@@ -413,7 +413,7 @@ html {
 
 .container > .tasks  .days-list .timeline > .day {
     margin: 0 5px;
-    width: 250px;
+    width: 300px;
     border-radius: 6px;
 }
 
@@ -458,19 +458,31 @@ html {
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .assigned{
-    width:50px;  
+    width:40px;  
     vertical-align: middle; 
     background-color: #D7DADB;
+    padding:5px;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .drop-user{
-    width:40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
+    margin: 5px;
     background-image: url(images/user_light.png);
     background-size: 30px 30px;
     background-repeat: no-repeat;
     background-position: center center;
-    margin-left: 5px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .dropped-user {
+    width: 30px;
+    height: 30px;
+    margin: 5px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .dropped-user img{
+    width:30px;
+    height: 30px;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title{

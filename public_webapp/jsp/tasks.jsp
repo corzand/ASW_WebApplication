@@ -85,14 +85,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class='fixed-box-pack users-bar' data-bind="foreach : Users">
-                        <div class="draggable"><img data-bind="attr : { src : picture, title : username, 'data-id' : id }" /></div>
+                    <div class='fixed-box-pack users-bar horizontal-box' data-bind="foreach : Users">
+                        <div class="fixed-box-pack">
+                            <img class="draggable" data-bind="attr : { src : picture, title : username, 'data-id' : id }" />
+                        </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
                         <div class="day fixed-box-pack vertical-box">
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
-                                <div class="task" data-bind="visible: visible">
+                                <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}">
                                     <div class="assigned cell">
                                         <!-- ko if: assigned() -->
                                         <div class="dropped-user">
