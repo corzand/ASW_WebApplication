@@ -1,3 +1,9 @@
+var notificationType = {
+    addedTask : 0,
+    deletedTask : 1,
+    editedTask : 2
+};
+
 function TasksViewModelDefinition() {
 
     var self = this;
@@ -42,7 +48,17 @@ function TasksViewModelDefinition() {
             return task.AssignedUser();
         });
     };
-
+    
+    self.Notification = function (){
+        var not = this;
+        not.title = ko.observable();
+        not.description = ko.observable();
+        not.task = null;
+        not.show = function (){
+            self.actions.showNotificationTask(not.task);
+        };
+    };
+    
     self.personal = ko.observable(true);
     self.Categories = ko.observableArray([]);
     self.Users = ko.observableArray([]);
@@ -62,6 +78,9 @@ function TasksViewModelDefinition() {
         newTask.Category = ko.observable();
         newTask.attachment = ko.observable("");
     };
+    
+
+    
     self.services = {
         "getUsers": {
             "request": function() {
@@ -119,18 +138,20 @@ function TasksViewModelDefinition() {
                     switch (data.operation) {
                         case 0:
                             //Add
-                            alert("Task aggiunto");
                             self.utils.pushTask(data.task);
+                            self.domUtils.showNotification(data.task, notificationType.addedTask);
+                            
                             break;
                         case 1:
                             //Edit
-                            alert("Task modificato");
                             var task = self.utils.getTaskById(data.task.id);
 
                             if (task.date.getTime() !== new Date(data.task.date).getTime()) {
                                 self.utils.removeTask(data.task);
                                 //if (self.startDate <= new Date(data.task.date) <= self.endDate) {
                                 self.utils.pushTask(data.task);
+                                
+                                self.domUtils.showNotification(data.task, notificationType.editedTask);
                                 //}
                             } else {
                                 task.title(data.task.title);
@@ -145,12 +166,15 @@ function TasksViewModelDefinition() {
                                 task.Category(self.utils.getCategoryById(data.task.categoryId));
                                 task.attachment(data.task.attachment);
                                 task.timeStamp = data.task.timeStamp;
+                                
+                                self.domUtils.showNotification(data.task, notificationType.editedTask);
                             }
                             break;
                         case 2:
                             //Delete
                             alert("Task eliminato");
                             self.utils.removeTask(data.task);
+                            self.domUtils.showNotification(data.task, notificationType.deletedTask);
                             break;
                     }
                 }
@@ -375,6 +399,10 @@ function TasksViewModelDefinition() {
         actions.toggleCategories = function(data, event) {
             self.domUtils.toggleCategories(event.target);
         };
+        
+        actions.showNotificationTask = function(task){
+            self.domUtils.openDialog(task);
+        };
     };
     self.domUtils = new function() {
         var domUtils = this;
@@ -509,7 +537,6 @@ function TasksViewModelDefinition() {
                     });
                 });
             }
-
         };
 
         domUtils.toggleCategories = function(element) {
@@ -634,6 +661,37 @@ function TasksViewModelDefinition() {
 
             domUtils.setDragBounds();
         };
+        
+        domUtils.showNotification = function(task, type){
+            var notification = new self.Notification();
+            if(type === notificationType.addedTask){
+                notification.title("!");                
+                notification.description("Task "+ task.title + " aggiunto");
+                self.Notification.task = task;
+            }else if (type === notificationType.editedTask){
+                notification.title("!");                
+                notification.description("Task "+ task.title + " modificato");
+                self.Notification.task = task;
+            }else if (type === notificationType.deletedTask) {
+                notification.title("!");                
+                notification.description("Task "+ task.title + " eliminato");
+                self.Notification.task = task;
+            }
+            
+            var $div = $("<div>", {class: "notification-box", "data-bind":"click : title"});
+            $div.append($("<h2>", { "data-bind":" text : title"}));
+            $div.append($("<div>", { "data-bind":" text : description"}));
+            $("body").append($div);
+            $div.fadeIn("slow", function(){                
+                setTimeout(function(){
+                    $div.fadeOut("slow", function(){
+                        ko.cleanNode($div[0]);
+                        $div.remove();
+                    });
+                },10000);
+            });
+            ko.applyBindings(notification, $div[0]);
+        };
     };
     self.utils = new function() {
         var utils = this;
@@ -735,6 +793,8 @@ function TasksViewModelDefinition() {
             }
 
             self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .assigned"), taskToPush);
+            
+            return taskToPush;
         };
         utils.getDayHeader = function(day) {
             return decodeHtmlEntity($.datepicker.formatDate("DD d MM", day.day));
