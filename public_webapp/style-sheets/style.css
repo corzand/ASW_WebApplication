@@ -354,7 +354,7 @@ input:focus{
 
 /*tasks.jsp*/
 html {    
-    background: url(images/bg.png) no-repeat center center fixed;
+    background: url(images/backgroundGrigio.png) no-repeat center center fixed;
     background-size: cover;    
 }
 
