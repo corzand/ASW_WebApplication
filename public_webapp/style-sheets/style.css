@@ -66,16 +66,21 @@ body {
     right: 0;
     width: 100%;
     height: 100%;
-    position:absolute;
+    position: absolute;
 }
 
-input[type="text"] {
+input[type="text"], input[type="password"] {
     font-family: Cabin, Verdana, sans-serif;
     font-size: 14px;
     color: #202D44;
     padding: 8px 12px;
     border: 2px solid #D7DADB;
     border-radius: 6px;
+}
+
+input[type="text"].error, input[type="password"].error {
+    border-color:  #FC4349;
+    color: #FC4349;
 }
 
 /* Custom checkbox */
@@ -186,7 +191,8 @@ input:focus{
 
 /*Fragment title.jspf*/
 .title {
-    margin: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .title > h1 {
@@ -277,7 +283,34 @@ input:focus{
 /*signup.jsp*/
 
 .signUpDiv {
+    margin-top: 15px;
+    margin-left: 30px;
+}
 
+.signUpForm {
+    background-color: #6DBCDB;
+    padding: 10px;
+    margin: 10px auto;
+    width: 325px;
+    border-radius: 8px;
+}
+
+.signUpForm > .table-row {
+    text-align: left;
+
+}
+
+.form-row {
+    padding-top: 10px;
+}
+
+.form-row .cell {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.signUpButton {
+    margin-top: 10px;
 }
 
 /*edituser.jsp*/
@@ -608,4 +641,9 @@ html {
 
 .arrow.arrow-right {
     background-image: url(images/arrow_right.png);
+}
+
+.right-label {
+    text-align: right;
+    padding-right: 10px;
 }

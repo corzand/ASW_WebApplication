@@ -10,7 +10,7 @@
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
         <div class="editUserDiv container horizontal-box fill-box-pack">       
-            <form class="editUserForm fixed-box-pack">
+            <form class="fixed-box-pack">
                 <div>Username: <div data-bind="text: username"></div></div>
                 <div class="data">
                     <div>Nome : </div><div><input name="firstName" data-bind="value : firstName" type="text" /></div>
