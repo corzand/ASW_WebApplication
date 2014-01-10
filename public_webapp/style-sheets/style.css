@@ -255,6 +255,7 @@ input:focus{
 .navigation .logged-user img {
     vertical-align: baseline;
     width: 50px;
+    border-radius: 8px;
     height: auto;
 }
 
@@ -391,12 +392,23 @@ html {
     width: 100%;
 }
 
-.container > .tasks  .users-bar img.draggable{
-    max-height:30px;
-    max-width:30px;    
+.users-bar .draggable {
     margin: 5px;
     border: 1px solid #202D44;
     border-radius: 4px;
+    width:30px;
+    height: 30px;
+    background-color: #202D44;
+    text-align: center;
+    line-height: 26px
+}
+
+.users-bar .draggable img {
+    max-height:26px;
+    max-width:26px;
+    border-radius: 4px;
+    vertical-align: middle;
+    cursor: pointer;
 }
 
 .container > .tasks  .add-bar {
@@ -505,8 +517,10 @@ html {
     width: 30px;
     height: 30px;
     margin: 5px;
+    border-radius: 4px;
+    background-color: #202D44;
     background-image: url(images/user_light.png);
-    background-size: 30px 30px;
+    background-size: 26px 26px;
     background-repeat: no-repeat;
     background-position: center center;
 }
@@ -515,11 +529,21 @@ html {
     width: 30px;
     height: 30px;
     margin: 5px;
+    margin: 5px;
+    border: 1px solid #202D44;
+    border-radius: 4px;
+    width:30px;
+    height: 30px;
+    background-color: #202D44;
+    text-align: center;
+    line-height: 26px;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .dropped-user img{
-    width:30px;
-    height: 30px;
+    max-height:26px;
+    max-width:26px;
+    border-radius: 4px;
+    vertical-align: middle;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title{
@@ -532,6 +556,26 @@ html {
     vertical-align: middle;
 }
 
+.notification-box {
+    cursor: pointer;
+    display: none;
+    z-index: 100;
+    position: absolute;
+    top: 83px;
+    right: 10px;
+    width: 150px;
+    height: 100px;
+    border-radius: 6px;
+    background: #FC4349;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+.notification-box h2 {
+    font-size: 40px;
+    color: #ffffff;
+}
 
 /*POP-UP ADD TASK*/
 

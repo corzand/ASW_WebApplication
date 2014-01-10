@@ -87,7 +87,9 @@
                     </div>
                     <div class='fixed-box-pack users-bar horizontal-box' data-bind="foreach : Users">
                         <div class="fixed-box-pack">
-                            <img class="draggable" data-bind="attr : { src : picture, title : username, 'data-id' : id }" />
+                            <div class="draggable">
+                                <img data-bind="attr : { src : picture, title : username, 'data-id' : id }" />
+                            </div>
                         </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
