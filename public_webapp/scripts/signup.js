@@ -40,8 +40,6 @@ function signUpViewModelDefinition() {
             
             if($(".signUpDiv").validate().form()){
                 self.services.signUp.request();
-            }else{
-                alert("cazzzo");
             }
         };
     };
@@ -50,7 +48,7 @@ function signUpViewModelDefinition() {
         var utils = this;
         
         utils.initValidation = function() {
-            $(".signUpDiv").validate({
+            $(".signUpForm").validate({
                 rules: {
                     firstName: "required",
                     lastName: "required",
