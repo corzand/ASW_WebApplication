@@ -52,11 +52,11 @@
                             <div class="cell label">Titolo</div>
                             <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                             <div class="cell label">Data</div>
-                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>  
+                            <div class="cell"><input type='text' id='fastAddDate'  disabled /><!-- Manual binding --></div>  
                         </div>
                         <div class="row buttons">
-                            <a class="button edit-button" data-bind="click : $root.actions.edit"></a>
-                            <a class="button" data-bind="click : $root.actions.addFast">Aggiungi</a>
+                            <button class="button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
+                            <button class="button" data-bind="click : $root.actions.addFast"><span>Aggiungi</span></button>
                         </div>
                     </div>
                 </div>          
@@ -76,12 +76,12 @@
                             </div>
                             <div class="table-row">
                                 <div class="cell">
-                                    <input type='text' id='startDate' /><!-- Manual binding -->
+                                    <input type='text' id='startDate'  disabled /><!-- Manual binding -->
                                 </div>
                                 <div class="cell">
-                                    <input type='text' id='endDate' /><!-- Manual binding -->
+                                    <input type='text' id='endDate'  disabled /><!-- Manual binding -->
                                 </div> 
-                                <a class="button" data-bind="click : actions.search">Applica</a>  
+                                <button class="button" data-bind="click : actions.search"><span>Applica</span></button>  
                             </div>
                         </div>
                     </div>
@@ -124,43 +124,51 @@
         </div>
         <div id="edit-task-popup" style="display:none;">
             <div>
-                <div class="row">
-                    <div>Titolo</div>
-                    <div><input type="text" data-bind="value : title" /></div>
+                <div class="table-row form-row">
+                    <div class="cell right-label">Titolo</div>
+                    <div class="cell"><input type="text" data-bind="value : title" /></div>
                 </div>
-                <div class="row">
-                    <div>Descrizione</div>
-                    <div><textarea data-bind="value : description" ></textarea></div>
+                <div class="table-row form-row">
+                    <div class="cell right-label">Descrizione</div>
+                    <div class="cell"><textarea data-bind="value : description" ></textarea></div>
                 </div>
-                <div class="row">
-                    <div>Data</div>
-                    <div><input type='text' id='taskDate' /><!-- Manual binding --></div>
+                <div class="table-row form-row">
+                    <div class="cell right-label">Data</div>
+                    <div class="cell"><input type='text' id='taskDate' disabled /><!-- Manual binding --></div>
                 </div>
-                <div class="row">
-                    <div>Fatto</div>
-                    <div><input type="checkbox" data-bind="checked : done"/></div>
-                </div>
-                <div class="row">
-                    <div>Privato</div>
-                    <div><input type="checkbox" data-bind="checked : personal"/></div>
-                </div>
-                <div class="row">
-                    <div>Categoria</div>
-                    <div>
-                        <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
+                <div class="table-row form-row">
+                    <div class="cell right-label">Fatto</div>
+                    <div class="cell">
+                        <div class="checkbox">
+                            <input id="chkDone" type="checkbox" data-bind="checked : done"/>
+                            <label for="chkDone"></label>
+                        </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div>Utente assegnato</div>
-                    <div>
-                        <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
+                <div class="table-row form-row">
+                    <div class="cell right-label">Privato</div>
+                    <div class="cell">
+                        <div class="checkbox">
+                            <input id="chkPersonal" type="checkbox" data-bind="checked : personal"/>
+                            <label for="chkPersonal"></label>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <div>Posizione</div>
-                    <div>
-                        <!-- TODO -->
-                    </div>                    
+                <div class="table-row form-row">
+                    <div class="cell right-label">Categoria</div>
+                    <div class="cell">
+                        <div class="select">
+                            <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="table-row form-row">
+                    <div class="cell right-label">Utente assegnato</div>
+                    <div class="cell">
+                        <div class="select">
+                            <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

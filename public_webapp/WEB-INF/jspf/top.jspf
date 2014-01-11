@@ -4,8 +4,8 @@
     <div class="items">       
         <%if (session.getAttribute("user") == null) { %> 
         <div class="actions">
-            <a href="/application/login" class="button top-button">Login</a>
-            <a href="/application/signup" class="button top-button">Sign Up</a>
+            <a href="/application/login" class="button top-button"><span>Login</span></a>
+            <a href="/application/signup" class="button top-button"><span>Sign Up</span></a>
         </div>
         <% } else {%>
         <script type="text/javascript">
@@ -23,7 +23,7 @@
             </a>            
         </div>
         <div class="actions">
-            <a href="#" class="button top-button" data-bind="click : Application.actions.logout">Logout</a>
+            <button href="#" class="button top-button" data-bind="click : Application.actions.logout"><span>Logout</span></button>
         </div>
         <% }%>  
     </div>
