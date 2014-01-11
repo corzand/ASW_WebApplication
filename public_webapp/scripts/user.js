@@ -54,7 +54,7 @@ function userViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.editUser = function() {
-            if ($(".editUserForm").validate().form()) {
+            if ($(".editUserDiv").validate().form()) {
                 self.services.editUserData.request();
             }
         };
