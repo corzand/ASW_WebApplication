@@ -413,7 +413,7 @@ function TasksViewModelDefinition() {
             $dialog.dialog({
                 autoOpen: true,
                 height: 450,
-                width: 450,
+                width: 400,
                 modal: true,
                 open: function(event, ui) {
                     if (task.id) {

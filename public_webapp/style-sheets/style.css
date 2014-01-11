@@ -206,14 +206,14 @@ input[type="checkbox"], input[type="radio"] {
     border: 2px solid #D7DADB;
     border-radius: 4px;
     background-color: #202D44;
-    width: 150px;
+    width: 205px;
     height: 34px;
     overflow: hidden;
 }
 
 .select select {
     background: transparent;
-    width: 150px;
+    width: 205px;
     padding: 5px;
     font-size: 16px;
     height: 34px;
@@ -641,7 +641,7 @@ html {
     padding-left: 10px;
 }
 
-#edit-task-popup input[type="text"], #edit-task-popup textarea, #edit-task-popup select{
+#edit-task-popup input[type="text"], #edit-task-popup textarea{
     width: 180px;
 }
 
@@ -794,4 +794,27 @@ html {
 .ui-datepicker a.ui-state-hover {
     background-color: #202D44;
     color: #ffffff;
+}
+
+.ui-datepicker-prev span {
+    cursor: pointer;
+    background-position: center center;
+    background-size: 20px 20px;
+    background-image:url(images/arrow_left_dark.png);
+    
+}
+
+.ui-datepicker-prev:hover span {
+    background-image:url(images/arrow_left.png);
+}
+
+.ui-datepicker-next span {
+    cursor: pointer;
+    background-position: center center;
+    background-size: 20px 20px;
+    background-image:url(images/arrow_right_dark.png);
+}
+
+.ui-datepicker-next:hover span {
+    background-image:url(images/arrow_right.png);
 }
