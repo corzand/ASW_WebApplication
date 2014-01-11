@@ -88,15 +88,26 @@ textarea {
     height: 52px;
 }
 
-input[type="text"].error, input[type="password"].error {
+textarea:focus {
+    border: 2px solid #202D44; 
+}
+
+.error{
     border-color:  #FC4349;
     color: #FC4349;
+}
+
+
+input:focus{
+    border: 2px solid #202D44; 
 }
 
 /* Custom checkbox */
 
 input[type="checkbox"], input[type="radio"] {
     visibility: hidden;
+    width: 0;
+    height: 0;
 }
 
 .checkbox {
@@ -104,7 +115,6 @@ input[type="checkbox"], input[type="radio"] {
     margin-right: 30px;
     position: relative;
     display: inline-block;
-    margin-left: -13px;
     margin-bottom: 3px;
 }
 
@@ -114,6 +124,7 @@ input[type="checkbox"], input[type="radio"] {
     width: 20px;
     height: 20px;
     top: 0;
+    left: 0;
     border-radius: 4px;
     background: #D7DADB;
 }
@@ -191,13 +202,51 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 
+.select{
+    border: 2px solid #D7DADB;
+    border-radius: 4px;
+    background-color: #202D44;
+    width: 150px;
+    height: 34px;
+    overflow: hidden;
+}
+
+.select select {
+    background: transparent;
+    width: 150px;
+    padding: 5px;
+    font-size: 16px;
+    height: 34px;
+    color: #fff;
+    border-style: none;
+    cursor: pointer;
+} 
+
+.select option {
+    cursor: pointer;
+    color: #202D44;
+    background-color: #ffffff;
+}
+
+.select option:hover {
+    background-color: #D7DADB;
+    color: #202D44;
+}
+
+.select option:checked {
+    background-color: #202D44;
+    color: #fff;
+}
+
+.select option:checked:hover {
+    background-color: #D7DADB;
+    color: #202D44;
+}
+
 input.hasDatepicker {
     width: 90px;
 }
 
-input:focus{
-    border: 2px solid #202D44; 
-}
 
 /*Fragment title.jspf*/
 .title {
@@ -291,7 +340,6 @@ input:focus{
     background-color: #6DBCDB;
     padding: 10px;
     margin: 10px auto;
-    width: 325px;
     border-radius: 8px;
 }
 
@@ -589,8 +637,12 @@ html {
 
 /*POP-UP ADD TASK*/
 
-#edit-task-popup {
+#edit-task-popup > div{
+    padding-left: 10px;
+}
 
+#edit-task-popup input[type="text"], #edit-task-popup textarea, #edit-task-popup select{
+    width: 180px;
 }
 
 /* COMMON RULES */
@@ -681,6 +733,7 @@ html {
 .ui-datepicker-trigger {
     vertical-align: middle;
     margin-left: 5px;
+    cursor: pointer;
 }
 
 .arrow {

@@ -10,8 +10,8 @@
         <div class="container horizontal-box fill-box-pack">
             <div class="content fill-box-pack vertical-box">
                 <%@ include file="/WEB-INF/jspf/title.jspf" %>      
-                <div class="fixed-box-pack applet">
-                    <object type="application/x-java-applet">
+                <div class="fixed-box-pack">
+                    <object type="application/x-java-applet" class="applet">
                         <param name="code" value="LoginApplet.class" />
                         <param name="codebase" value="/applet/"/>   
                         <param name="archive" value = "ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" />

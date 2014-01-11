@@ -52,7 +52,7 @@
                             <div class="cell label">Titolo</div>
                             <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                             <div class="cell label">Data</div>
-                            <div class="cell"><input type='text' id='fastAddDate' /><!-- Manual binding --></div>  
+                            <div class="cell"><input type='text' id='fastAddDate'  disabled /><!-- Manual binding --></div>  
                         </div>
                         <div class="row buttons">
                             <button class="button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
@@ -76,10 +76,10 @@
                             </div>
                             <div class="table-row">
                                 <div class="cell">
-                                    <input type='text' id='startDate' /><!-- Manual binding -->
+                                    <input type='text' id='startDate'  disabled /><!-- Manual binding -->
                                 </div>
                                 <div class="cell">
-                                    <input type='text' id='endDate' /><!-- Manual binding -->
+                                    <input type='text' id='endDate'  disabled /><!-- Manual binding -->
                                 </div> 
                                 <button class="button" data-bind="click : actions.search"><span>Applica</span></button>  
                             </div>
@@ -134,7 +134,7 @@
                 </div>
                 <div class="table-row form-row">
                     <div class="cell right-label">Data</div>
-                    <div class="cell"><input type='text' id='taskDate' /><!-- Manual binding --></div>
+                    <div class="cell"><input type='text' id='taskDate' disabled /><!-- Manual binding --></div>
                 </div>
                 <div class="table-row form-row">
                     <div class="cell right-label">Fatto</div>
@@ -157,13 +157,17 @@
                 <div class="table-row form-row">
                     <div class="cell right-label">Categoria</div>
                     <div class="cell">
-                        <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
+                        <div class="select">
+                            <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
+                        </div>
                     </div>
                 </div>
                 <div class="table-row form-row">
                     <div class="cell right-label">Utente assegnato</div>
                     <div class="cell">
-                        <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
+                        <div class="select">
+                            <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
+                        </div>
                     </div>
                 </div>
             </div>
