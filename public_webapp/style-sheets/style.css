@@ -564,14 +564,26 @@ html {
     border-bottom-right-radius: 6px;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned{
-    width:40px;  
-    vertical-align: middle; 
+.container > .tasks  .days-list .timeline > .day > .task-list .task .user{
+    width:40px;
+    vertical-align: middle;
     background-color: #D7DADB;
     padding:5px;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .drop-user{
+.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):first-child .user{
+    border-top-left-radius: 6px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):last-child .user {
+    border-bottom-left-radius: 6px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .user.assigned{
+    background-color: #202D44;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .user .drop-user{
     width: 30px;
     height: 30px;
     margin: 5px;
@@ -583,7 +595,7 @@ html {
     background-position: center center;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .dropped-user {
+.container > .tasks  .days-list .timeline > .day > .task-list .task .user .dropped-user {
     width: 30px;
     height: 30px;
     margin: 5px;
@@ -597,7 +609,7 @@ html {
     line-height: 26px;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task .assigned .dropped-user img{
+.container > .tasks  .days-list .timeline > .day > .task-list .task .user .dropped-user img{
     max-height:26px;
     max-width:26px;
     border-radius: 4px;

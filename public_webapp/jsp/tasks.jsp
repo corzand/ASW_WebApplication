@@ -97,7 +97,7 @@
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
                                 <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}">
-                                    <div class="assigned cell">
+                                    <div class="user cell" data-bind="css : { 'assigned' : assigned() }">
                                         <!-- ko if: assigned() -->
                                         <div class="dropped-user">
                                             <img data-bind=" attr : { src : AssignedUser().picture }" />
