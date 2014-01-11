@@ -124,45 +124,48 @@
         </div>
         <div id="edit-task-popup" style="display:none;">
             <div>
-                <div class="row">
-                    <div>Titolo</div>
-                    <div><input type="text" data-bind="value : title" /></div>
+                <div class="table-row">
+                    <div class="cell">Titolo</div>
+                    <div class="cell"><input type="text" data-bind="value : title" /></div>
                 </div>
-                <div class="row">
-                    <div>Descrizione</div>
-                    <div><textarea data-bind="value : description" ></textarea></div>
+                <div class="table-row">
+                    <div class="cell">Descrizione</div>
+                    <div class="cell"><textarea data-bind="value : description" ></textarea></div>
                 </div>
-                <div class="row">
-                    <div>Data</div>
-                    <div><input type='text' id='taskDate' /><!-- Manual binding --></div>
+                <div class="table-row">
+                    <div class="cell">Data</div>
+                    <div class="cell"><input type='text' id='taskDate' /><!-- Manual binding --></div>
                 </div>
-                <div class="row">
-                    <div>Fatto</div>
-                    <div><input type="checkbox" data-bind="checked : done"/></div>
+                <div class="table-row">
+                    <div class="cell">Fatto</div>
+                    <div class="cell">
+                        <div class="checkbox">
+                            <input id="chkDone" type="checkbox" data-bind="checked : done"/>
+                            <label for="chkDone"></label>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div>Privato</div>
-                    <div><input type="checkbox" data-bind="checked : personal"/></div>
+                <div class="table-row">
+                    <div class="cell">Privato</div>
+                    <div class="cell">
+                        <div class="checkbox">
+                            <input id="chkPersonal" type="checkbox" data-bind="checked : personal"/>
+                            <label for="chkPersonal"></label>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    <div>Categoria</div>
-                    <div>
+                <div class="table-row">
+                    <div class="cell">Categoria</div>
+                    <div class="cell">
                         <select data-bind="options: Categories, optionsText: 'title', value: Category"></select>                        
                     </div>
                 </div>
-                <div class="row">
-                    <div>Utente assegnato</div>
-                    <div>
+                <div class="table-row">
+                    <div class="cell">Utente assegnato</div>
+                    <div class="cell">
                         <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
                     </div>
                 </div>
-                <div>
-                    <div>Posizione</div>
-                    <div>
-                        <!-- TODO -->
-                    </div>                    
-                </div>
             </div>
-        </div>
     </body>
 </html>

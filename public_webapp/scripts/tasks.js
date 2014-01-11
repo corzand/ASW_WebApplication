@@ -412,8 +412,8 @@ function TasksViewModelDefinition() {
             var boundTask;
             $dialog.dialog({
                 autoOpen: true,
-                height: 300,
-                width: 350,
+                height: 450,
+                width: 450,
                 modal: true,
                 open: function(event, ui) {
                     if (task.id) {
