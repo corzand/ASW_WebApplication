@@ -54,7 +54,7 @@ function userViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.editUser = function() {
-            if ($(".editUserDiv").validate().form()) {
+            if ($(".edit-user").validate().form()) {
                 self.services.editUserData.request();
             }
         };
@@ -64,7 +64,7 @@ function userViewModelDefinition() {
         var utils = this;
 
         utils.initValidation = function() {
-            $(".editUserForm").validate({
+            $(".edit-user").validate({
                 rules: {
                     firstName: "required",
                     lastName: "required",
@@ -121,7 +121,7 @@ $(document).ready(function() {
         reader.readAsDataURL(file);
     });
     var userViewModel = new userViewModelDefinition();
-    ko.applyBindings(userViewModel, $(".editUserDiv")[0]);
+    ko.applyBindings(userViewModel, $(".edit-user")[0]);
 
     userViewModel.utils.initValidation();
 });
