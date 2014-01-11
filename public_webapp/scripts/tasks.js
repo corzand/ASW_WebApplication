@@ -412,7 +412,7 @@ function TasksViewModelDefinition() {
             var boundTask;
             $dialog.dialog({
                 autoOpen: true,
-                height: 450,
+                height: 400,
                 width: 450,
                 modal: true,
                 open: function(event, ui) {
@@ -459,7 +459,7 @@ function TasksViewModelDefinition() {
                 buttons: [
                     {
                         text: "Aggiungi",
-                        class: "addButton",
+                        class: "button",
                         click: function() {
                             self.actions.addDialog($dialog, boundTask);
                         }

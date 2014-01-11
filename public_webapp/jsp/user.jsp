@@ -20,7 +20,7 @@
                         <div>Password: </div><div><input name="oldPassword" data-bind="value : oldPassword" type="password" /></div>
                         <div>Nuova Password : </div><div><input id="newPassword" name="newPassword" data-bind="value : newPassword" type="password" /></div>
                         <div>Conferma Password : </div><div><input id="confirmNewPassword" name="confirmNewPassword" data-bind="value : confirmNewPassword" type="password" /></div>
-                        <a class="button editUser-button" data-bind="click : actions.editUser" >Modifica</a>
+                        <button class="button editUser-button" data-bind="click : actions.editUser" ><span>Modifica</span></button>
                     </div>
                 </div>
                 <div class="image">

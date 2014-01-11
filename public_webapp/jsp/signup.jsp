@@ -36,7 +36,7 @@
                         <div class="cell right-label">Conferma Password: </div>
                         <div class="cell"><input name="confirmPassword" data-bind="value : confirmPassword" type="password"/></div> 
                     </div>
-                    <a class="button signUpButton" data-bind="click : actions.signUp" >Registrati</a>
+                    <button class="button signUpButton" data-bind="click : actions.signUp" ><span>Registrati</span></button>
                 </form>  
             </div>
         </div>
