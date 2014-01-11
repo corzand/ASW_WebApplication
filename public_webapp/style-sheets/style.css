@@ -278,7 +278,11 @@ input:focus{
 }
 
 .applet{
-
+    background-color: #6DBCDB;
+    padding: 10px;
+    margin: 10px auto;
+    width: 325px;
+    border-radius: 8px;
 }
 
 /*signup.jsp*/
@@ -350,7 +354,7 @@ input:focus{
 
 /*tasks.jsp*/
 html {    
-    background: url(images/bg.png) no-repeat center center fixed;
+    background: url(images/backgroundGrigio.png) no-repeat center center fixed;
     background-size: cover;    
 }
 
