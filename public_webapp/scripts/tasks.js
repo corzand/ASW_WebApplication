@@ -25,24 +25,35 @@ function TasksViewModelDefinition() {
         task.timeStamp = params.timeStamp;
 
         task.visible = ko.computed(function() {
-            var categoryVisible = false;
+            var visible = false;
+            
             $.each(self.Categories(), function(index, category) {
                 if (category.id() === task.Category().id()) {
-                    categoryVisible = category.state();
+                    visible = category.state();
                 }
             });
-            if (categoryVisible) {
-                if (self.personal()) {
-                    return task.userId() === loggedUser.id
+            
+            if(self.personal() && visible){
+                visible = visible && task.userId() === loggedUser.id
                             || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id);
-                } else {
-                    return task.userId() === loggedUser.id
+            } else if (!self.personal() && visible){
+                visible = visible && task.userId() === loggedUser.id
                             || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id)
                             || !task.personal();
-                }
-            } else {
-                return false;
             }
+            
+            if(task.done() && visible){
+                visible = self.done();
+            }
+            
+            if(!task.done() && visible){
+                visible = self.todo();
+            }
+            
+            return visible;
+        });
+        task.expired = ko.computed(function(){
+           return !task.done() && (task.date.getTime() < self.today.getTime());
         });
         task.assigned = ko.computed(function() {
             return task.AssignedUser();
@@ -60,11 +71,14 @@ function TasksViewModelDefinition() {
     };
     
     self.personal = ko.observable(true);
+    self.todo = ko.observable(true);
+    self.done = ko.observable(false);
     self.Categories = ko.observableArray([]);
     self.Users = ko.observableArray([]);
     self.Days = ko.observableArray([]);
     self.startDate = new Date();
     self.endDate = new Date();
+    self.today = getMidnightDate(new Date());
     self.NewTask = new function() {
         var newTask = this;
         newTask.title = ko.observable("");
@@ -568,11 +582,13 @@ function TasksViewModelDefinition() {
         };
 
         domUtils.initDroppable = function(element, task) {
+            console.log(element);
             $(element).droppable({
                 activeClass: "ui-state-hover",
                 hoverClass: "ui-state-active",
                 accept: ".draggable",
                 drop: function(event, ui){
+                    console.log(event);
                     task.AssignedUser(self.utils.getUserById($(ui.helper).data('id')));
                     self.services.edit.request(task, task);
                 }
@@ -792,7 +808,7 @@ function TasksViewModelDefinition() {
                 }
             }
 
-            self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .assigned"), taskToPush);
+            self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .user"), taskToPush);
             
             return taskToPush;
         };

@@ -31,6 +31,22 @@
                             <span>Tutti i tasks</span>
                         </div>
                     </div>
+                    <div class="todo-filter">                    
+                        <div>
+                            <div class="row">
+                                <div class="checkbox">
+                                    <input id='chk_todo' type="checkbox" data-bind="checked : todo"/><label for='chk_todo'></label>
+                                </div>
+                                <span>Da fare</span>
+                            </div>
+                            <div class="row">
+                                <div class="checkbox">
+                                    <input id='chk_done' type="checkbox" data-bind="checked : done"/><label for='chk_done'></label>
+                                </div>
+                                <span>Fatti</span>
+                            </div>
+                        </div> 
+                    </div>
                     <div class="categories-filter">                    
                         <div><h2>Categorie</h2></div>
                         <div data-bind="foreach : Categories">
@@ -87,8 +103,8 @@
                     </div>
                     <div class='fixed-box-pack users-bar horizontal-box' data-bind="foreach : Users">
                         <div class="fixed-box-pack">
-                            <div class="draggable">
-                                <img data-bind="attr : { src : picture, title : username, 'data-id' : id }" />
+                            <div class="draggable" data-bind="attr : { 'data-id' : id }">
+                                <img data-bind="attr : { src : picture, title : username}" />
                             </div>
                         </div>
                     </div>
@@ -96,7 +112,7 @@
                         <div class="day fixed-box-pack vertical-box">
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
-                                <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}">
+                                <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}, css: {'expired' : expired, 'visible' : visible}">
                                     <div class="user cell" data-bind="css : { 'assigned' : assigned() }">
                                         <!-- ko if: assigned() -->
                                         <div class="dropped-user">
@@ -107,7 +123,7 @@
                                         <div class="drop-user" title="Trascina un utente per assegnarlo al task"></div>
                                         <!-- /ko -->
                                     </div>
-                                    <div class="task-title cell">
+                                    <div class="task-title cell" data-bind="css : { 'done' : done }">
                                         <a data-bind="text : title, click : $root.actions.edit"></a>
                                     </div>
                                     <div class="task-check cell">

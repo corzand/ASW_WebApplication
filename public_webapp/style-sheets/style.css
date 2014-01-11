@@ -117,7 +117,6 @@ input[type="checkbox"], input[type="radio"] {
 
 .checkbox {
     width: 20px;
-    margin-right: 30px;
     position: relative;
     display: inline-block;
     margin-bottom: 3px;
@@ -151,14 +150,14 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 .checkbox label:hover::after {
-    opacity: 1;
+    opacity: 0.3;
 }
 
 .checkbox input[type=checkbox]:checked + label:after {
     opacity: 1;
 }
 
-.checkbox input[type=checkbox]:checked + label{
+.checkbox input[type=checkbox] + label{
     background: #202D44;
 }
 
@@ -166,7 +165,7 @@ input[type="checkbox"], input[type="radio"] {
 .radiobutton {
     width: 23px;
     height: 23px;
-    background: #D7DADB;	
+    background: #202D44;	
     border-radius: 50px;
     position: relative;
     display:inline-block;
@@ -545,18 +544,18 @@ html {
 .container > .tasks  .days-list .timeline > .day > .task-list .task {
     height: 50px;
     display: table;
-    border-bottom: 2px solid #D7DADB;
-    border-left: 2px solid #D7DADB;
-    border-right: 2px solid #D7DADB;
+    border-bottom: 2px solid #202D44;
+    border-left: 2px solid #202D44;
+    border-right: 2px solid #202D44;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):first-child {
+.container > .tasks  .days-list .timeline > .day > .task-list .visible:first-child{
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
-    border-top: 2px solid #D7DADB;
+    border-top: 2px solid #202D44;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):last-child {
+.container > .tasks  .days-list .timeline > .day > .task-list .visible:last-child {
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
 }
@@ -568,16 +567,20 @@ html {
     padding:5px;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):first-child .user{
-    border-top-left-radius: 6px;
+.container > .tasks  .days-list .timeline > .day > .task-list .task.visible:first-child .user{
+    border-top-left-radius: 2px;
 }
 
-.container > .tasks  .days-list .timeline > .day > .task-list .task:not([style="display: none"]):last-child .user {
-    border-bottom-left-radius: 6px;
+.container > .tasks  .days-list .timeline > .day > .task-list .task.visible:last-child .user {
+    border-bottom-left-radius: 2px;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .user.assigned{
     background-color: #202D44;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .user.assigned{
+    background-color: #FC4349;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .user .drop-user{
@@ -587,9 +590,13 @@ html {
     border-radius: 4px;
     background-color: #202D44;
     background-image: url(images/user_light.png);
-    background-size: 26px 26px;
+    background-size: 27px 27px;
     background-repeat: no-repeat;
     background-position: center center;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .user .drop-user {
+    background-color: #FC4349;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .user .dropped-user {
@@ -597,13 +604,16 @@ html {
     height: 30px;
     margin: 5px;
     margin: 5px;
-    border: 1px solid #202D44;
     border-radius: 4px;
     width:30px;
     height: 30px;
     background-color: #202D44;
     text-align: center;
     line-height: 26px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .user .dropped-user {
+    background-color: #FC4349;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .user .dropped-user img{
@@ -614,13 +624,30 @@ html {
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title{
-    width:140px;
+    width:170px;
     padding: 0 10px;
     vertical-align: middle;
 }
 
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .task-title {
+    color: #FC4349;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .checkbox input[type=checkbox] + label{ 
+    background-color: #FC4349;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-title.done{
+    text-decoration: line-through;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-title a{
+    cursor: pointer;
+}
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-check{
     vertical-align: middle;
+    text-align: center;
+    padding-right: 10px;
 }
 
 .notification-box {
