@@ -88,15 +88,20 @@ textarea {
     height: 52px;
 }
 
+
+
 textarea:focus {
     border: 2px solid #202D44; 
 }
 
-.error{
-    border-color:  #FC4349;
+input.error{
+    border: 2px solid #FC4349;
     color: #FC4349;
 }
 
+.error {
+    color: #FC4349;
+}
 
 input:focus{
     border: 2px solid #202D44; 
@@ -377,38 +382,30 @@ input.hasDatepicker {
 }
 
 /*edituser.jsp*/
-.editUserDiv {
+
+.edit-user {
+    width: 600px;
+    background-color: #6DBCDB;
+    padding: 20px 10px;
+    margin: 50px auto;
+    border-radius: 8px;
+}
+
+.edit-user .right {
+    padding-top: 5px;
+}
+
+.edit-user .right img {
     margin-top: 15px;
-    margin-left: 30px;
-}
-
-.editUserDiv .image {
-    margin-top: 20px;
-    float: left;
-}
-
-.editUserDiv .image img {
-    margin-top: 10px;
     margin-bottom: 10px;
     max-width: 200px;
     height: auto;
 }
 
-.editUserDiv .data {
-    margin-top: 20px;
-    width: 200px;
-    float: left;
+.edit-user .clear {
+    text-align: right;
+    padding-right: 10px;
 }
-
-.editUserDiv .data > .password {
-    margin-top: 25px;
-}
-
-.editUser-button {
-    margin-top: 10px;
-    margin-left: 5px;
-}
-
 
 /*tasks.jsp*/
 html {    
@@ -721,11 +718,6 @@ html {
     line-height: normal;
 }
 
-.error{
-    border-color: #cd0a0a;
-    color: #cd0a0a;
-}
-
 .hidden {
     display: none;
 }
@@ -746,6 +738,7 @@ html {
     background-size: 24px 24px;
 }
 
+
 .arrow.arrow-down {
     background-image: url(images/arrow_down.png);
 }
@@ -764,6 +757,11 @@ html {
 
 .right-label {
     text-align: right;
+    padding-right: 10px;
+}
+
+.left-label {
+    text-align: left;
     padding-right: 10px;
 }
 
@@ -794,4 +792,16 @@ html {
 .ui-datepicker a.ui-state-hover {
     background-color: #202D44;
     color: #ffffff;
+}
+
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.clear {
+    clear: both;
 }
