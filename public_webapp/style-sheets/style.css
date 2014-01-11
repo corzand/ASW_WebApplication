@@ -828,3 +828,15 @@ html {
 .ui-datepicker-next:hover span {
     background-image:url(images/arrow_right.png);
 }
+
+.left {
+    float:left;
+}
+
+.right {
+    float:right;
+}
+
+.clear {
+    clear: both;
+}
