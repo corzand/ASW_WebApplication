@@ -46,7 +46,7 @@
                     </div>
                 </div>
                 <div class="right">
-                    <div>Nuova immagine: </div> 
+                    <div>Immagine: </div> 
                     <div>
                         <img data-bind="attr : {src: picture}"/>
                     </div>

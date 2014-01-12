@@ -584,8 +584,8 @@ function TasksViewModelDefinition() {
         domUtils.initDroppable = function(element, task) {
             console.log(element);
             $(element).droppable({
-                activeClass: "ui-state-hover",
-                hoverClass: "ui-state-active",
+                activeClass: "droppable-hover",
+                hoverClass: "droppable-active",
                 accept: ".draggable",
                 drop: function(event, ui){
                     console.log(event);
@@ -606,8 +606,8 @@ function TasksViewModelDefinition() {
                 scroll: false,
                 helper: "clone",
                 zIndex: 100,
-                snap: ".drop-user",
-                snapMode: "inner",
+                /*snap: ".drop-user",*/
+                /*snapMode: "inner",*/
                 drag: function(event, ui) {
                     $(".task-list").each(function() {
                         var $this = $(this);

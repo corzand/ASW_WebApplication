@@ -3,13 +3,19 @@
     <id>1</id>
     <title>Casa</title>
     <state>true</state>
-    <color>#acacac</color>
+    <color>#00ff59</color>
   </Category>
   <Category>
     <id>2</id>
     <title>Lavoro</title>
     <state>false</state>
-    <color>#12C587</color>
+    <color>#ff9000</color>
   </Category>
-  <progId>2</progId>
+  <Category>
+    <id>3</id>
+    <title>Sport</title>
+    <state>false</state>
+    <color>#9400ff</color>
+  </Category>
+  <progId>3</progId>
 </Categories>

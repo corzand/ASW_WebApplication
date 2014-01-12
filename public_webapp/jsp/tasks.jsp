@@ -15,6 +15,7 @@
                     <a class="arrow arrow-left" data-bind="click: actions.toggleCategories "></a>
                 </div>
                 <div class="categories-content">
+                    <h2>Filtri</h2>
                     <div class="private-filter">
                         <div class="row">
                             <div class="radiobutton" data-bind="css : { checked : personal() }">
@@ -30,7 +31,7 @@
                             </div>
                             <span>Tutti i tasks</span>
                         </div>
-                    </div>
+                    </div>                    
                     <div class="todo-filter">                    
                         <div>
                             <div class="row">
@@ -48,11 +49,11 @@
                         </div> 
                     </div>
                     <div class="categories-filter">                    
-                        <div><h2>Categorie</h2></div>
+                        <h2>Categorie</h2>
                         <div data-bind="foreach : Categories">
                             <div class="row">
                                 <div class="checkbox">
-                                    <input type="checkbox" data-bind="attr : { name : title, id : 'cat_'+id() }, checked : state"/><label data-bind="attr: { for : 'cat_'+id()} "></label>
+                                    <input type="checkbox" data-bind="attr : { name : title, id : 'cat_'+id() }, checked : state"/><label data-bind="attr: { for : 'cat_'+id()}, style : { 'background-color' : color } "></label>
                                 </div>
                                 <span data-bind="text : title"></span>
                             </div>
@@ -69,10 +70,10 @@
                             <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                             <div class="cell label">Data</div>
                             <div class="cell"><input type='text' id='fastAddDate'  disabled /><!-- Manual binding --></div>  
-                        </div>
-                        <div class="row buttons">
-                            <button class="button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
-                            <button class="button" data-bind="click : $root.actions.addFast"><span>Aggiungi</span></button>
+                            <div class="cell buttons">
+                                <button class="button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
+                                <button class="button" data-bind="click : $root.actions.addFast"><span>Aggiungi</span></button>
+                            </div>                            
                         </div>
                     </div>
                 </div>          
@@ -80,14 +81,15 @@
                     <div class="filters fixed-box-pack toolbar">
                         <div>
                             <a class="arrow arrow-down" data-bind="click: actions.toggleFilters "></a>
+                            <span class="header">La tua Time-Line</span>
                         </div>
                         <div class="filters-content hidden">
                             <div class="table-row">
                                 <div class="cell">
-                                    <span>Data Inizio</span>
+                                    <span>Da</span>
                                 </div>
                                 <div class="cell">
-                                    <span>Data Fine</span>
+                                    <span>A</span>
                                 </div>    
                             </div>
                             <div class="table-row">
@@ -103,20 +105,30 @@
                     </div>
                     <div class='fixed-box-pack users-bar horizontal-box' data-bind="foreach : Users">
                         <div class="fixed-box-pack">
-                            <div class="draggable" data-bind="attr : { 'data-id' : id }">
-                                <img data-bind="attr : { src : picture, title : username}" />
+                            <div class="draggable" data-bind="attr : { 'data-id' : id, title : username}">
+                                <!-- ko if: picture() !== "" -->
+                                <img data-bind="attr : { src : picture}" />
+                                <!-- /ko -->
+                                <!-- ko if: picture() === '' -->
+                                <div class="username-initial" data-bind='text : username().charAt(0)'></div>
+                                <!-- /ko -->
                             </div>
                         </div>
                     </div>
                     <div class="timeline horizontal-box fill-box-pack" data-bind="foreach : Days">
-                        <div class="day fixed-box-pack vertical-box">
+                        <div class="day fixed-box-pack vertical-box" data-bind="css : { 'today' : day.getTime() === $root.today.getTime() }">
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
-                                <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}, css: {'expired' : expired, 'visible' : visible}">
-                                    <div class="user cell" data-bind="css : { 'assigned' : assigned() }">
+                                <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}, css: {'expired' : expired}">
+                                    <div class="user cell" data-bind="css : { 'assigned' : assigned() }, style: { 'background-color' : Category().color }">
                                         <!-- ko if: assigned() -->
                                         <div class="dropped-user">
+                                            <!-- ko if: AssignedUser().picture() !== "" -->
                                             <img data-bind=" attr : { src : AssignedUser().picture }" />
+                                            <!-- /ko -->
+                                            <!-- ko if: AssignedUser().picture() === '' -->
+                                            <div class="username-initial" data-bind='text : AssignedUser().username().charAt(0)'></div>
+                                            <!-- /ko -->
                                         </div>
                                         <!-- /ko -->
                                         <!-- ko if: !assigned() -->
