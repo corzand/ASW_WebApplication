@@ -122,9 +122,9 @@ input[type="checkbox"], input[type="radio"] {
 
 .checkbox {
     width: 20px;
+    height: 20px;
     position: relative;
     display: inline-block;
-    margin-bottom: 3px;
 }
 
 .checkbox label {
@@ -449,7 +449,7 @@ html {
 
 .container > .categories .private-filter {
     margin-bottom: 20px;
-    
+
 }
 
 .container > .categories .todo-filter {
@@ -655,17 +655,13 @@ html {
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title{
-    width:170px;
-    padding: 0 10px;
+    padding: 0 5px;
     vertical-align: middle;
+    cursor: pointer;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task.expired .task-title {
     color: #FC4349;
-}
-
-.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .checkbox input[type=checkbox] + label{ 
-    background-color: #FC4349;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title.done{
@@ -673,17 +669,47 @@ html {
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title a{
-    cursor: pointer;
+    width: 140px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: inline-block;
 }
 
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-title a:hover {
     text-decoration: underline;
 }
 
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-delay {
+    vertical-align: middle;
+    padding: 0 5px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task .task-delay a{
+    display:block;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background-image: url(images/delay.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 16px 16px;
+    background-color: #202D44;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .task-delay a{
+    background-color: #FC4349;
+}
+
 .container > .tasks  .days-list .timeline > .day > .task-list .task .task-check{
     vertical-align: middle;
     text-align: center;
-    padding-right: 10px;
+    padding: 0 5px;
+}
+
+.container > .tasks  .days-list .timeline > .day > .task-list .task.expired .task-check .checkbox input[type=checkbox] + label{ 
+    background-color: #FC4349;
 }
 
 .notification-box {
@@ -737,6 +763,7 @@ html {
 
 .cell {
     display: table-cell;
+    white-space: nowrap;
 }
 
 .row {
@@ -874,7 +901,7 @@ html {
     background-position: center center;
     background-size: 20px 20px;
     background-image:url(images/arrow_left_dark.png);
-    
+
 }
 
 .ui-datepicker-prev:hover span {

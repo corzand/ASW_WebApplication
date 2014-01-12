@@ -32,7 +32,6 @@ public class TasksManager extends FileManager {
         } else {
             _tasks = new ArrayList<>();
         }
-        //Eventualmente, leggere il contenuto del file Users.xml e impostare gli oggetti in memoria.
     }
 
     public static synchronized TasksManager getInstance() {
@@ -80,36 +79,6 @@ public class TasksManager extends FileManager {
         } else {
             toAdd = toAdd && false;
         }
-//        if (request.getPersonal()) {
-//            if (request.getUserId() == task.getUserId()
-//                    || request.getUserId() == task.getAssignedUserId()) {
-//                toAdd = toAdd && true;
-//            } else {
-//                toAdd = toAdd && false;
-//            }
-//        } else {
-//            if (request.getUserId() == task.getUserId()
-//                    || request.getUserId() == task.getAssignedUserId()
-//                    || !request.getPersonal()) {
-//                toAdd = toAdd && true;
-//            } else {
-//                toAdd = toAdd && false;
-//            }
-//        }
-
-//        boolean categoryMatch = false;
-//        for (Category category : request.getCategories()) {
-//            if (task.getCategoryId() == category.getId()) {
-//                categoryMatch = true;
-//                break;
-//            }
-//        }
-//
-//        if (categoryMatch) {
-//            toAdd = toAdd && true;
-//        } else {
-//            toAdd = toAdd && false;
-//        }
         return toAdd;
     }
 

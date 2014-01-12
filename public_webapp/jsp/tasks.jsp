@@ -54,7 +54,7 @@
                         <div data-bind="foreach : Categories">
                             <div class="row">
                                 <div class="checkbox">
-                                    <input type="checkbox" data-bind="attr : { name : title, id : 'cat_'+id() }, checked : state"/><label data-bind="attr: { for : 'cat_'+id()}, style : { 'background-color' : color } "></label>
+                                    <input type="checkbox" data-bind="attr : { name : title, id : 'cat_'+id() }, checked : state"/><label data-bind="attr: { for : 'cat_'+id()}, style : { 'backgroundColor' : color } "></label>
                                 </div>
                                 <span data-bind="text : title"></span>
                             </div>
@@ -113,7 +113,7 @@
                             <h2 class="fixed-box-pack" data-bind="text: $root.utils.getDayHeader($data)"></h2>
                             <div class="task-list" class="fill-box-pack" data-bind="foreach : Tasks">
                                 <div class="task" data-bind="visible: visible, attr : { 'data-id' : id}, css: {'expired' : expired}">
-                                    <div class="user cell" data-bind="css : { 'assigned' : assigned() }, style: { 'background-color' : Category().color }">
+                                    <div class="user cell" data-bind="css : { 'assigned' : assigned() }, style: { 'backgroundColor' : Category().color }">
                                         <!-- ko if: assigned() -->
                                         <div class="dropped-user">
                                             <!-- ko if: AssignedUser().picture() !== "" -->
@@ -128,8 +128,11 @@
                                         <div class="drop-user" title="Trascina un utente per assegnarlo al task"></div>
                                         <!-- /ko -->
                                     </div>
-                                    <div class="task-title cell" data-bind="css : { 'done' : done }">
-                                        <a data-bind="text : title, click : $root.actions.edit"></a>
+                                    <div class="task-title cell" data-bind="css : { 'done' : done }, click : $root.actions.edit, attr: { title : description}">
+                                        <a data-bind="text : title"></a>
+                                    </div>
+                                    <div  class="task-delay cell">
+                                        <a class="delay-button" title="posticipa" data-bind="click: $root.actions.delay"></a>
                                     </div>
                                     <div class="task-check cell">
                                         <div class="checkbox">

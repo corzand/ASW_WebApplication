@@ -8,13 +8,13 @@
   <Category>
     <id>2</id>
     <title>Lavoro</title>
-    <state>false</state>
+    <state>true</state>
     <color>#ff9000</color>
   </Category>
   <Category>
     <id>3</id>
     <title>Sport</title>
-    <state>false</state>
+    <state>true</state>
     <color>#9400ff</color>
   </Category>
   <progId>3</progId>

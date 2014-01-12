@@ -226,23 +226,6 @@ public class Tasks extends HttpServlet {
                         context.complete();
                     }
                 }
-//                for (int i = contexts.size() - 1; i >= 0; i--) {
-//                    TaskPollingAsyncRequest asyncRequest = contexts.get(i);
-//                    if (userId != asyncRequest.getRequestViewModel().getUserId()
-//                            && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
-//                        //Notify!
-//                        contexts.remove(i);
-//                        AsyncContext context = asyncRequest.getContext();
-//                        HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
-//
-//                        TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
-//                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
-//                        clientToPush.getOutputStream().print(jsonResponse);
-//                        clientToPush.getOutputStream().flush();
-//
-//                        context.complete();
-//                    }
-//                }
                 semaphore.release();
 
             } catch (InterruptedException | IOException ex) {
