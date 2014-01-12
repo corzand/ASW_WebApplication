@@ -36,10 +36,10 @@ function dateDiff(d1, d2) {
     return parseInt((d2 - d1) / (24 * 3600 * 1000));
 }
 
-function getMidnightDate(d){
-    return new Date(d.setHours(0,0,0,0));
+function getMidnightDate(d) {
+    return new Date(d.setHours(0, 0, 0, 0));
 }
-    
+
 
 function compareDate(d1, d2) {
 
@@ -52,7 +52,30 @@ function compareDate(d1, d2) {
 }
 
 function decodeHtmlEntity(str) {
-  return str.replace(/&#(\d+)/g, function(match, dec) {
-    return String.fromCharCode(dec);
-  });
-};
+    return str.replace(/&#(\d+)/g, function(match, dec) {
+        return String.fromCharCode(dec);
+    });
+}
+
+function customShowErrors() {
+    return true;
+}
+
+function customInvalidHandler(event, validator) {
+    $("#validation-dialog").empty();
+
+    for (var i = 0; i < validator.errorList.length; i++) {
+        var $error = $("<span>").text(validator.errorList[i].message);
+        $("#validation-dialog").append($error);
+    }
+
+    $("#validation-dialog").dialog({
+        dialogClass: 'alert',
+        autoOpen: true,
+        modal: true,
+        close: function() {
+            $("#validation-dialog").dialog("destroy");
+        }
+    });
+}
+

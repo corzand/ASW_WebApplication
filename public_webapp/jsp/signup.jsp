@@ -8,10 +8,11 @@
     </head>
     <body class="vertical-box">
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
+        <%@ include file="/WEB-INF/jspf/validation-dialog.jspf" %> 
         <div class="signUpDiv container horizontal-box fill-box-pack">
             <div class="content fill-box-pack vertical-box">
                 <%@ include file="/WEB-INF/jspf/title.jspf" %>   
-                <form class="signUpForm fixed-box-pack">
+                <form id="sign-up-form" class="signUpForm fixed-box-pack">
                     <div class="table-row form-row">
                         <div class="cell right-label">Nome :</div>
                         <div class="cell"><input name="firstName" data-bind="value : firstName" type="text"/></div>

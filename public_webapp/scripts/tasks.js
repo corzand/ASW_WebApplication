@@ -1,7 +1,7 @@
 var notificationType = {
-    addedTask : 0,
-    deletedTask : 1,
-    editedTask : 2
+    addedTask: 0,
+    deletedTask: 1,
+    editedTask: 2
 };
 
 function TasksViewModelDefinition() {
@@ -26,53 +26,53 @@ function TasksViewModelDefinition() {
 
         task.visible = ko.computed(function() {
             var visible = false;
-            
+
             $.each(self.Categories(), function(index, category) {
                 if (category.id() === task.Category().id()) {
                     visible = category.state();
                 }
             });
-            
-            if(self.personal() && visible){
+
+            if (self.personal() && visible) {
                 visible = visible && task.userId() === loggedUser.id
-                            || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id);
-            } else if (!self.personal() && visible){
+                        || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id);
+            } else if (!self.personal() && visible) {
                 visible = visible && task.userId() === loggedUser.id
-                            || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id)
-                            || !task.personal();
+                        || (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id)
+                        || !task.personal();
             }
-            
-            if(task.done() && visible){
+
+            if (task.done() && visible) {
                 visible = self.done();
             }
-            
-            if(!task.done() && visible){
+
+            if (!task.done() && visible) {
                 visible = self.todo();
             }
-            
+
             return visible;
         });
-        task.expired = ko.computed(function(){
-           return !task.done() && (task.date.getTime() < self.today.getTime());
+        task.expired = ko.computed(function() {
+            return !task.done() && (task.date.getTime() < self.today.getTime());
         });
         task.assigned = ko.computed(function() {
             return task.AssignedUser();
         });
     };
-    
-    self.Notification = function (){
+
+    self.Notification = function() {
         var not = this;
         not.title = ko.observable();
         not.description = ko.observable();
         not.task = null;
-        not.show = function (){
+        not.show = function() {
             self.actions.showNotificationTask(not.task);
         };
     };
-    
+
     self.personal = ko.observable(true);
     self.todo = ko.observable(true);
-    self.done = ko.observable(false);
+    self.done = ko.observable(true);
     self.Categories = ko.observableArray([]);
     self.Users = ko.observableArray([]);
     self.Days = ko.observableArray([]);
@@ -92,9 +92,7 @@ function TasksViewModelDefinition() {
         newTask.Category = ko.observable();
         newTask.attachment = ko.observable("");
     };
-    
 
-    
     self.services = {
         "getUsers": {
             "request": function() {
@@ -154,7 +152,7 @@ function TasksViewModelDefinition() {
                             //Add
                             self.utils.pushTask(data.task);
                             self.domUtils.showNotification(data.task, notificationType.addedTask);
-                            
+
                             break;
                         case 1:
                             //Edit
@@ -164,7 +162,7 @@ function TasksViewModelDefinition() {
                                 self.utils.removeTask(data.task);
                                 //if (self.startDate <= new Date(data.task.date) <= self.endDate) {
                                 self.utils.pushTask(data.task);
-                                
+
                                 self.domUtils.showNotification(data.task, notificationType.editedTask);
                                 //}
                             } else {
@@ -180,7 +178,7 @@ function TasksViewModelDefinition() {
                                 task.Category(self.utils.getCategoryById(data.task.categoryId));
                                 task.attachment(data.task.attachment);
                                 task.timeStamp = data.task.timeStamp;
-                                
+
                                 self.domUtils.showNotification(data.task, notificationType.editedTask);
                             }
                             break;
@@ -370,20 +368,19 @@ function TasksViewModelDefinition() {
         };
 
         actions.addFast = function() {
-            if (self.utils.validate(self.NewTask)) {
+            if ($("#add-bar-form").validate().form()) {
                 self.services.add.request(null, self.NewTask);
             }
         };
 
         actions.addDialog = function($dialog, task) {
-            if (self.utils.validate(task)) {
+            if ($("#edit-task-form").validate().form()) {
                 self.services.add.request($dialog, task);
             }
-
         };
 
         actions.save = function(task, boundTask, $dialog) {
-            if (self.utils.validate(boundTask)) {
+            if ($("#edit-task-form").validate().form()) {
                 self.services.edit.request(task, boundTask, $dialog);
             }
         };
@@ -413,8 +410,8 @@ function TasksViewModelDefinition() {
         actions.toggleCategories = function(data, event) {
             self.domUtils.toggleCategories(event.target);
         };
-        
-        actions.showNotificationTask = function(task){
+
+        actions.showNotificationTask = function(task) {
             self.domUtils.openDialog(task);
         };
     };
@@ -517,17 +514,23 @@ function TasksViewModelDefinition() {
                 showOn: "button",
                 buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
+                maxDate: self.endDate,
                 onSelect: function() {
                     self.startDate = $("#startDate").datepicker("getDate");
+                    $("#endDate").datepicker("option", "minDate", self.startDate);
                 }
             });
             $("#startDate").datepicker("setDate", self.startDate);
+
+
             $("#endDate").datepicker({
                 showOn: "button",
                 buttonImage: "/style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
+                minDate: self.startDate,
                 onSelect: function() {
                     self.endDate = $("#endDate").datepicker("getDate");
+                    $("#startDate").datepicker("option", "maxDate", self.endDate);
                 }
             });
             $("#endDate").datepicker("setDate", self.endDate);
@@ -587,7 +590,7 @@ function TasksViewModelDefinition() {
                 activeClass: "droppable-hover",
                 hoverClass: "droppable-active",
                 accept: ".draggable",
-                drop: function(event, ui){
+                drop: function(event, ui) {
                     console.log(event);
                     task.AssignedUser(self.utils.getUserById($(ui.helper).data('id')));
                     self.services.edit.request(task, task);
@@ -677,36 +680,60 @@ function TasksViewModelDefinition() {
 
             domUtils.setDragBounds();
         };
-        
-        domUtils.showNotification = function(task, type){
+
+        domUtils.showNotification = function(task, type) {
             var notification = new self.Notification();
-            if(type === notificationType.addedTask){
-                notification.title("!");                
-                notification.description("Task "+ task.title + " aggiunto");
+            if (type === notificationType.addedTask) {
+                notification.title("!");
+                notification.description("Task " + task.title + " aggiunto");
                 self.Notification.task = task;
-            }else if (type === notificationType.editedTask){
-                notification.title("!");                
-                notification.description("Task "+ task.title + " modificato");
+            } else if (type === notificationType.editedTask) {
+                notification.title("!");
+                notification.description("Task " + task.title + " modificato");
                 self.Notification.task = task;
-            }else if (type === notificationType.deletedTask) {
-                notification.title("!");                
-                notification.description("Task "+ task.title + " eliminato");
+            } else if (type === notificationType.deletedTask) {
+                notification.title("!");
+                notification.description("Task " + task.title + " eliminato");
                 self.Notification.task = task;
             }
-            
-            var $div = $("<div>", {class: "notification-box", "data-bind":"click : title"});
-            $div.append($("<h2>", { "data-bind":" text : title"}));
-            $div.append($("<div>", { "data-bind":" text : description"}));
+
+            var $div = $("<div>", {class: "notification-box", "data-bind": "click : title"});
+            $div.append($("<h2>", {"data-bind": " text : title"}));
+            $div.append($("<div>", {"data-bind": " text : description"}));
             $("body").append($div);
-            $div.fadeIn("slow", function(){                
-                setTimeout(function(){
-                    $div.fadeOut("slow", function(){
+            $div.fadeIn("slow", function() {
+                setTimeout(function() {
+                    $div.fadeOut("slow", function() {
                         ko.cleanNode($div[0]);
                         $div.remove();
                     });
-                },10000);
+                }, 10000);
             });
             ko.applyBindings(notification, $div[0]);
+        };
+
+        domUtils.initValidation = function() {
+            $("#add-bar-form").validate({
+                rules: {
+                    fastTitle: "required"
+                },
+                messages: {
+                    fastTitle: "Il titolo è obbligatorio"
+                },
+                errorPlacement: function(error, element) {},
+                invalidHandler: customInvalidHandler
+            });
+
+            $("#edit-task-form").validate({
+                rules: {
+                    title: "required"
+                },
+                messages: {
+                    title: "Il titolo è obbligatorio"
+                },
+                errorPlacement: function(error, element) {},
+                invalidHandler: customInvalidHandler
+            });
         };
     };
     self.utils = new function() {
@@ -754,13 +781,6 @@ function TasksViewModelDefinition() {
             self.NewTask.Category();
             self.NewTask.attachment("");
         };
-        utils.validate = function(task) {
-            if (task.title() !== "") {
-                return true;
-            } else {
-                alert("Il nuovo task deve avere un titolo!");
-            }
-        };
         utils.getTaskById = function(id) {
             for (var i = 0; i < self.Days().length; i++) {
                 for (var j = 0; j < self.Days()[i].Tasks().length; j++) {
@@ -789,27 +809,27 @@ function TasksViewModelDefinition() {
             for (var i = 0; i < self.Days().length && !pushed; i++) {
                 if (compareDate(new Date(task.date), self.Days()[i].day)) {
                     taskToPush = new self.Task({
-                                id: task.id,
-                                title: task.title,
-                                description: task.description,
-                                date: task.date,
-                                done: task.done,
-                                personal: task.personal,
-                                userId: task.userId,
-                                assignedUserId: task.assignedUserId,
-                                categoryId: task.categoryId,
-                                latitude: task.latitude,
-                                longitude: task.longitude,
-                                attachment: task.attachment,
-                                timeStamp: task.timeStamp
-                            });
+                        id: task.id,
+                        title: task.title,
+                        description: task.description,
+                        date: task.date,
+                        done: task.done,
+                        personal: task.personal,
+                        userId: task.userId,
+                        assignedUserId: task.assignedUserId,
+                        categoryId: task.categoryId,
+                        latitude: task.latitude,
+                        longitude: task.longitude,
+                        attachment: task.attachment,
+                        timeStamp: task.timeStamp
+                    });
                     self.Days()[i].Tasks.push(taskToPush);
                     pushed = true;
                 }
             }
 
             self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .user"), taskToPush);
-            
+
             return taskToPush;
         };
         utils.getDayHeader = function(day) {
@@ -830,16 +850,17 @@ $(document).ready(function() {
         tasksViewModel.domUtils.initDraggables();
         tasksViewModel.utils.initDates();
         tasksViewModel.domUtils.initDatePickers();
+        tasksViewModel.domUtils.initValidation();
         tasksViewModel.services.search.request();
-        
+
         $(".assigned").droppable({
-                activeClass: "ui-state-hover",
-                hoverClass: "ui-state-active",
-                accept: ".draggable",
-                drop: function(event, ui){
-                    $( this ).addClass( "ui-state-highlight" );
-                }
-            });
+            activeClass: "ui-state-hover",
+            hoverClass: "ui-state-active",
+            accept: ".draggable",
+            drop: function(event, ui) {
+                $(this).addClass("ui-state-highlight");
+            }
+        });
     });
 });
 

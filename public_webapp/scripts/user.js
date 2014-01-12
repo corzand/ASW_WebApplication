@@ -84,7 +84,6 @@ function userViewModelDefinition() {
                             {
                                 return "#confirmNewPassword";
                             }
-
                         }
                     }
                 },
@@ -101,7 +100,9 @@ function userViewModelDefinition() {
                     confirmNewPassword: {
                         equalTo: "Le due password devono coincidere"
                     }
-                }
+                },
+                errorPlacement: function(error, element) {},
+                invalidHandler: customInvalidHandler
             });
         };
     };

@@ -9,6 +9,7 @@
     <body class="vertical-box"> 
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
+        <%@ include file="/WEB-INF/jspf/validation-dialog.jspf" %>
         <div class="container horizontal-box fill-box-pack">
             <div class="categories fixed-box-pack">
                 <div class="toggle-arrow">
@@ -63,11 +64,11 @@
             </div>
             <div class="tasks fill-box-pack vertical-box">                
                 <div class='fixed-box-pack' data-bind="with : NewTask">
-                    <div class="add-bar">
+                    <form id="add-bar-form" class="add-bar">
                         <h1>Nuovo Task</h1>
                         <div class="row">
                             <div class="cell label">Titolo</div>
-                            <div class="cell"><input type="text" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
+                            <div class="cell"><input type="text" name="fastTitle" placeholder="Inserire titolo..." data-bind="value : title" /></div>                            
                             <div class="cell label">Data</div>
                             <div class="cell"><input type='text' id='fastAddDate'  disabled /><!-- Manual binding --></div>  
                             <div class="cell buttons">
@@ -75,29 +76,21 @@
                                 <button class="button" data-bind="click : $root.actions.addFast"><span>Aggiungi</span></button>
                             </div>                            
                         </div>
-                    </div>
+                    </form>
                 </div>          
                 <div class='days-list fill-box-pack vertical-box'>
                     <div class="filters fixed-box-pack toolbar">
                         <div>
                             <a class="arrow arrow-down" data-bind="click: actions.toggleFilters "></a>
-                            <span class="header">La tua Time-Line</span>
+                            <span class="header">Time-Line</span>
                         </div>
                         <div class="filters-content hidden">
                             <div class="table-row">
                                 <div class="cell">
-                                    <span>Da</span>
+                                    <span class="right-label">Da</span><input type='text' id='startDate'  disabled /><!-- Manual binding -->
                                 </div>
                                 <div class="cell">
-                                    <span>A</span>
-                                </div>    
-                            </div>
-                            <div class="table-row">
-                                <div class="cell">
-                                    <input type='text' id='startDate'  disabled /><!-- Manual binding -->
-                                </div>
-                                <div class="cell">
-                                    <input type='text' id='endDate'  disabled /><!-- Manual binding -->
+                                    <span class="right-label">A</span><input type='text' id='endDate'  disabled /><!-- Manual binding -->
                                 </div> 
                                 <button class="button" data-bind="click : actions.search"><span>Applica</span></button>  
                             </div>
@@ -151,10 +144,10 @@
             </div>
         </div>
         <div id="edit-task-popup" style="display:none;">
-            <div>
+            <form id="edit-task-form">
                 <div class="table-row form-row">
                     <div class="cell right-label">Titolo</div>
-                    <div class="cell"><input type="text" data-bind="value : title" /></div>
+                    <div class="cell"><input type="text" name="title" data-bind="value : title" /></div>
                 </div>
                 <div class="table-row form-row">
                     <div class="cell right-label">Descrizione</div>
@@ -198,7 +191,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </body>
 </html>

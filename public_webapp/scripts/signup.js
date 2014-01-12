@@ -37,8 +37,7 @@ function signUpViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.signUp = function() {
-            
-            if($(".signUpDiv").validate().form()){
+            if($("#sign-up-form").validate().form()){
                 self.services.signUp.request();
             }
         };
@@ -48,7 +47,7 @@ function signUpViewModelDefinition() {
         var utils = this;
         
         utils.initValidation = function() {
-            $(".signUpForm").validate({
+            $("#sign-up-form").validate({
                 rules: {
                     firstName: "required",
                     lastName: "required",
@@ -72,7 +71,7 @@ function signUpViewModelDefinition() {
                     firstName: "Inserisci il nome",
                     lastName: "Inserisci il cognome",
                     email: {
-                        required: "Inserisci un email",
+                        required: "Inserisci l'email",
                         email: "L'email deve avere il seguente formato nome@dominio.com"
                     },
                     username: {
@@ -86,7 +85,9 @@ function signUpViewModelDefinition() {
                     confirmPassword: {
                         equalTo: "Le due password devono coincidere"
                     }
-                }
+                },
+                errorPlacement: function(error, element) {},
+                invalidHandler: customInvalidHandler
             });
         };
     };

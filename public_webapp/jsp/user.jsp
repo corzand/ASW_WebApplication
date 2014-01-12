@@ -9,6 +9,7 @@
     <body class="vertical-box">
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 
+        <%@ include file="/WEB-INF/jspf/validation-dialog.jspf" %> 
         <div class="container fill-box-pack"> 
             <form class="edit-user">
                 <div class="left">

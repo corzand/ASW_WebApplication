@@ -99,6 +99,11 @@ input.error{
     color: #FC4349;
 }
 
+input.error:focus{
+    border: 2px solid #FC4349;
+    color: #FC4349;
+}
+
 .error {
     color: #FC4349;
 }
@@ -907,3 +912,21 @@ html {
     text-transform:uppercase;
     color:#ffffff;
 }
+
+/* validation-dialog.jspf */
+
+.ui-dialog.alert {
+    background-color: #FC4349;
+}
+
+.ui-dialog.alert #validation-dialog span {
+    display: block;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.ui-dialog.alert .ui-dialog-content {
+    border: 0;
+}
+
+/* END validation-dialog.jspf */
