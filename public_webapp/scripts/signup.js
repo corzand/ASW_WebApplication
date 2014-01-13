@@ -6,7 +6,7 @@ function signUpViewModelDefinition() {
     self.username = ko.observable('');
     self.password = ko.observable('');
     self.confirmPassword = ko.observable('');
-    
+
     self.services = {
         "signUp": {
             "request": function() {
@@ -27,9 +27,12 @@ function signUpViewModelDefinition() {
             },
             "callback": function(data) {
                 if (!data.error) {
-                    window.location.href = "/application/login";
+                    ShowPositiveFeedback("Utente aggiunto correttamente");
+                    setTimeout(function() {
+                        window.location.href = "/application/login";
+                    }, 2000);
                 } else {
-                    alert(data.errorMessage);
+                    ShowNegativeFeedback(data.errorMessage);
                 }
             }
         }
@@ -37,15 +40,15 @@ function signUpViewModelDefinition() {
     self.actions = new function() {
         var actions = this;
         actions.signUp = function() {
-            if($("#sign-up-form").validate().form()){
+            if ($("#sign-up-form").validate().form()) {
                 self.services.signUp.request();
             }
         };
     };
-    
+
     self.utils = new function() {
         var utils = this;
-        
+
         utils.initValidation = function() {
             $("#sign-up-form").validate({
                 rules: {
@@ -64,7 +67,7 @@ function signUpViewModelDefinition() {
                         minlength: 6
                     },
                     confirmPassword: {
-                        equalTo: "#password" 
+                        equalTo: "#password"
                     }
                 },
                 messages: {
@@ -86,7 +89,8 @@ function signUpViewModelDefinition() {
                         equalTo: "Le due password devono coincidere"
                     }
                 },
-                errorPlacement: function(error, element) {},
+                errorPlacement: function(error, element) {
+                },
                 invalidHandler: customInvalidHandler
             });
         };
@@ -98,6 +102,6 @@ $(document).ready(function() {
 //init view model and stuff
     var signUpViewModel = new signUpViewModelDefinition();
     ko.applyBindings(signUpViewModel, $(".signUpDiv")[0]);
-    
+
     signUpViewModel.utils.initValidation();
 });

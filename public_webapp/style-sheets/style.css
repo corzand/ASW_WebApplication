@@ -923,26 +923,51 @@ input.hasDatepicker {
     background-color: #FC4349;
 }
 
-/* Notification Box */
-
-.notification-box {
-    cursor: pointer;
+.fade-in-box {
     display: none;
     z-index: 100;
     position: absolute;
-    top: 83px;
-    right: 10px;
-    width: 150px;
-    height: 100px;
-    border-radius: 6px;
-    background: #FC4349;
-    color: #fff;
+    top: 4px;
+    left: calc(50% - 150px);    
+    height: 45px;    
+    width: 300px;
     padding: 10px;
+    text-align: center;
+    font-size: 16px;
+    border-radius: 6px;
+}
+
+/* Notification Box */
+
+.fade-in-box.notification-box {
+    cursor: pointer;
+    background: #ff9000;
+    color: #fff;
     text-align: center;
 }
 
-.notification-box h2 {
-    font-size: 40px;
+.fade-in-box.notification-box h2 {
+    font-size: 25px;
+}
+
+.fade-in-box.notification-box span {
+    padding-top: 10px;
+    font-size: 15px;
+}
+
+/* Positive Feedback Box  */
+
+.fade-in-box.positive-feedback-box {    
+    line-height: 45px;
+    border-radius: 6px;
+    background: #00ff59;
+    color: #ffffff;
+}
+
+.fade-in-box.negative-feedback-box {    
+    line-height: 45px;
+    border-radius: 6px;
+    background: #FC4349;
     color: #ffffff;
 }
 

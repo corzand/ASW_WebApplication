@@ -79,3 +79,28 @@ function customInvalidHandler(event, validator) {
     });
 }
 
+function showPositiveFeedback(message) {
+    var $div = $("<div>", {class: "fade-in-box positive-feedback-box"});
+    $div.append($("<span>").text(message));
+    $("body").append($div);
+    $div.fadeIn("slow", function() {
+        setTimeout(function() {
+            $div.fadeOut("slow", function() {
+                $div.remove();
+            });
+        }, 2000);
+    });
+}
+
+function showNegativeFeedback() {
+    var $div = $("<div>", {class: "fade-in-box negative-feedback-box"});
+    $div.append($("<span>").text(message));
+    $("body").append($div);
+    $div.fadeIn("slow", function() {
+        setTimeout(function() {
+            $div.fadeOut("slow", function() {
+                $div.remove();
+            });
+        }, 2000);
+    });
+}

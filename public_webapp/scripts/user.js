@@ -44,9 +44,12 @@ function userViewModelDefinition() {
             },
             "callback": function(data) {
                 if (!data.error) {
-                    window.location.href = "/application/tasks";
+                    ShowPositiveFeedback("Utente aggiornato correttamente.");
+                    setTimeout(function() {
+                        window.location.href = "/application/tasks";
+                    }, 2000);
                 } else {
-                    alert(data.errorMessage);
+                    ShowNegativeFeedback(data.errorMessage);
                 }
             }
         }
@@ -101,7 +104,8 @@ function userViewModelDefinition() {
                         equalTo: "Le due password devono coincidere"
                     }
                 },
-                errorPlacement: function(error, element) {},
+                errorPlacement: function(error, element) {
+                },
                 invalidHandler: customInvalidHandler
             });
         };

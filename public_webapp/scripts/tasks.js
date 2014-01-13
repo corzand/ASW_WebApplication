@@ -259,8 +259,10 @@ function TasksViewModelDefinition() {
                     }
 
                     self.utils.resetNewTask();
+                    
+                    showPositiveFeedback("Salvataggio effettuato correttamente.");
                 } else {
-                    alert(data.errorMessage);
+                    showNegativeFeedback(data.errorMessage);
                 }
             }
         },
@@ -318,7 +320,9 @@ function TasksViewModelDefinition() {
                 }
 
                 if (data.error) {
-                    alert(data.errorMessage);
+                    showNegativeFeedback(data.errorMessage);
+                } else {
+                    showPositiveFeedback("Salvataggio effettuato correttamente.");
                 }
 
                 if (params.$dialog) {
@@ -348,8 +352,9 @@ function TasksViewModelDefinition() {
                     if ($dialog) {
                         $dialog.dialog("close");
                     }
+                    showPositiveFeedback("Eliminazione effettuata correttamente.");
                 } else {
-                    alert(data.errorMessage);
+                    showNegativeFeedback(data.errorMessage);
                 }
             }
         }
@@ -695,9 +700,9 @@ function TasksViewModelDefinition() {
                 notification.description("Task " + task.title + " eliminato");
             }
 
-            var $div = $("<div>", {class: "notification-box", "data-bind": notification.task !== null ? "click : show" : "style: { 'cursor' : 'default'}"});
+            var $div = $("<div>", {class: "fade-in-box notification-box", "data-bind": notification.task !== null ? "click : show" : "style: { 'cursor' : 'default'}"});
             $div.append($("<h2>", {"data-bind": " text : title"}));
-            $div.append($("<div>", {"data-bind": " text : description"}));
+            $div.append($("<span>", {"data-bind": " text : description"}));
             $("body").append($div);
             $div.fadeIn("slow", function() {
                 setTimeout(function() {
