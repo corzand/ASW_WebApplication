@@ -27,12 +27,12 @@ function signUpViewModelDefinition() {
             },
             "callback": function(data) {
                 if (!data.error) {
-                    ShowPositiveFeedback("Utente aggiunto correttamente");
+                    showPositiveFeedback("Utente aggiunto correttamente");
                     setTimeout(function() {
                         window.location.href = "/application/login";
                     }, 2000);
                 } else {
-                    ShowNegativeFeedback(data.errorMessage);
+                    showNegativeFeedback(data.errorMessage);
                 }
             }
         }
@@ -46,10 +46,10 @@ function signUpViewModelDefinition() {
         };
     };
 
-    self.utils = new function() {
-        var utils = this;
+    self.domUtils = new function() {
+        var domUtils = this;
 
-        utils.initValidation = function() {
+        domUtils.initValidation = function() {
             $("#sign-up-form").validate({
                 rules: {
                     firstName: "required",
@@ -103,5 +103,5 @@ $(document).ready(function() {
     var signUpViewModel = new signUpViewModelDefinition();
     ko.applyBindings(signUpViewModel, $(".signUpDiv")[0]);
 
-    signUpViewModel.utils.initValidation();
+    signUpViewModel.domUtils.initValidation();
 });

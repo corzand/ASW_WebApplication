@@ -13,14 +13,13 @@ function userViewModelDefinition() {
         if (self.userPicture() !== '') {
             return self.userPicture();
         } else {
-            return '/style-sheets/images/user50.png';
+            return '/style-sheets/images/user_light.png';
         }
     });
 
     self.oldPassword = ko.observable("");
     self.newPassword = ko.observable("");
     self.confirmNewPassword = ko.observable("");
-
 
     self.services = {
         "editUserData": {
@@ -44,12 +43,12 @@ function userViewModelDefinition() {
             },
             "callback": function(data) {
                 if (!data.error) {
-                    ShowPositiveFeedback("Utente aggiornato correttamente.");
+                    showPositiveFeedback("Utente aggiornato correttamente.");
                     setTimeout(function() {
                         window.location.href = "/application/tasks";
                     }, 2000);
                 } else {
-                    ShowNegativeFeedback(data.errorMessage);
+                    showNegativeFeedback(data.errorMessage);
                 }
             }
         }
@@ -61,12 +60,31 @@ function userViewModelDefinition() {
                 self.services.editUserData.request();
             }
         };
+        
+        actions.readImage = function() {
+            $('#pictureButton').click();
+        };
     };
 
-    self.utils = new function() {
-        var utils = this;
+    self.domUtils = new function() {
+        var domUtils = this;
 
-        utils.initValidation = function() {
+        domUtils.initFileReader = function() {
+            
+            $('#pictureButton').change(function(evt) {
+                var file = evt.target.files[0];
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    self.newPicture = reader.result;
+                    self.userPicture(reader.result);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        };
+        
+        domUtils.initValidation = function() {
             $(".edit-user").validate({
                 rules: {
                     firstName: "required",
@@ -82,9 +100,7 @@ function userViewModelDefinition() {
                         equalTo: function() {
                             if (self.newPassword() !== "") {
                                 return "#newPassword";
-                            }
-                            else
-                            {
+                            } else {
                                 return "#confirmNewPassword";
                             }
                         }
@@ -114,19 +130,10 @@ function userViewModelDefinition() {
 
 $(document).ready(function() {
     //init view model and stuff
-    $('#pictureButton').change(function(evt) {
-        var file = evt.target.files[0];
-        var reader = new FileReader();
 
-        reader.onload = function(e) {
-            userViewModel.newPicture = reader.result;
-            userViewModel.userPicture(reader.result);
-        };
-
-        reader.readAsDataURL(file);
-    });
     var userViewModel = new userViewModelDefinition();
     ko.applyBindings(userViewModel, $(".edit-user")[0]);
 
-    userViewModel.utils.initValidation();
+    userViewModel.domUtils.initValidation();
+    userViewModel.domUtils.initFileReader();
 });

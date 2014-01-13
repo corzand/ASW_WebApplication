@@ -598,22 +598,32 @@ input.hasDatepicker {
 /*edituser.jsp*/
 
 .edit-user {
-    width: 600px;
+    width: 560px;
     background-color: #6DBCDB;
     padding: 20px 10px;
     margin: 50px auto;
     border-radius: 8px;
 }
 
+.edit-user #pictureButton {
+    display: none;
+}
+
+.edit-user .left {
+    margin-left: 20px;
+}
+
 .edit-user .right {
     padding-top: 5px;
+    margin-right: 20px;
 }
 
 .edit-user .right img {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    max-width: 200px;
+    max-width: 170px;
     height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 6px;
 }
 
 .edit-user .clear {

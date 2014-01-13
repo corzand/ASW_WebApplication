@@ -23,7 +23,7 @@ function sendRequest(settings) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
+            showNegativeFeedback(errorThrown);
             if (settings.errorCallback) {
                 settings.errorCallback(settings.callbackParameter);
             }

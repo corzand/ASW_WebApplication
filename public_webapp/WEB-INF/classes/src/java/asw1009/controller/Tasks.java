@@ -181,8 +181,7 @@ public class Tasks extends HttpServlet {
 
         EditTaskResponseViewModel response = new EditTaskResponseViewModel();
         if (request != null) {
-            response = TasksManager.getInstance().editTask(request);
-            response.setError(false);
+            response = TasksManager.getInstance().editTask(request);            
         } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");

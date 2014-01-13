@@ -53,6 +53,7 @@
                         <img data-bind="attr : {src: picture}"/>
                     </div>
                     <div>
+                        <button class="button" data-bind="click : actions.readImage"><span>Seleziona Immagine</span></button>
                         <input type="file" id="pictureButton" accept="image/x-png, image/gif, image/jpeg" />
                     </div>
                 </div>    
