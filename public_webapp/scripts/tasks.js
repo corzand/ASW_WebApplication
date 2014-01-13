@@ -451,7 +451,21 @@ function TasksViewModelDefinition() {
                             boundTask.date = $("#taskDate").datepicker("getDate");
                         }
                     });
+
                     $("#taskDate").datepicker("setDate", boundTask.date);
+
+                    $("#edit-task-form").validate({
+                        rules: {
+                            title: "required"
+                        },
+                        messages: {
+                            title: "Il titolo è obbligatorio"
+                        },
+                        errorPlacement: function(error, element) {
+                        },
+                        invalidHandler: customInvalidHandler
+                    });
+
                     ko.applyBindings(boundTask, $dialog[0]);
                 },
                 buttons: [
@@ -667,7 +681,7 @@ function TasksViewModelDefinition() {
         };
 
         domUtils.showNotification = function(task, type) {
-            var notification = new self.Notification();            
+            var notification = new self.Notification();
             notification.title("!");
             if (type === notificationType.addedTask) {
                 notification.description("Task " + task.title + " aggiunto");
@@ -709,17 +723,6 @@ function TasksViewModelDefinition() {
                 invalidHandler: customInvalidHandler
             });
 
-            $("#edit-task-form").validate({
-                rules: {
-                    title: "required"
-                },
-                messages: {
-                    title: "Il titolo è obbligatorio"
-                },
-                errorPlacement: function(error, element) {
-                },
-                invalidHandler: customInvalidHandler
-            });
         };
     };
     self.utils = new function() {

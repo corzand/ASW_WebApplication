@@ -15,7 +15,8 @@
                 <div class="left">
                     <div class="table-row form-row">
                         <div class="cell right-label">Username: </div>
-                        <div class="cell left-label"><div data-bind="text: username"></div>
+                        <div class="cell left-label">
+                            <span data-bind="text: username"></span>
                         </div>
                     </div>
 

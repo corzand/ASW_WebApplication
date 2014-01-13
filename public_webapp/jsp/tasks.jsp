@@ -72,7 +72,7 @@
                             <div class="cell label">Data</div>
                             <div class="cell"><input type='text' id='fastAddDate'  disabled /><!-- Manual binding --></div>  
                             <div class="cell buttons">
-                                <button class="button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
+                                <button class="button image-button edit-button" data-bind="click : $root.actions.edit"><span></span></button>
                                 <button class="button" data-bind="click : $root.actions.addFast"><span>Aggiungi</span></button>
                             </div>                            
                         </div>
