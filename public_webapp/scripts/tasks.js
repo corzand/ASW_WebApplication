@@ -24,6 +24,21 @@ function TasksViewModelDefinition() {
         task.attachment = ko.observable(params.attachment);
         task.timeStamp = params.timeStamp;
 
+        task.accessible = ko.computed(function() {
+            var accessible = true;
+            if (task.userId() === loggedUser.id) {
+                accessible = accessible && true;
+            } else if (task.personal() === false) {
+                accessible = accessible && true;
+            } else if (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id) {
+                accessible = accessible && true;
+            } else {
+                accessible = accessible && false;
+            }
+            
+            return accessible;
+        });
+
         task.visible = ko.computed(function() {
             var visible = false;
 
@@ -153,8 +168,10 @@ function TasksViewModelDefinition() {
                             var task = self.utils.getTaskById(data.task.id);
                             if (task === null) {
                                 //Add
-                                self.utils.pushTask(data.task);
-                                self.domUtils.showNotification(data.task, notificationType.addedTask);
+                                var pushedTask = self.utils.pushTask(data.task);
+                                if (pushedTask.accessible()) {
+                                    self.domUtils.showNotification(data.task, notificationType.addedTask);
+                                }
                             } else {
                                 //Edit
                                 if (task.date.getTime() !== new Date(data.task.date).getTime()) {
@@ -174,14 +191,18 @@ function TasksViewModelDefinition() {
                                     task.attachment(data.task.attachment);
                                     task.timeStamp = data.task.timeStamp;
                                 }
-
-                                self.domUtils.showNotification(data.task, notificationType.editedTask);
+                                if (task.accessible()) {
+                                    self.domUtils.showNotification(data.task, notificationType.editedTask);
+                                }
                             }
                             break;
                         case 2:
                             //Delete
-                            self.utils.removeTask(data.task);
-                            self.domUtils.showNotification(data.task, notificationType.deletedTask);
+                            var removedTask = self.utils.removeTask(data.task);
+                            if (removedTask.accessible()) {
+                                self.domUtils.showNotification(data.task, notificationType.deletedTask);
+                            }
+
                             break;
                     }
                 }
@@ -259,7 +280,7 @@ function TasksViewModelDefinition() {
                     }
 
                     self.utils.resetNewTask();
-                    
+
                     showPositiveFeedback("Salvataggio effettuato correttamente.");
                 } else {
                     showNegativeFeedback(data.errorMessage);
@@ -787,12 +808,11 @@ function TasksViewModelDefinition() {
         };
         utils.removeTask = function(task) {
             var removed = false;
-            for (var i = 0; i < self.Days().length && !removed; i++) {
-                for (var j = 0; j < self.Days()[i].Tasks().length && !removed; j++) {
+            for (var i = 0; i < self.Days().length; i++) {
+                for (var j = 0; j < self.Days()[i].Tasks().length; j++) {
                     //var task = self.Days()[i].tasks()[j];
                     if (task.id === self.Days()[i].Tasks()[j].id()) {
-                        self.Days()[i].Tasks.splice(j, 1);
-                        removed = true;
+                        return self.Days()[i].Tasks.splice(j, 1)[0];                        
                     }
                 }
             }
