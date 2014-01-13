@@ -13,6 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = {"/application/*"})
+/**
+ * Classe che provvede ad inizializzare i servizi dell'applicazione e 
+ * 
+ * @author ASW1009
+ */
 public class Application extends HttpServlet {
 
     @Override

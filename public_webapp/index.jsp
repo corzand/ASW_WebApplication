@@ -9,13 +9,54 @@
         <%@ include file="/WEB-INF/jspf/top.jspf" %>
         <div class="container horizontal-box fill-box-pack">
             <div class="content fill-box-pack vertical-box">
-                <%@ include file="/WEB-INF/jspf/title.jspf" %>      
+                <%@ include file="/WEB-INF/jspf/title.jspf" %> 
+                <%
+                    //String username = request.getParameter("username");
+                    //String password = request.getParameter("password");
+                    Cookie[] cookies = request.getCookies();
+
+                    String username = "";
+                    String password = "";
+                    int i = 0;
+
+                    int flag = 0;
+
+                    if (cookies == null) {
+                        flag = 0;
+                        System.out.println("nessun cookies");
+                    } else {
+                        for (i = 0; i < cookies.length ; i++) {
+
+                            String name = cookies[i].getName();
+                            String value = cookies[i].getValue();
+                            if (name.equals("username")) {
+                                username = value;
+                                flag++;
+                            }
+                            if (name.equals("password")) {
+                                password = value;
+                                flag++;
+                            }
+                        }
+                    }
+                    /*
+                    
+                     sul server:
+                    
+                     Cookie c = new Cookie("login", log);
+                     c.setMaxAge(180);
+                     response.addCookie(c);
+                    
+                     */
+                %>
                 <div class="fixed-box-pack">
                     <object type="application/x-java-applet" class="applet">
                         <param name="code" value="LoginApplet.class" />
                         <param name="codebase" value="/applet/"/>   
                         <param name="archive" value = "ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" />
                         <param name="sessionId" value="<%= session.getId()%>" />
+                        <param name="username" value="<%= username%>" />
+                        <param name="password" value="<%= password%>" />
                     </object> 
                 </div>
             </div>

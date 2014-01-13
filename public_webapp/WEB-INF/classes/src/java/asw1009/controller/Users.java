@@ -93,7 +93,14 @@ public class Users extends HttpServlet {
 
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    
+                    if (root.getElementsByTagName("remember").item(0).getTextContent().equals("true")) {
+                        Cookie c_username = new Cookie("username", loginRequestViewModel.getUsername());
+                        Cookie c_password = new Cookie("password", loginRequestViewModel.getPassword());
+                        c_password.setMaxAge(-1);
+                        c_username.setMaxAge(-1);
+                        response.addCookie(c_username);
+                        response.addCookie(c_password);
+                    }
 
                     answer = mngXML.newDocument();
 
@@ -119,7 +126,7 @@ public class Users extends HttpServlet {
                         email.setTextContent(loginResponseViewModel.getLoggedUser().getEmail());
                         Element pictureUrl = answer.createElement("pictureUrl");
                         pictureUrl.setTextContent(loginResponseViewModel.getLoggedUser().getPicture());
-                        
+
                         loggedUser.appendChild(id);
                         loggedUser.appendChild(firstName);
                         loggedUser.appendChild(lastName);
@@ -132,14 +139,14 @@ public class Users extends HttpServlet {
                     root.appendChild(errorMessage);
 
                     answer.appendChild(root);
-                    
+
                     loginRequestViewModel.setPassword("");
-                    
+
                     if (!loginResponseViewModel.hasError()) {
                         Gson gson = new Gson();
                         session.setAttribute("user", gson.toJson(loginResponseViewModel.getLoggedUser(), User.class));
                     }
-                    
+
                 }
 
                 mngXML.transform(os, answer);

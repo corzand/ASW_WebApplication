@@ -14,34 +14,60 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Classe singleton rappresentante il gestore dei task.
+ * Contiene la lista delle entità Task.
+ * 
+ * @author ASW1009
+*/
+
 
 public class TasksManager extends FileManager {
 
     private List<Task> _tasks;
     private static TasksManager instance;
-
+    
+    /**
+    * Costruttore di classe.
+    */
     public TasksManager() {
         _tasks = new ArrayList<>();
     }
 
+    
     @Override
+    /**
+    * Metodo che fa l'override del metodo init() della classe FileManager: se il file.xml esiste
+    * istanzia la lista di task leggendo dal file, altrimenti crea una lista di task nuova. 
+    * 
+    * @param directoryPath stringa rappresentante il percorso del file.
+    * @param fileName stringa rappresentante il nome del file.
+    */
     public void init(String directoryPath, String fileName) {
-        super.init(directoryPath, fileName); //To change body of generated methods, choose Tools | Templates.
+        super.init(directoryPath, fileName);
         if (xml.exists()) {
             _tasks = (List<Task>) readXML(Task.class);
         } else {
             _tasks = new ArrayList<>();
         }
     }
-
+    
+    /**
+    * Restituisce l'istanza della classe.
+    * @return instance statico del gestore del task inizilizzato all'inizio a null.
+    */
     public static synchronized TasksManager getInstance() {
         if (instance == null) {
             instance = new TasksManager();
         }
-
         return instance;
     }
-
+    
+   /**
+    * Restituisce il task corrispondente all'id inserito, prendendolo dalla lista dei task 
+    * @param id intero rappresentante l'identificativo del task
+    * @return task relativo alla lista dei task
+    */
     private Task getTaskById(int id) {
 
         for (int i = 0; i < _tasks.size(); i++) {
@@ -50,15 +76,22 @@ public class TasksManager extends FileManager {
                 return task;
             }
         }
-
         return null;
     }
-
-
+    
+    /**
+     * Aggiorna il task scrivendolo 
+     */
     private void _updateXML() {
         writeXML(_tasks, Task.class);
     }
-
+    
+    /**
+     * Metodo che verifica se il task corrente corrisponde alla richiesta
+     * @param task rappresentante un singolo task
+     * @param request indica il viewModel rappresentante la richiesta di match del task
+     * @return toAdd Booleano rappresentante il buon esito del maching
+     */
     public boolean isTaskMatchingRequest(Task task, SearchTasksRequestViewModel request) {
         boolean toAdd = true;
 
@@ -81,7 +114,12 @@ public class TasksManager extends FileManager {
 //        }
         return toAdd;
     }
-
+    
+    /**
+     * Effettua la ricerca dei tasks.
+     * @param request indica il viewModel rappresentante la richiesta di ricerca del task.
+     * @return response che contiene la lista dei task.
+    */
     public SearchTasksResponseViewModel searchTasks(SearchTasksRequestViewModel request) {
         SearchTasksResponseViewModel response = new SearchTasksResponseViewModel();
         List<Task> tasksToAdd = new ArrayList<>();
@@ -97,7 +135,13 @@ public class TasksManager extends FileManager {
 
         return response;
     }
-
+    
+   /**
+    * Metodo invocato per aggiungere un task.
+    * @param request indica il viewModel rappresentate la richiesta di aggiunta del task
+    * da parte del client.
+    * @return response che contiene il task aggiornato.
+    */
     public AddTaskResponseViewModel addTask(AddTaskRequestViewModel request) {
         AddTaskResponseViewModel response = new AddTaskResponseViewModel();
         Date date = new Date();
@@ -126,6 +170,13 @@ public class TasksManager extends FileManager {
         return response;
     }
 
+    /**
+     * Metodo invocato per effettuare la modifica di un task. Verifica che il timeStamp sia uguale
+     * a quello dell'ultima versione, in caso contrario invia un messaggio di errato aggiornamento.
+     * @param request indica il viewModel che rappresenta la richiesta di modifica del task 
+     * da parte del client.
+     * @return viewModel che contiene il task aggiornato.
+     */
     public EditTaskResponseViewModel editTask(EditTaskRequestViewModel request) {
         EditTaskResponseViewModel viewModel = new EditTaskResponseViewModel();
         Task task = getTaskById(request.getId());
@@ -138,10 +189,6 @@ public class TasksManager extends FileManager {
                 task.setDate(request.getDate());
                 task.setDone(request.getDone());
                 task.setCategoryId(request.getCategoryId());
-                
-                //L'owner del task non deve mai variare
-                //task.setUserId(request.getUserId());
-                
                 task.setLatitude(request.getLatitude());
                 task.setLongitude(request.getLongitude());
                 task.setPersonal(request.getPersonal());
@@ -167,6 +214,14 @@ public class TasksManager extends FileManager {
         return viewModel;
     }
 
+    /**
+     * Metodo invocato per effettuare la cancellazione del task. Come per l'editTask si verifica 
+     * che il il timeStamp sia uguale a quello dell'ultima versione, in caso contrario invia 
+     * un messaggio di errato aggiornamento.
+     * @param request indica il viewModel che rappresenta la modifica di cancellazione del task 
+     * da parte del client.
+     * @return viewModel che contiene il task.
+     */
     public DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request) {
         DeleteTaskResponseViewModel viewModel = new DeleteTaskResponseViewModel();
 
