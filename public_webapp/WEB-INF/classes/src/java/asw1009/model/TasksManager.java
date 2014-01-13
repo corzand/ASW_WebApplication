@@ -138,7 +138,10 @@ public class TasksManager extends FileManager {
                 task.setDate(request.getDate());
                 task.setDone(request.getDone());
                 task.setCategoryId(request.getCategoryId());
-                task.setUserId(request.getUserId());
+                
+                //L'owner del task non deve mai variare
+                //task.setUserId(request.getUserId());
+                
                 task.setLatitude(request.getLatitude());
                 task.setLongitude(request.getLongitude());
                 task.setPersonal(request.getPersonal());

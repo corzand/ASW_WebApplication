@@ -284,7 +284,7 @@ function TasksViewModelDefinition() {
                     date: task.date,
                     done: task.done(),
                     personal: task.personal(),
-                    userId: task.userId(),
+                    userId: loggedUser.id,
                     assignedUserId: task.AssignedUser() ? task.AssignedUser().id() : -1,
                     latitude: task.latitude(),
                     longitude: task.longitude(),

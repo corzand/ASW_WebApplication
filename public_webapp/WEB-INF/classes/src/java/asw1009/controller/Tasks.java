@@ -39,7 +39,7 @@ public class Tasks extends HttpServlet {
     private final String ACTION_POLLING = "polling";
     private final String ACTION_DELETE = "delete";
 
-    private HashMap<Integer, TaskPollingAsyncRequest> contexts;
+    private HashMap<String, TaskPollingAsyncRequest> contexts;
     private Semaphore semaphore;
     private Gson gson;
 
@@ -80,7 +80,7 @@ public class Tasks extends HttpServlet {
                     AddTaskResponseViewModel responseData = addTask(requestData);
                     jsonResponse = gson.toJson(responseData, AddTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
-                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 0).start();                        
+                        new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 0).start();                        
                     }
                     break;
                 }
@@ -90,7 +90,7 @@ public class Tasks extends HttpServlet {
                     jsonResponse = gson.toJson(responseData, EditTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
 
-                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 1).start();
+                        new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 1).start();
                         //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
                         //da adesso alla prossima polling request per questo client?
                     }
@@ -105,7 +105,7 @@ public class Tasks extends HttpServlet {
                         //mandare al client, il client resta lì in attesa "infinita"
                         semaphore.acquire();
                         
-                        contexts.put(requestData.getUserId(), new TaskPollingAsyncRequest(asyncContext, requestData));
+                        contexts.put(session.getId(), new TaskPollingAsyncRequest(asyncContext, requestData, session.getId()));
                         
                         semaphore.release();
                     } catch (InterruptedException ex) {
@@ -119,7 +119,7 @@ public class Tasks extends HttpServlet {
                     jsonResponse = gson.toJson(responseData, DeleteTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
 
-                        new pushTaskChangedNotificationThread(requestData.getUserId(), responseData.getTask(), 2).start();
+                        new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 2).start();
                         //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
                         //da adesso alla prossima polling request per questo client?
                     }
@@ -193,12 +193,17 @@ public class Tasks extends HttpServlet {
 
     private class pushTaskChangedNotificationThread extends Thread {
 
-        int userId;
+        //Source of notification
+        String sessionId;
+        
+        //Edited task
         Task task;
+        
+        //Operation
         int operation;
 
-        public pushTaskChangedNotificationThread(int userId, Task task, int operation) {
-            this.userId = userId;
+        public pushTaskChangedNotificationThread(String sessionId, Task task, int operation) {
+            this.sessionId = sessionId;
             this.task = task;
             this.operation = operation;
         }
@@ -207,28 +212,32 @@ public class Tasks extends HttpServlet {
         public void run() {
             try {
                 semaphore.acquire();
-                Iterator<Entry<Integer,TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
+                Iterator<Entry<String,TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
                 while (iter.hasNext()) {
-                    Entry<Integer,TaskPollingAsyncRequest> entry = iter.next();
+                    Entry<String,TaskPollingAsyncRequest> entry = iter.next();
                     TaskPollingAsyncRequest asyncRequest = entry.getValue();
-                    if (userId != asyncRequest.getRequestViewModel().getUserId()
+                    if (!sessionId.equals(asyncRequest.getSessionId())
                             && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
                         //Notify!
                         iter.remove();
                         AsyncContext context = asyncRequest.getContext();
                         HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
-
                         TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
-                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
-                        clientToPush.getOutputStream().print(jsonResponse);
-                        clientToPush.getOutputStream().flush();
-
+                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);                        
+                        
+                        try{
+                            clientToPush.getOutputStream().print(jsonResponse);
+                            clientToPush.getOutputStream().flush();
+                        }catch(IOException ex){
+                            System.out.println("Client disconnected");
+                            //Client disconnected... nothing do do, just bye bye :)
+                        }
                         context.complete();
                     }
                 }
                 semaphore.release();
 
-            } catch (InterruptedException | IOException ex) {
+            } catch (InterruptedException ex) {
                 Logger.getLogger(Tasks.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
