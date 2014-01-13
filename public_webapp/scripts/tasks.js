@@ -667,7 +667,7 @@ function TasksViewModelDefinition() {
         };
 
         domUtils.showNotification = function(task, type) {
-            var notification = new self.Notification();            
+            var notification = new self.Notification();
             notification.title("!");
             if (type === notificationType.addedTask) {
                 notification.description("Task " + task.title + " aggiunto");
@@ -721,6 +721,16 @@ function TasksViewModelDefinition() {
                 invalidHandler: customInvalidHandler
             });
         };
+
+        domUtils.initAddOnEnterKey = function() {            
+            $("input[name='fastTitle']").bind('keypress',function(event) {
+                if (event.keyCode === 13) {
+                    self.actions.addFast();
+                    return false;
+                }
+            });
+        };
+
     };
     self.utils = new function() {
         var utils = this;
@@ -855,6 +865,7 @@ $(document).ready(function() {
         tasksViewModel.utils.initDates();
         tasksViewModel.domUtils.initDatePickers();
         tasksViewModel.domUtils.initValidation();
+        tasksViewModel.domUtils.initAddOnEnterKey();
         tasksViewModel.services.search.request();
 
         $(".assigned").droppable({
