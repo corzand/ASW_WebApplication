@@ -30,6 +30,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * Classe base per le classi manager che implementa la scrittura e la lettura di entità java in file XML
+ * ...continua CORZANI
+*/
+
 public class FileManager {
 
     protected String servletPath;
@@ -38,12 +43,15 @@ public class FileManager {
     protected ManageXML xmlManager;
     private int progId;
     private DateFormat dateFormat;
+    
+    /**
+    *
+    */
 
     protected void init(String servletPath, String fileName) {
         this.servletPath = servletPath;
         this.fileName = fileName;
         this.xml = new File(this.servletPath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
-        //this._xstream = new XStream();
         try {
             this.xmlManager = new ManageXML();
         } catch (TransformerConfigurationException | ParserConfigurationException ex) {
@@ -52,6 +60,10 @@ public class FileManager {
         this.dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
         this.progId = 0;
     }
+    /**
+     * Restituisce l'identificativo progressivo
+     * @return 
+     */
 
     protected int getNextId() {
         progId = progId + 1;
