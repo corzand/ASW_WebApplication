@@ -9,6 +9,9 @@
         <%@ include file="/WEB-INF/jspf/top.jspf" %>
         <div class="container horizontal-box fill-box-pack">
             <div class="content fill-box-pack vertical-box">
+                 <%if (session.getAttribute("user") != null) {
+                     response.sendRedirect("/application/tasks");
+                 }%>
                 <%@ include file="/WEB-INF/jspf/title.jspf" %> 
                 <%
                     //String username = request.getParameter("username");
