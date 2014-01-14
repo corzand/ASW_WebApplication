@@ -24,21 +24,6 @@ function TasksViewModelDefinition() {
         task.attachment = ko.observable(params.attachment);
         task.timeStamp = params.timeStamp;
 
-        task.accessible = ko.computed(function() {
-            var accessible = true;
-            if (task.userId() === loggedUser.id) {
-                accessible = accessible && true;
-            } else if (task.personal() === false) {
-                accessible = accessible && true;
-            } else if (task.AssignedUser() && task.AssignedUser().id() === loggedUser.id) {
-                accessible = accessible && true;
-            } else {
-                accessible = accessible && false;
-            }
-            
-            return accessible;
-        });
-
         task.visible = ko.computed(function() {
             var visible = false;
 
@@ -151,16 +136,36 @@ function TasksViewModelDefinition() {
             }
         },
         "polling": {
-            "request": function(requestData) {
+            "lastPollingRequest": null,
+            "request": function() {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/polling/';
-                rSettings.requestData = requestData;
-                rSettings.callbackParameter = requestData;
+                rSettings.requestData = JSON.stringify(self.services.polling.requestData());
                 rSettings.successCallback = self.services.polling.callback;
-                return sendRequest(rSettings);
+                console.log("new polling request");
+                if (self.services.polling.lastPollingRequest) {
+                    console.log("aborting");
+                    self.services.polling.lastPollingRequest.abort();
+                }
+                self.services.polling.lastPollingRequest = sendRequest(rSettings);
             },
-            "callback": function(data, requestData) {
-                self.services.polling.request(requestData);
+            "requestData": function() {
+                var taskIds = [];
+                for (var i = 0; i < self.Days().length; i++) {
+                    for (var j = 0; j < self.Days()[i].Tasks().length; j++) {
+                        taskIds.push(self.Days()[i].Tasks()[j].id());
+                    }
+                }
+
+                return {
+                    searchRequestViewModel: self.services.search.requestData(),
+                    taskIds: taskIds
+                };
+            },
+            "callback": function(data) {
+
+                self.services.polling.lastPollingRequest = null;
+                console.log("comet!");
                 if (!data.error) {
                     switch (data.operation) {
                         case 0:
@@ -168,10 +173,8 @@ function TasksViewModelDefinition() {
                             var task = self.utils.getTaskById(data.task.id);
                             if (task === null) {
                                 //Add
-                                var pushedTask = self.utils.pushTask(data.task);
-                                if (pushedTask.accessible()) {
-                                    self.domUtils.showNotification(data.task, notificationType.addedTask);
-                                }
+                                self.utils.pushTask(data.task);
+                                self.domUtils.showNotification(data.task, notificationType.addedTask);
                             } else {
                                 //Edit
                                 if (task.date.getTime() !== new Date(data.task.date).getTime()) {
@@ -191,20 +194,18 @@ function TasksViewModelDefinition() {
                                     task.attachment(data.task.attachment);
                                     task.timeStamp = data.task.timeStamp;
                                 }
-                                if (task.accessible()) {
-                                    self.domUtils.showNotification(data.task, notificationType.editedTask);
-                                }
+                                self.domUtils.showNotification(data.task, notificationType.editedTask);
                             }
                             break;
                         case 2:
                             //Delete
-                            var removedTask = self.utils.removeTask(data.task);
-                            if (removedTask.accessible()) {
-                                self.domUtils.showNotification(data.task, notificationType.deletedTask);
-                            }
+                            self.utils.removeTask(data.task);
+                            self.domUtils.showNotification(data.task, notificationType.deletedTask);
 
                             break;
                     }
+
+                    self.services.polling.request();
                 }
             }
         },
@@ -214,7 +215,6 @@ function TasksViewModelDefinition() {
                 rSettings.url = '/tasks/search/';
                 rSettings.requestData = JSON.stringify(self.services.search.requestData());
                 rSettings.successCallback = self.services.search.callback;
-                rSettings.callbackParameter = rSettings.requestData;
                 return sendRequest(rSettings);
             },
             "requestData": function() {
@@ -224,10 +224,8 @@ function TasksViewModelDefinition() {
                     userId: loggedUser.id
                 };
             },
-            "callback": function(data, pollingRequestData) {
+            "callback": function(data) {
                 if (!data.error) {
-
-                    self.services.polling.request(pollingRequestData);
 
                     self.Days.removeAll();
                     var currentDay = new Date(self.startDate);
@@ -243,6 +241,8 @@ function TasksViewModelDefinition() {
                     for (i = 0; i < data.tasks.length; i++) {
                         self.utils.pushTask(data.tasks[i]);
                     }
+
+                    self.services.polling.request();
                 }
             }
         },
@@ -280,6 +280,8 @@ function TasksViewModelDefinition() {
                     }
 
                     self.utils.resetNewTask();
+
+                    self.services.polling.request();
 
                     showPositiveFeedback("Salvataggio effettuato correttamente.");
                 } else {
@@ -373,6 +375,8 @@ function TasksViewModelDefinition() {
                     if ($dialog) {
                         $dialog.dialog("close");
                     }
+
+                    self.services.polling.request();
                     showPositiveFeedback("Eliminazione effettuata correttamente.");
                 } else {
                     showNegativeFeedback(data.errorMessage);
@@ -751,8 +755,8 @@ function TasksViewModelDefinition() {
 
         };
 
-        domUtils.initAddOnEnterKey = function() {            
-            $("input[name='fastTitle']").bind('keypress',function(event) {
+        domUtils.initAddOnEnterKey = function() {
+            $("input[name='fastTitle']").bind('keypress', function(event) {
                 if (event.keyCode === 13) {
                     self.actions.addFast();
                     return false;
@@ -822,7 +826,7 @@ function TasksViewModelDefinition() {
                 for (var j = 0; j < self.Days()[i].Tasks().length; j++) {
                     //var task = self.Days()[i].tasks()[j];
                     if (task.id === self.Days()[i].Tasks()[j].id()) {
-                        return self.Days()[i].Tasks.splice(j, 1)[0];                        
+                        return self.Days()[i].Tasks.splice(j, 1)[0];
                     }
                 }
             }

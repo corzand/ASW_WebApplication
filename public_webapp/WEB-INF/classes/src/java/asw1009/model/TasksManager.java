@@ -103,15 +103,15 @@ public class TasksManager extends FileManager {
             toAdd = toAdd && false;
         }
 
-//        if (task.getUserId() == request.getUserId()) {
-//            toAdd = toAdd && true;
-//        } else if (task.getPersonal() == false) {
-//            toAdd = toAdd && true;
-//        } else if (task.getAssignedUserId() == request.getUserId()) {
-//            toAdd = toAdd && true;
-//        } else {
-//            toAdd = toAdd && false;
-//        }
+        if (task.getUserId() == request.getUserId()) {
+            toAdd = toAdd && true;
+        } else if (task.getPersonal() == false) {
+            toAdd = toAdd && true;
+        } else if (task.getAssignedUserId() == request.getUserId()) {
+            toAdd = toAdd && true;
+        } else {
+            toAdd = toAdd && false;
+        }
         return toAdd;
     }
     

@@ -23,9 +23,11 @@ function sendRequest(settings) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            showNegativeFeedback(errorThrown);
-            if (settings.errorCallback) {
-                settings.errorCallback(settings.callbackParameter);
+            if (textStatus !== "abort") {
+                showNegativeFeedback(errorThrown);
+                if (settings.errorCallback) {
+                    settings.errorCallback(settings.callbackParameter);
+                }
             }
         }
     });
@@ -92,7 +94,7 @@ function showPositiveFeedback(message) {
     });
 }
 
-function showNegativeFeedback() {
+function showNegativeFeedback(message) {
     var $div = $("<div>", {class: "fade-in-box negative-feedback-box"});
     $div.append($("<span>").text(message));
     $("body").append($div);

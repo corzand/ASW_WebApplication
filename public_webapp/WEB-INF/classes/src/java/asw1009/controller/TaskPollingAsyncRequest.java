@@ -1,15 +1,16 @@
 
 package asw1009.controller;
 
+import asw1009.viewmodel.request.PollingRequestViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import javax.servlet.AsyncContext;
 
 public class TaskPollingAsyncRequest {
     private AsyncContext context;
-    private SearchTasksRequestViewModel requestViewModel;
+    private PollingRequestViewModel requestViewModel;
     private String sessionId;
     
-    public TaskPollingAsyncRequest(AsyncContext context, SearchTasksRequestViewModel requestViewModel, String sessionId){
+    public TaskPollingAsyncRequest(AsyncContext context, PollingRequestViewModel requestViewModel, String sessionId){
         this.context = context;
         this.sessionId = sessionId;
         this.requestViewModel = requestViewModel;
@@ -19,7 +20,7 @@ public class TaskPollingAsyncRequest {
         return this.context;
     }
     
-    public SearchTasksRequestViewModel getRequestViewModel(){
+    public PollingRequestViewModel getRequestViewModel(){
         return this.requestViewModel;
     }
     

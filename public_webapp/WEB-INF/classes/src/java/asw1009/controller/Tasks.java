@@ -6,6 +6,7 @@ import asw1009.model.entities.Task;
 import asw1009.viewmodel.request.AddTaskRequestViewModel;
 import asw1009.viewmodel.request.DeleteTaskRequestViewModel;
 import asw1009.viewmodel.request.EditTaskRequestViewModel;
+import asw1009.viewmodel.request.PollingRequestViewModel;
 import asw1009.viewmodel.response.EditTaskResponseViewModel;
 import asw1009.viewmodel.request.SearchTasksRequestViewModel;
 import asw1009.viewmodel.response.AddTaskResponseViewModel;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -80,7 +82,7 @@ public class Tasks extends HttpServlet {
                     AddTaskResponseViewModel responseData = addTask(requestData);
                     jsonResponse = gson.toJson(responseData, AddTaskResponseViewModel.class);
                     if (!responseData.hasError()) {
-                        new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 0).start();                        
+                        new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 0).start();
                     }
                     break;
                 }
@@ -97,16 +99,16 @@ public class Tasks extends HttpServlet {
                     break;
                 }
                 case ACTION_POLLING: {
-                    SearchTasksRequestViewModel requestData = gson.fromJson(json, SearchTasksRequestViewModel.class);
+                    PollingRequestViewModel requestData = gson.fromJson(json, PollingRequestViewModel.class);
                     AsyncContext asyncContext = request.startAsync(request, response);
                     try {
                         asyncContext.setTimeout(0);
                         //il timeout a noi non serve... semplicemente se non ho nulla da
                         //mandare al client, il client resta lì in attesa "infinita"
                         semaphore.acquire();
-                        
+
                         contexts.put(session.getId(), new TaskPollingAsyncRequest(asyncContext, requestData, session.getId()));
-                        
+
                         semaphore.release();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Tasks.class.getName()).log(Level.SEVERE, null, ex);
@@ -164,16 +166,16 @@ public class Tasks extends HttpServlet {
 
         return response;
     }
-    
-    private DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request){
+
+    private DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request) {
         DeleteTaskResponseViewModel response = new DeleteTaskResponseViewModel();
-        if(request != null){
+        if (request != null) {
             response = TasksManager.getInstance().deleteTask(request);
-        }else {
+        } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
         }
-        
+
         return response;
     }
 
@@ -181,7 +183,7 @@ public class Tasks extends HttpServlet {
 
         EditTaskResponseViewModel response = new EditTaskResponseViewModel();
         if (request != null) {
-            response = TasksManager.getInstance().editTask(request);            
+            response = TasksManager.getInstance().editTask(request);
         } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
@@ -194,10 +196,10 @@ public class Tasks extends HttpServlet {
 
         //Source of notification
         String sessionId;
-        
+
         //Edited task
         Task task;
-        
+
         //Operation
         int operation;
 
@@ -206,28 +208,38 @@ public class Tasks extends HttpServlet {
             this.task = task;
             this.operation = operation;
         }
+        
+        private boolean isSubscribedToTask(PollingRequestViewModel requestViewModel, Task task){
+            for(int id : requestViewModel.getTaskIds()){
+                if(id == task.getId())
+                    return true;
+            }
+            
+            return false;
+        }
 
         @Override
         public void run() {
             try {
                 semaphore.acquire();
-                Iterator<Entry<String,TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
+                Iterator<Entry<String, TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
                 while (iter.hasNext()) {
-                    Entry<String,TaskPollingAsyncRequest> entry = iter.next();
+                    Entry<String, TaskPollingAsyncRequest> entry = iter.next();
                     TaskPollingAsyncRequest asyncRequest = entry.getValue();
                     if (!sessionId.equals(asyncRequest.getSessionId())
-                            && TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel())) {
+                            && (TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel().getSearchRequestViewModel())
+                            || isSubscribedToTask(asyncRequest.getRequestViewModel(), task))) {
                         //Notify!
                         iter.remove();
                         AsyncContext context = asyncRequest.getContext();
                         HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
                         TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
-                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);                        
-                        
-                        try{
+                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
+
+                        try {
                             clientToPush.getOutputStream().print(jsonResponse);
                             clientToPush.getOutputStream().flush();
-                        }catch(IOException ex){
+                        } catch (IOException ex) {
                             System.out.println("Client disconnected");
                             //Client disconnected... nothing do do, just bye bye :)
                         }
