@@ -46,7 +46,30 @@ Può accedere alla schermata di modifica dell'utente tramite click sulle informa
         Tramite la top.jspf, visibile in questa view, l'utente anonimo può navigare alla view di registrazione. 
         
         signup.jsp
-        Questa view 
+        Questa view consente al client di procedere con la registrazione di un nuovo utente. La tecnologia utilizzata è l'insieme composto da HTML, Javascript e CSS.
+        Tutti i campi presenti (Nome, Cognome, Email, Username, Password e Conferma Password) sono obbligatori, in caso di assenza di uno di essi o di errori da parte dell'utente (es.: formato mail non idoneo, password troppo corta, conferma errata)
+        la chiamata al servizio di signup non si effettua e all'utente vengono notificati gli errori commessi.
+        Anche in questa pagina è presente il fragment top.jspf che consente la navigazione tra l'index.jsp e la signup.jsp.
+        In caso di registrazione effettuata con successo si verifica il redirect automatico alla pagina di login: in questo modo l'utente potrà utilizzare le credenziali appena registrate per accedere all'applicazione.
+        
+        user.jsp
+        Questa view è accessibile tramite il fragment top.jspf mediante click in corrispondenza dei dati dell'utente loggato (picture o nome e cognome). Tramite user.jsp è possibile modificare i dati ed associare un'immagine personale all'utente.
+        Come per la signup la form è descritta e realizzata tramite HTML, CSS e Javascript. 
+        L'utente non ha la possibilità di modificare il proprio username e qualsiasi modifica voglia apportare deve essere confermata tramite l'inserimento della propria password. Nel caso in cui voglia modificare la password dovrà inserire l'attuale e, successivamente, la nuova con relativa conferma.
+        A modifiche avvenute correttamente vi è il redirect automatico alla pagina di gestione tasks, in caso contrario l'utente verrà informato degli eventuali errori commessi.
+        Anche nella user.jsp è presente il fragment top.jspf che, oltre al logo del sito, posiziona sulla destra le informazioni relative all'utente e il pulsante di logout.
+        
+        tasks.jsp
+        Questa view rappresenta il core dell'applicazione ed è una vera e propria single page application. 
+        In alto è presente la top.jspf che consente l'accesso, tramite click sulle informazioni dell'utente loggato, alla pagina di modifica utente.
+        Sulla sinistra è presente una side-bar a scomparsa il cui scopo è applicare filtri per la visualizzazione dei task sulla timeline.
+        A centro schermo troviamo il box di aggiunta task tramite il quale l'utente può aggiungere nuovi task alla timeline. Il titolo del singolo task è obbligatorio, nel caso in cui l'utente voglia estendere il contenuto del task
+        oltre al titolo e alla data di validità, può cliccare il bottone di modifica per aggiungere proprietà al task (descrizione, check-done, categoria, utente assegnato e pubblicità del task).
+        In rispetto della logica dell'applicazione i filtri di ricerca basati sulla data sono posizionati in una barra orizzontale sopra la timeline.
+        Immediatamente sopra la timeline vi è la user-bar che contiene le immagini personali degli utenti registrati: tramite drag & drop è possibile trascinare la picture sopra ad un task per assegnarlo ad un determinato utente.
+        La timeline è una scroll-bar orizzontale rappresentante la linea del tempo: ogni giorno è rappresentanto da un contenitore dove al suo interno sono visualizzati i relativi task. 
+        Ogni task può essere modificato cliccando sul box centrale; quest'azione mostra una pop-up in cui è possibile aggiornare o eliminare il task.
+        Oltre a questa possibilità l'utente ha alcune shortcut che consentono delle rapide modifiche: tramite un pulsante è possibile posticipare la data di realizzazione del task mentre tramite la checkbox è possibile marcare il task come fatto.
         
         <h2>Lato Server</h2>
         
