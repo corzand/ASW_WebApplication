@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>DOC.html</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+
+        <h1> Titolo: Multi-User Task List </h1>
+        <h1>Autori:</h1>
+        <p> Capelli Claudia, matricola: 675488, claudia.capelli5@studio.unibo.it <br/>
+            Corzani Andrea, matricola: 654615, andrea.corzani@studio.unibo.it <br/>
+            Lo Iacono Luca, matricola: 651821, luca.loiacono@studio.unibo.it <br/>
+            Magnani Antonio, matricola: 680727, antonio.magnani@studio.unibo.it</p> 
+
+
+        <h1>Descrizione del servizio offerto dal sito:</h1>
+        <div><pre>L'elaborato consiste nella realizzazione di un'applicazione web che consenta di gestire, tra diversi utenti, delle liste di "task".
+        La fase di login viene realizzata attraverso un'applet Java. Una volta completata l'autenticazione, l'applicazione web presenta un front-end nativo (HTML, CSS, Javascript) interfacciato con un back-end a servizi Java.
+        L'idea è quella di creare, modificare, eliminare delle "to-do list" condivise tra gli utenti in modo da permettere ad ognuno di essi di prendersi carico di una o più attività.
+        L'interfaccia renderà esplicita la scelta degli utenti in modo da facilitare la pianificazione delle singole attività  da portare a termine quotidianamente.</pre></div>
+
+        <h1>Utilizzo del sito:</h1>
+        <div><pre>Il sito si interfaccia alle seguenti categorie di utenti:
+            * Pubblici, che accedono al sito per la prima volta ed effettuano la registrazione inserendo username, nome, cognome, email e password.
+            * Registrati, che accedono al sito utilizzando le proprie credenziali. L'utente registrato può accedere all'applicativo vero e proprio: può aggiungere, modificare, cancellare, ricercare, filtrare i task a lui accessibili.
+Può accedere alla schermata di modifica dell'utente tramite click sulle informazioni dell'utente posizionate nella top-bar.
+        * Amministratore, non è attualmente implementato. L'amministratore del sito si occupa della modifica, all’interno del file XML, delle categorie di task.</pre></div>
+        
+        <h1>Realizzazione del sito:</h1>
+        Il sito è strutturato secondo una classica architettura MVC: le view sono le pagine jsp unite ai fragments, le servlet costituiscono lo strato di controller ed il model è composto da classi singleton gestrici delle relative entità.
+        Le entità condivise tra client e server sono codificate come Java Beans e sono contenute in una library esterna importata sia dalla applet che dal server.
+        La gestione dei dati da parte del model è eseguita in memoria con scrittura di backup su file XML.
+        
+        <h2>Lato Client</h2>
+        Per la computazione lato Client il sito presenta due diverse tecnologie utilizzate nelle quattro pagine jsp accessibili:
+        Applet Java, utilizzata in fase di login (index.jsp);
+        Applicazione nativa (Javascript, HTML), utilizzata in fase di registrazione utente, modifica utente e gestione dei task.
+        
+        Per quanto riguarda l'applet java
+        
+        
+        <h2>Lato Server</h2>
+        
+    </body>
+</html>

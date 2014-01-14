@@ -109,7 +109,7 @@ public class Users extends HttpServlet {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
-                    loginRequestViewModel.setRemember(Boolean.parseBoolean(root.getElementsByTagName("password").item(0).getTextContent()));
+                    loginRequestViewModel.setRemember(Boolean.parseBoolean(root.getElementsByTagName("remember").item(0).getTextContent()));
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
                     if (loginRequestViewModel.getRemember()) {
