@@ -60,11 +60,12 @@ public class FileManager {
         this.dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
         this.progId = 0;
     }
+    
     /**
      * Restituisce l'identificativo progressivo
+     * 
      * @return 
      */
-
     protected int getNextId() {
         progId = progId + 1;
         return progId;
