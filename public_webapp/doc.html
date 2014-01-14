@@ -39,8 +39,14 @@ Può accedere alla schermata di modifica dell'utente tramite click sulle informa
         Applet Java, utilizzata in fase di login (index.jsp);
         Applicazione nativa (Javascript, HTML), utilizzata in fase di registrazione utente, modifica utente e gestione dei task.
         
-        Per quanto riguarda l'applet java
+        index.jsp
+        Questa view utilizza un'applet java per offrire all'utente la possibilità di eseguire il login. L'applet si compone di alcuni oggetti Swing tra cui il JTextField relativo allo username
+        e il JPasswordField relativo alla password dell'utente. E' inoltre presente una checkbox il cui scopo è quello di richiedere al server 2 appositi cookie per il mantenimento delle credenziali.
+        Nel caso in cui le credenziali inserite siano valide avverà il redirect automatico alla view di gestione tasks.
+        Tramite la top.jspf, visibile in questa view, l'utente anonimo può navigare alla view di registrazione. 
         
+        signup.jsp
+        Questa view 
         
         <h2>Lato Server</h2>
         
