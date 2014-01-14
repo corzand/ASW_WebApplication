@@ -14,12 +14,19 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet(urlPatterns = {"/application/*"})
 /**
- * Classe che provvede ad inizializzare i servizi dell'applicazione e 
- * 
+ * Classe che provvede definisce le chiamate ai servizi attraverso metodi di
+ * tipo HttpServlet
+ *
  * @author ASW1009
  */
 public class Application extends HttpServlet {
 
+    /**
+     * Metodo che inizializza la classi che gestiscono i sevizi principali
+     * dell'applicazione
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         super.init();
@@ -34,6 +41,18 @@ public class Application extends HttpServlet {
     private final String ACTION_TASKS = "tasks";
     private final String ACTION_USER = "user";
 
+    /**
+     * Metodo che inoltra la richiesta http con i dati del servizio richiesto
+     *
+     * @param request Oggetto HttpServletRequest che contine i dati della
+     * richiesta http
+     * @param response Oggetto HttpServletResponse che contine i dati della
+     * risposta http
+     * @param page Stringa che contiene il titolo della pagina da invocare per
+     * chiamare un servizio
+     * @throws ServletException
+     * @throws IOException
+     */
     private void forward(HttpServletRequest request, HttpServletResponse response, String page)
             throws ServletException, IOException {
         ServletContext sc = getServletContext();
@@ -41,6 +60,17 @@ public class Application extends HttpServlet {
         rd.forward(request, response);
     }
 
+    /**
+     * Metodo che prepara la richiesta http da inoltrare impostando la pagina
+     * jsp da chiamare
+     *
+     * @param request Oggetto HttpServletRequest che contine i dati della
+     * richiesta http
+     * @param response Oggetto HttpServletResponse che contine i dati della
+     * risposta http
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //HttpSession session = request.getSession();
@@ -58,7 +88,6 @@ public class Application extends HttpServlet {
             case ACTION_USER:
                 forward(request, response, "/jsp/user.jsp");
                 break;
-                
         }
     }
 }

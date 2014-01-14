@@ -17,11 +17,8 @@ import asw1009.viewmodel.response.TaskChangedPushNotificationViewModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
@@ -31,6 +28,11 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
+/**
+ * Classe che definisce tutti i servizi legati alla gestione dei task
+ *
+ * @author ASW1009
+ */
 @WebServlet(urlPatterns = {"/tasks/*"}, asyncSupported = true)
 public class Tasks extends HttpServlet {
 
@@ -45,6 +47,11 @@ public class Tasks extends HttpServlet {
     private Semaphore semaphore;
     private Gson gson;
 
+    /**
+     * Metodo che inizializza tutti gli attributi della classe
+     *
+     * @throws ServletException
+     */
     @Override
     public void init() throws ServletException {
         super.init(); //To change body of generated methods, choose Tools | Templates.
@@ -53,6 +60,19 @@ public class Tasks extends HttpServlet {
         semaphore = new Semaphore(1);
     }
 
+    /**
+     * Metodo che definisce il comportamento dell'applicazione a seguito di
+     * chiamate di tipo POST al server. Il metodo decodifica, per ogni serivzio
+     * chiamato, i dati inviati tramite una variabile di tipo gson e richiama i
+     * singoli metodi che si occupano di eseguire il servizio in questione
+     *
+     * @param request Oggetto HttpServletRequest che contine i dati della
+     * richiesta http
+     * @param response Oggetto HttpServletResponse che contine i dati della
+     * risposta http
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -134,6 +154,15 @@ public class Tasks extends HttpServlet {
 
     }
 
+    /**
+     * Metodo che implementa il servizio di ricerca di più tasks
+     *
+     * @param request Oggetto SearchTasksRequestViewModel che contine i dati
+     * della richiesta
+     *
+     * @return Oggetto SearchTasksResponseViewModel che contiene l'elenco dei
+     * tasks richiesti
+     */
     public SearchTasksResponseViewModel searchTasks(SearchTasksRequestViewModel request) {
         SearchTasksResponseViewModel response = new SearchTasksResponseViewModel();
         if (request != null) {
@@ -147,12 +176,31 @@ public class Tasks extends HttpServlet {
         return response;
     }
 
+    /**
+     *
+     * Metodo che restituisce la lista delle categorie previste dal sistema
+     * chiamando CategoriesManager, situato all'interno del model, il quale si
+     * occupa di effettuare la ricerca
+     *
+     * @return Oggetto CategoriesListResponseViewModel contenente l'elenco delle
+     * categorie presenti
+     */
     private CategoriesListResponseViewModel categoriesList() {
         CategoriesListResponseViewModel response = CategoriesManager.getInstance().categoriesList();
         response.setError(false);
         return response;
     }
 
+    /**
+     * Metodo che permette di creare un task chiamando TaskManager, situato
+     * all'interno del model, il quale si occupa di effettuare la scrittura dei
+     * dati sul server
+     *
+     * @param request Oggetto AddTaskRequestViewModel che contiene i dati della
+     * richiesta
+     * @return VOggetto AddTaskResponseViewModel che contiene i valori del task
+     * appena inserito
+     */
     private AddTaskResponseViewModel addTask(AddTaskRequestViewModel request) {
 
         AddTaskResponseViewModel response = new AddTaskResponseViewModel();
@@ -167,6 +215,16 @@ public class Tasks extends HttpServlet {
         return response;
     }
 
+    /**
+     * Metodo che permette di eliminare un task chiamando TaskManager, situato
+     * all'interno del model, il quale si occupa di effettuare la modifica dei
+     * dati
+     *
+     * @param request Oggetto DeleteTaskRequestViewModel che contiene i dati
+     * della richiesta
+     * @return Oggetto DeleteTaskResponseViewModel che contiene i valori del
+     * task appena eliminato
+     */
     private DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request) {
         DeleteTaskResponseViewModel response = new DeleteTaskResponseViewModel();
         if (request != null) {
@@ -179,6 +237,16 @@ public class Tasks extends HttpServlet {
         return response;
     }
 
+    /**
+     * Metodo che permette di modificare un task chiamando TaskManager, situato
+     * all'interno del model, il quale si occupa di effettuare la modifica dei
+     * dati
+     *
+     * @param request Oggetto DeleteTaskRequestViewModel che contiene i dati
+     * della richiesta
+     * @return Oggetto DeleteTaskResponseViewModel che contiene i valori del
+     * task appena modificato
+     */
     private EditTaskResponseViewModel editTask(EditTaskRequestViewModel request) {
 
         EditTaskResponseViewModel response = new EditTaskResponseViewModel();
@@ -192,6 +260,9 @@ public class Tasks extends HttpServlet {
         return response;
     }
 
+    /**
+     * Classe che permette di notificare al client un'azione su un task
+     */
     private class pushTaskChangedNotificationThread extends Thread {
 
         //Source of notification
@@ -203,21 +274,42 @@ public class Tasks extends HttpServlet {
         //Operation
         int operation;
 
+        /**
+         * Costruttore della classe
+         *
+         * @param sessionId Stringa che contiene l'id della sessione
+         * @param task Oggetto Task che contiene i dati del task
+         * @param operation Intero rappresentante il tipo di operazione.
+         */
         public pushTaskChangedNotificationThread(String sessionId, Task task, int operation) {
             this.sessionId = sessionId;
             this.task = task;
             this.operation = operation;
         }
-        
-        private boolean isSubscribedToTask(PollingRequestViewModel requestViewModel, Task task){
-            for(int id : requestViewModel.getTaskIds()){
-                if(id == task.getId())
+
+        /**
+         * Metodo che verifica se un task visaulizzato nella timeline ha subito
+         * modifche da altri utenti
+         *
+         * @param requestViewModel Oggetto PollingRequestViewModel che contiene
+         * i dati della richiesta
+         * @param task Oggetto Task che contiene i dati del task in questione
+         * @return Valore booleano che vale 1 se il task è presente nella
+         * timeline e 0 se non è presente
+         */
+        private boolean isSubscribedToTask(PollingRequestViewModel requestViewModel, Task task) {
+            for (int id : requestViewModel.getTaskIds()) {
+                if (id == task.getId()) {
                     return true;
+                }
             }
-            
+
             return false;
         }
 
+        /**
+         * Metodo che implementa l'attesa delle richieste tramite polling
+         */
         @Override
         public void run() {
             try {

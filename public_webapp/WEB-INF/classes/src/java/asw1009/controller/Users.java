@@ -20,6 +20,12 @@ import javax.xml.transform.TransformerException;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
+/**
+ *
+ * Classe che definisce tutti i servizi legati alla gestione degli utenti
+ *
+ * @author ASW1009
+ */
 @WebServlet(urlPatterns = {"/users/*"})
 public class Users extends HttpServlet {
 
@@ -29,6 +35,19 @@ public class Users extends HttpServlet {
     private final String ACTION_EDITUSER = "edituser";
     private final String ACTION_USERS = "users";
 
+    /**
+     * Metodo che definisce il comportamento dell'applicazione a seguito di
+     * chiamate di tipo POST al server. Il metodo decodifica, per ogni serivzio
+     * chiamato, i dati inviati tramite una variabile di tipo gson e richiama i
+     * singoli metodi che si occupano di eseguire il servizio in questione
+     *
+     * @param request Oggetto HttpServletRequest che contine i dati della
+     * richiesta http
+     * @param response Oggetto HttpServletResponse che contine i dati della
+     * risposta http
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -160,8 +179,17 @@ public class Users extends HttpServlet {
 
     }
 
+    /**
+     * Metodo che invoca il servizio di registrazione all'applicazione chiamando
+     * UserManager, situato all'interno del model, il quale si occupa di
+     * effettuare il controllo dei dati
+     *
+     * @param data Oggetto SignUpRequestViewModel che contine i dati inseriti
+     * dall'utente
+     * @return Oggetto BaseResponseViewModel che contiene tutti i dati del nuovo
+     * utente creato
+     */
     private BaseResponseViewModel signUp(SignUpRequestViewModel data) {
-        //fa cose --> chiama il model, registra etc
         BaseResponseViewModel response = new BaseResponseViewModel();
         if (data != null) {
             response = UsersManager.getInstance()._signUp(data);
@@ -172,6 +200,16 @@ public class Users extends HttpServlet {
         return response;
     }
 
+    /**
+     * Metodo che invoca il servizio di login chiamando UserManager, situato
+     * all'inerno del model, il quale si occupa di effettuare il controllo dei
+     * dati
+     *
+     * @param data Oggetto LoginRequestViewModel che contine i dati inseriti
+     * dall'utente
+     * @return Oggetto LoginResponseViewModel che contiene i dati dell'utente
+     * appena loggato
+     */
     private LoginResponseViewModel login(LoginRequestViewModel data) {
         LoginResponseViewModel response = new LoginResponseViewModel();
         if (data != null) {
@@ -188,6 +226,16 @@ public class Users extends HttpServlet {
         return response;
     }
 
+    /**
+     * Metodo che invoca il servizio di modifica dei dati dell'utente chiamando
+     * UserManager, situato all'interno del model, il quale si occupa di
+     * effettuare la modifica dei dati
+     *
+     * @param request Oggetto EditUserRequestViewModel che contine i dati
+     * inseriti dall'utente
+     * @return Oggetto EditUserResponseViewModel che contiene i dati dell'utente
+     * appena modificato
+     */
     private EditUserResponseViewModel editUser(EditUserRequestViewModel request) {
         EditUserResponseViewModel response = new EditUserResponseViewModel();
         if (request != null) {

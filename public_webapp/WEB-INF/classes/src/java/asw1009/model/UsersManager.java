@@ -1,6 +1,5 @@
 package asw1009.model;
 
-import asw1009.model.entities.Task;
 import org.apache.commons.codec.binary.Base64;
 import asw1009.model.entities.User;
 import asw1009.viewmodel.request.EditUserRequestViewModel;
@@ -11,16 +10,10 @@ import asw1009.viewmodel.response.EditUserResponseViewModel;
 import asw1009.viewmodel.response.LoginResponseViewModel;
 import asw1009.viewmodel.response.UsersListResponseViewModel;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Classe singleton rappresentante il gestore degli utenti. Contiene la lista
