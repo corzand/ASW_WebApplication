@@ -42,6 +42,7 @@
                         <param name="code" value="LoginApplet.class" />
                         <param name="codebase" value="/applet/"/>   
                         <param name="archive" value = "ASW_Applet1.jar,ASW_Lib1.jar,org.json.jar" />
+                        <param name="sessionId" value="<%= session.getId()%>" />
                         <param name="username" value="<%= username%>" />
                         <param name="password" value="<%= password%>" />
                     </object> 
