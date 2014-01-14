@@ -90,16 +90,18 @@ public class Users extends HttpServlet {
                     LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
-
+                    loginRequestViewModel.setRemember(Boolean.parseBoolean(root.getElementsByTagName("password").item(0).getTextContent()));
                     LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
 
-                    if (root.getElementsByTagName("remember").item(0).getTextContent().equals("true")) {
+                    if (loginRequestViewModel.getRemember()) {
                         Cookie c_username = new Cookie("username", loginRequestViewModel.getUsername());
                         Cookie c_password = new Cookie("password", loginRequestViewModel.getPassword());
-                        c_password.setMaxAge(-1);
-                        c_username.setMaxAge(-1);
+                        c_password.setMaxAge(60*60*24);
+                        c_username.setMaxAge(60*60*24);
+                        c_username.setPath("/");
+                        c_password.setPath("/");
                         response.addCookie(c_username);
-                        response.addCookie(c_password);
+                        response.addCookie(c_password);                        
                     }
 
                     answer = mngXML.newDocument();

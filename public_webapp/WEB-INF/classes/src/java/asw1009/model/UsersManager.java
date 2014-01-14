@@ -1,4 +1,3 @@
-
 package asw1009.model;
 
 import asw1009.model.entities.Task;
@@ -24,46 +23,48 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Classe singleton rappresentante il gestore degli utenti.
- * Contiene la lista delle entità User.
- * 
+ * Classe singleton rappresentante il gestore degli utenti. Contiene la lista
+ * delle entità User.
+ *
  * @author ASW1009
  */
-
 public class UsersManager extends FileManager {
 
     private List<User> users;
     private static UsersManager instance;
-    
+
     /**
-    * Costruttore di classe.
-    */
+     * Costruttore di classe.
+     */
     public UsersManager() {
         users = new ArrayList<>();
     }
 
     @Override
     /**
-     * Metodo che fa l'override del metodo init() della classe FileManager: se il file.xml esiste
-     * istanzia la lista leggendo dal file, altrimenti crea una lista di utenti nuova.
-     * 
+     * Metodo che fa l'override del metodo init() della classe FileManager: se
+     * il file.xml esiste istanzia la lista leggendo dal file, altrimenti crea
+     * una lista di utenti nuova.
+     *
      * @param directoryPath stringa rappresentante il percorso del file.
      * @param fileName stringa rappresentante il nome del file.
-    */
+     */
     public void init(String directoryPath, String fileName) {
         super.init(directoryPath, fileName);
-        
+
         if (xml.exists()) {
             users = readXML(User.class);
         } else {
             users = new ArrayList<>();
         }
     }
-    
+
     /**
      * Restituisce l'istanza della classe.
-     * @return instance statico del gestore degli utenti inizilizzato all'inizio a null.
-    */
+     *
+     * @return instance statico del gestore degli utenti inizilizzato all'inizio
+     * a null.
+     */
     public static synchronized UsersManager getInstance() {
         if (instance == null) {
             instance = new UsersManager();
@@ -71,9 +72,10 @@ public class UsersManager extends FileManager {
 
         return instance;
     }
-    
+
     /**
      * Aggiunge un nuovo utente e aggiorna il fileXML.
+     *
      * @param user rappresentante l'utente.
      */
     public void addUser(User user) {
@@ -82,9 +84,11 @@ public class UsersManager extends FileManager {
 
         _updateXML();
     }
-    
+
     /**
-     * Restituisce l'utente corrispondente all'username inserito, prendendolo dalla lista di utenti.
+     * Restituisce l'utente corrispondente all'username inserito, prendendolo
+     * dalla lista di utenti.
+     *
      * @param username rappresentante il nome dell'utente.
      * @return user relativo alla lista di utenti.
      */
@@ -99,17 +103,21 @@ public class UsersManager extends FileManager {
 
         return null;
     }
+
     /**
      * Aggiorna il fileXML scrivendolo.
      */
     private void _updateXML() {
         writeXML(users, User.class);
     }
-    
+
     /**
-     * Metodo invocato per effettuare l'iscrizione dell'utente. Se la registrazione viene effettuata
-     * per la prima volta si impostano i campi utili, altrimenti viene inviato un messaggio di errore. 
-     * @param request indica il viewModel rappresentante la richiesta di registrazione dell'utente.
+     * Metodo invocato per effettuare l'iscrizione dell'utente. Se la
+     * registrazione viene effettuata per la prima volta si impostano i campi
+     * utili, altrimenti viene inviato un messaggio di errore.
+     *
+     * @param request indica il viewModel rappresentante la richiesta di
+     * registrazione dell'utente.
      * @return viewModel rappresentante la risposta del client.
      */
     public BaseResponseViewModel _signUp(SignUpRequestViewModel request) {
@@ -133,87 +141,101 @@ public class UsersManager extends FileManager {
 
         return viewModel;
     }
+
     /**
      * Metodo invocato per effettuare l'accesso dell'utente.
-     * @param request indica il viewModel rappresentante la richiesta di login dell'utente.
+     *
+     * @param request indica il viewModel rappresentante la richiesta di login
+     * dell'utente.
      * @return viewModel rappresentante la risposta del client.
      */
     public LoginResponseViewModel _login(LoginRequestViewModel request) {
         LoginResponseViewModel viewModel = new LoginResponseViewModel();
         User user = _getUserByUsername(request.getUsername());
 
-        if (user != null && user.getPassword().equals(request.getPassword())) {
-            viewModel.setError(false);
-            viewModel.setErrorMessage("");
-            viewModel.setLoggedUser(user);
+        if (user != null) {
+            if (user.getPassword().equals(request.getPassword())) {
+                viewModel.setError(false);
+                viewModel.setErrorMessage("");
+                viewModel.setLoggedUser(user);
+            } else {
+                viewModel.setError(true);
+                viewModel.setErrorMessage("Password errata.");
+            }
+        } else {
+            viewModel.setError(true);
+            viewModel.setErrorMessage("Username non trovato.");
+        }
+
+        return viewModel;
+    }
+
+    /**
+     * Metodo invocato per effettuare la modifica di un user. Consente di
+     * effettuare modifiche se: la vecchia password è uguale alla password
+     * attuale, se l'utente non ha cambiato la password o non ha ancora inserito
+     * l'immagine profilo. Al contrario, invia un messaggio di registrazione
+     * errata. Infine aggiorna il fileXML.
+     *
+     * @param request indica il viewModel rappresentante la richiesta di
+     * modifica dell'utente.
+     * @return viewModel rappresentante la risposta del client.
+     */
+    public EditUserResponseViewModel _editUser(EditUserRequestViewModel request) {
+        EditUserResponseViewModel viewModel = new EditUserResponseViewModel();
+        User user = _getUserByUsername(request.getUsername());
+        User sessionUser = new User();
+
+        if (user != null) {
+
+            if (request.getOldPassword().equals(user.getPassword())) {
+                user.setFirstName(request.getFirstName());
+                sessionUser.setFirstName(request.getFirstName());
+
+                user.setLastName(request.getLastName());
+                sessionUser.setLastName(request.getLastName());
+
+                user.setEmail(request.getEmail());
+                sessionUser.setEmail(request.getEmail());
+
+                sessionUser.setId(user.getId());
+
+                sessionUser.setUsername(user.getUsername());
+
+                if (!request.getPicture().equals("")) {
+                    String filePath = createImage(request.getPicture(), user.getId());
+                    user.setPicture(filePath);
+                    sessionUser.setPicture(filePath);
+                }
+
+                if (request.getNewPassword().equals("")) {
+                    sessionUser.setPassword(user.getPassword());
+                } else {
+                    user.setPassword(request.getNewPassword());
+                    sessionUser.setPassword(request.getNewPassword());
+                }
+
+                viewModel.setLoggedUser(sessionUser);
+                viewModel.setError(false);
+                viewModel.setErrorMessage("");
+            } else {
+                viewModel.setError(true);
+                viewModel.setErrorMessage("Password errata");
+            }
+
         } else {
             viewModel.setError(true);
             viewModel.setErrorMessage("Login failed");
         }
 
+        _updateXML();
         return viewModel;
     }
+
     /**
-     * Metodo invocato per effettuare la modifica di un user. Consente di effettuare modifiche se:
-     * la vecchia password è uguale alla password attuale, se l'utente non ha cambiato la password o
-     * non ha ancora inserito l'immagine profilo. Al contrario, invia un messaggio di registrazione 
-     * errata. Infine aggiorna il fileXML.
-     * @param request indica il viewModel rappresentante la richiesta di modifica dell'utente.
-     * @return viewModel rappresentante la risposta del client.
-     */
-    public EditUserResponseViewModel _editUser(EditUserRequestViewModel request) {
-            EditUserResponseViewModel viewModel = new EditUserResponseViewModel();
-            User user = _getUserByUsername(request.getUsername());
-            User sessionUser = new User();
-
-            if (user != null) {
-
-                if (request.getOldPassword().equals(user.getPassword())) {
-                    user.setFirstName(request.getFirstName());
-                    sessionUser.setFirstName(request.getFirstName());
-
-                    user.setLastName(request.getLastName());
-                    sessionUser.setLastName(request.getLastName());
-
-                    user.setEmail(request.getEmail());
-                    sessionUser.setEmail(request.getEmail());
-
-                    sessionUser.setId(user.getId());
-
-                    sessionUser.setUsername(user.getUsername());
-
-                    if (!request.getPicture().equals("")) {
-                        String filePath = createImage(request.getPicture(), user.getId());
-                        user.setPicture(filePath);
-                        sessionUser.setPicture(filePath);
-                    }
-
-                    if (request.getNewPassword().equals("")) {
-                        sessionUser.setPassword(user.getPassword());
-                    } else {
-                        user.setPassword(request.getNewPassword());
-                        sessionUser.setPassword(request.getNewPassword());
-                    }
-
-
-                    viewModel.setLoggedUser(sessionUser);
-                    viewModel.setError(false);
-                    viewModel.setErrorMessage("");
-                } else {
-                    viewModel.setError(true);
-                    viewModel.setErrorMessage("Password errata");
-                }
-
-            } else {
-                viewModel.setError(true);
-                viewModel.setErrorMessage("Login failed");
-            }
-
-            _updateXML();
-            return viewModel;
-        }
-    /**
-     * Metodo invocato per recuperare un view model contenente la lista degli utenti
+     * Metodo invocato per recuperare un view model contenente la lista degli
+     * utenti
+     *
      * @return viewModel che contiene la lista degli utenti.
      */
     public UsersListResponseViewModel usersList() {
@@ -222,11 +244,14 @@ public class UsersManager extends FileManager {
         viewModel.setUsers(users);
         return viewModel;
     }
-    
+
     /**
-     * Metodo privato invocato per creare l'immagine del profilo utente, attraverso la 
-     * conversione di una stringa a base64 in un immagine di array di byte.
-     * @param base64 Stringa codificata secondo la numerazione posizionale che usa 64 simboli.
+     * Metodo privato invocato per creare l'immagine del profilo utente,
+     * attraverso la conversione di una stringa a base64 in un immagine di array
+     * di byte.
+     *
+     * @param base64 Stringa codificata secondo la numerazione posizionale che
+     * usa 64 simboli.
      * @param id Intero rappresentante l'identificativo univoco dell'immagine.
      * @return filepath rappresentante il percorso del file dell'immagine.
      */
