@@ -3,17 +3,17 @@ package asw1009.controller;
 import asw1009.model.CategoriesManager;
 import asw1009.model.TasksManager;
 import asw1009.model.entities.Task;
-import asw1009.viewmodel.request.AddTaskRequestViewModel;
-import asw1009.viewmodel.request.DeleteTaskRequestViewModel;
-import asw1009.viewmodel.request.EditTaskRequestViewModel;
-import asw1009.viewmodel.request.PollingRequestViewModel;
-import asw1009.viewmodel.response.EditTaskResponseViewModel;
-import asw1009.viewmodel.request.SearchTasksRequestViewModel;
-import asw1009.viewmodel.response.AddTaskResponseViewModel;
-import asw1009.viewmodel.response.CategoriesListResponseViewModel;
-import asw1009.viewmodel.response.DeleteTaskResponseViewModel;
-import asw1009.viewmodel.response.SearchTasksResponseViewModel;
-import asw1009.viewmodel.response.TaskChangedPushNotificationViewModel;
+import asw1009.requests.AddTaskRequest;
+import asw1009.requests.DeleteTaskRequest;
+import asw1009.requests.EditTaskRequest;
+import asw1009.requests.PollingRequest;
+import asw1009.responses.EditTaskResponse;
+import asw1009.requests.SearchTasksRequest;
+import asw1009.responses.AddTaskResponse;
+import asw1009.responses.CategoriesListResponse;
+import asw1009.responses.DeleteTaskResponse;
+import asw1009.responses.SearchTasksResponse;
+import asw1009.responses.LongPollingResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
@@ -89,27 +89,27 @@ public class Tasks extends HttpServlet {
             String jsonResponse = "";
             switch (action) {
                 case ACTION_SEARCH: {
-                    SearchTasksRequestViewModel requestData = gson.fromJson(json, SearchTasksRequestViewModel.class);
-                    jsonResponse = gson.toJson(searchTasks(requestData), SearchTasksResponseViewModel.class);
+                    SearchTasksRequest requestData = gson.fromJson(json, SearchTasksRequest.class);
+                    jsonResponse = gson.toJson(searchTasks(requestData), SearchTasksResponse.class);
                     break;
                 }
                 case ACTION_CATEGORIES: {
-                    jsonResponse = gson.toJson(categoriesList(), CategoriesListResponseViewModel.class);
+                    jsonResponse = gson.toJson(categoriesList(), CategoriesListResponse.class);
                     break;
                 }
                 case ACTION_ADD: {
-                    AddTaskRequestViewModel requestData = gson.fromJson(json, AddTaskRequestViewModel.class);
-                    AddTaskResponseViewModel responseData = addTask(requestData);
-                    jsonResponse = gson.toJson(responseData, AddTaskResponseViewModel.class);
+                    AddTaskRequest requestData = gson.fromJson(json, AddTaskRequest.class);
+                    AddTaskResponse responseData = addTask(requestData);
+                    jsonResponse = gson.toJson(responseData, AddTaskResponse.class);
                     if (!responseData.hasError()) {
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 0).start();
                     }
                     break;
                 }
                 case ACTION_EDIT: {
-                    EditTaskRequestViewModel requestData = gson.fromJson(json, EditTaskRequestViewModel.class);
-                    EditTaskResponseViewModel responseData = editTask(requestData);
-                    jsonResponse = gson.toJson(responseData, EditTaskResponseViewModel.class);
+                    EditTaskRequest requestData = gson.fromJson(json, EditTaskRequest.class);
+                    EditTaskResponse responseData = editTask(requestData);
+                    jsonResponse = gson.toJson(responseData, EditTaskResponse.class);
                     if (!responseData.hasError()) {
 
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 1).start();
@@ -119,7 +119,7 @@ public class Tasks extends HttpServlet {
                     break;
                 }
                 case ACTION_POLLING: {
-                    PollingRequestViewModel requestData = gson.fromJson(json, PollingRequestViewModel.class);
+                    PollingRequest requestData = gson.fromJson(json, PollingRequest.class);
                     AsyncContext asyncContext = request.startAsync(request, response);
                     try {
                         asyncContext.setTimeout(0);
@@ -136,9 +136,9 @@ public class Tasks extends HttpServlet {
                     break;
                 }
                 case ACTION_DELETE: {
-                    DeleteTaskRequestViewModel requestData = gson.fromJson(json, DeleteTaskRequestViewModel.class);
-                    DeleteTaskResponseViewModel responseData = deleteTask(requestData);
-                    jsonResponse = gson.toJson(responseData, DeleteTaskResponseViewModel.class);
+                    DeleteTaskRequest requestData = gson.fromJson(json, DeleteTaskRequest.class);
+                    DeleteTaskResponse responseData = deleteTask(requestData);
+                    jsonResponse = gson.toJson(responseData, DeleteTaskResponse.class);
                     if (!responseData.hasError()) {
 
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 2).start();
@@ -157,14 +157,14 @@ public class Tasks extends HttpServlet {
     /**
      * Metodo che implementa il servizio di ricerca di più tasks
      *
-     * @param request Oggetto SearchTasksRequestViewModel che contine i dati
-     * della richiesta
+     * @param request Oggetto SearchTasksRequest che contine i dati
+ della richiesta
      *
-     * @return Oggetto SearchTasksResponseViewModel che contiene l'elenco dei
-     * tasks richiesti
+     * @return Oggetto SearchTasksResponse che contiene l'elenco dei
+ tasks richiesti
      */
-    public SearchTasksResponseViewModel searchTasks(SearchTasksRequestViewModel request) {
-        SearchTasksResponseViewModel response = new SearchTasksResponseViewModel();
+    public SearchTasksResponse searchTasks(SearchTasksRequest request) {
+        SearchTasksResponse response = new SearchTasksResponse();
         if (request != null) {
             response = TasksManager.getInstance().searchTasks(request);
             response.setError(false);
@@ -182,11 +182,11 @@ public class Tasks extends HttpServlet {
      * chiamando CategoriesManager, situato all'interno del model, il quale si
      * occupa di effettuare la ricerca
      *
-     * @return Oggetto CategoriesListResponseViewModel contenente l'elenco delle
-     * categorie presenti
+     * @return Oggetto CategoriesListResponse contenente l'elenco delle
+ categorie presenti
      */
-    private CategoriesListResponseViewModel categoriesList() {
-        CategoriesListResponseViewModel response = CategoriesManager.getInstance().categoriesList();
+    private CategoriesListResponse categoriesList() {
+        CategoriesListResponse response = CategoriesManager.getInstance().categoriesList();
         response.setError(false);
         return response;
     }
@@ -196,14 +196,14 @@ public class Tasks extends HttpServlet {
      * all'interno del model, il quale si occupa di effettuare la scrittura dei
      * dati sul server
      *
-     * @param request Oggetto AddTaskRequestViewModel che contiene i dati della
-     * richiesta
-     * @return VOggetto AddTaskResponseViewModel che contiene i valori del task
-     * appena inserito
+     * @param request Oggetto AddTaskRequest che contiene i dati della
+ richiesta
+     * @return VOggetto AddTaskResponse che contiene i valori del task
+ appena inserito
      */
-    private AddTaskResponseViewModel addTask(AddTaskRequestViewModel request) {
+    private AddTaskResponse addTask(AddTaskRequest request) {
 
-        AddTaskResponseViewModel response = new AddTaskResponseViewModel();
+        AddTaskResponse response = new AddTaskResponse();
         if (request != null) {
             response = TasksManager.getInstance().addTask(request);
             response.setError(false);
@@ -220,13 +220,13 @@ public class Tasks extends HttpServlet {
      * all'interno del model, il quale si occupa di effettuare la modifica dei
      * dati
      *
-     * @param request Oggetto DeleteTaskRequestViewModel che contiene i dati
-     * della richiesta
-     * @return Oggetto DeleteTaskResponseViewModel che contiene i valori del
-     * task appena eliminato
+     * @param request Oggetto DeleteTaskRequest che contiene i dati
+ della richiesta
+     * @return Oggetto DeleteTaskResponse che contiene i valori del
+ task appena eliminato
      */
-    private DeleteTaskResponseViewModel deleteTask(DeleteTaskRequestViewModel request) {
-        DeleteTaskResponseViewModel response = new DeleteTaskResponseViewModel();
+    private DeleteTaskResponse deleteTask(DeleteTaskRequest request) {
+        DeleteTaskResponse response = new DeleteTaskResponse();
         if (request != null) {
             response = TasksManager.getInstance().deleteTask(request);
         } else {
@@ -242,14 +242,14 @@ public class Tasks extends HttpServlet {
      * all'interno del model, il quale si occupa di effettuare la modifica dei
      * dati
      *
-     * @param request Oggetto DeleteTaskRequestViewModel che contiene i dati
-     * della richiesta
-     * @return Oggetto DeleteTaskResponseViewModel che contiene i valori del
-     * task appena modificato
+     * @param request Oggetto DeleteTaskRequest che contiene i dati
+ della richiesta
+     * @return Oggetto DeleteTaskResponse che contiene i valori del
+ task appena modificato
      */
-    private EditTaskResponseViewModel editTask(EditTaskRequestViewModel request) {
+    private EditTaskResponse editTask(EditTaskRequest request) {
 
-        EditTaskResponseViewModel response = new EditTaskResponseViewModel();
+        EditTaskResponse response = new EditTaskResponse();
         if (request != null) {
             response = TasksManager.getInstance().editTask(request);
         } else {
@@ -291,13 +291,13 @@ public class Tasks extends HttpServlet {
          * Metodo che verifica se un task visaulizzato nella timeline ha subito
          * modifche da altri utenti
          *
-         * @param requestViewModel Oggetto PollingRequestViewModel che contiene
-         * i dati della richiesta
+         * @param requestViewModel Oggetto PollingRequest che contiene
+ i dati della richiesta
          * @param task Oggetto Task che contiene i dati del task in questione
          * @return Valore booleano che vale 1 se il task è presente nella
          * timeline e 0 se non è presente
          */
-        private boolean isSubscribedToTask(PollingRequestViewModel requestViewModel, Task task) {
+        private boolean isSubscribedToTask(PollingRequest requestViewModel, Task task) {
             for (int id : requestViewModel.getTaskIds()) {
                 if (id == task.getId()) {
                     return true;
@@ -325,8 +325,8 @@ public class Tasks extends HttpServlet {
                         iter.remove();
                         AsyncContext context = asyncRequest.getContext();
                         HttpServletResponse clientToPush = (HttpServletResponse) context.getResponse();
-                        TaskChangedPushNotificationViewModel responseData = new TaskChangedPushNotificationViewModel(operation, task);
-                        String jsonResponse = gson.toJson(responseData, TaskChangedPushNotificationViewModel.class);
+                        LongPollingResponse responseData = new LongPollingResponse(operation, task);
+                        String jsonResponse = gson.toJson(responseData, LongPollingResponse.class);
 
                         try {
                             clientToPush.getOutputStream().print(jsonResponse);

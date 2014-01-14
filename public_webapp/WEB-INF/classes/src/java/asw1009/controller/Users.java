@@ -3,13 +3,13 @@ package asw1009.controller;
 import asw1009.ManageXML;
 import asw1009.model.UsersManager;
 import asw1009.model.entities.User;
-import asw1009.viewmodel.request.EditUserRequestViewModel;
-import asw1009.viewmodel.request.LoginRequestViewModel;
-import asw1009.viewmodel.request.SignUpRequestViewModel;
-import asw1009.viewmodel.response.BaseResponseViewModel;
-import asw1009.viewmodel.response.EditUserResponseViewModel;
-import asw1009.viewmodel.response.LoginResponseViewModel;
-import asw1009.viewmodel.response.UsersListResponseViewModel;
+import asw1009.requests.EditUserRequest;
+import asw1009.requests.LoginRequest;
+import asw1009.requests.SignUpRequest;
+import asw1009.responses.BaseResponse;
+import asw1009.responses.EditUserResponse;
+import asw1009.responses.LoginResponse;
+import asw1009.responses.UsersListResponse;
 import com.google.gson.Gson;
 import java.io.*;
 import javax.servlet.ServletException;
@@ -64,27 +64,30 @@ public class Users extends HttpServlet {
             String jsonResponse = "";
             switch (action) {
                 case ACTION_SIGNUP: {
-                    SignUpRequestViewModel requestData = gson.fromJson(json, SignUpRequestViewModel.class);
-                    jsonResponse = gson.toJson(signUp(requestData), BaseResponseViewModel.class);
+                    SignUpRequest requestData = gson.fromJson(json, SignUpRequest.class);
+                    jsonResponse = gson.toJson(signUp(requestData), BaseResponse.class);
                     break;
                 }
                 case ACTION_LOGOUT: {
-                    BaseResponseViewModel response_logout = new BaseResponseViewModel();
+                    BaseResponse response_logout = new BaseResponse();
                     response_logout.setError(false);
                     session.setAttribute("user", null);
-                    jsonResponse = gson.toJson(response_logout, BaseResponseViewModel.class);
+                    jsonResponse = gson.toJson(response_logout, BaseResponse.class);
                     break;
                 }
                 case ACTION_EDITUSER: {
-                    EditUserRequestViewModel requestData = gson.fromJson(json, EditUserRequestViewModel.class);
-                    EditUserResponseViewModel response_edit = editUser(requestData);
-                    response_edit.getLoggedUser().setPassword("");
+                    EditUserRequest requestData = gson.fromJson(json, EditUserRequest.class);
+                    EditUserResponse response_edit = editUser(requestData);
+                    
+                    if(!response_edit.hasError()){
+                        response_edit.getLoggedUser().setPassword("");
+                    }
                     session.setAttribute("user", gson.toJson(response_edit.getLoggedUser(), User.class));
-                    jsonResponse = gson.toJson(response_edit, EditUserResponseViewModel.class);
+                    jsonResponse = gson.toJson(response_edit, EditUserResponse.class);
                     break;
                 }
                 case ACTION_USERS: {
-                    jsonResponse = gson.toJson(usersList(), UsersListResponseViewModel.class);
+                    jsonResponse = gson.toJson(usersList(), UsersListResponse.class);
                     break;
                 }
             }
@@ -106,11 +109,11 @@ public class Users extends HttpServlet {
                 Document answer = null;
 
                 if (action.equals(ACTION_LOGIN)) {
-                    LoginRequestViewModel loginRequestViewModel = new LoginRequestViewModel();
+                    LoginRequest loginRequestViewModel = new LoginRequest();
                     loginRequestViewModel.setUsername(root.getElementsByTagName("username").item(0).getTextContent());
                     loginRequestViewModel.setPassword(root.getElementsByTagName("password").item(0).getTextContent());
                     loginRequestViewModel.setRemember(Boolean.parseBoolean(root.getElementsByTagName("remember").item(0).getTextContent()));
-                    LoginResponseViewModel loginResponseViewModel = login(loginRequestViewModel);
+                    LoginResponse loginResponseViewModel = login(loginRequestViewModel);
 
                     if (loginRequestViewModel.getRemember()) {
                         Cookie c_username = new Cookie("username", loginRequestViewModel.getUsername());
@@ -184,15 +187,15 @@ public class Users extends HttpServlet {
      * UserManager, situato all'interno del model, il quale si occupa di
      * effettuare il controllo dei dati
      *
-     * @param data Oggetto SignUpRequestViewModel che contine i dati inseriti
-     * dall'utente
-     * @return Oggetto BaseResponseViewModel che contiene tutti i dati del nuovo
-     * utente creato
+     * @param data Oggetto SignUpRequest che contine i dati inseriti
+ dall'utente
+     * @return Oggetto BaseResponse che contiene tutti i dati del nuovo
+ utente creato
      */
-    private BaseResponseViewModel signUp(SignUpRequestViewModel data) {
-        BaseResponseViewModel response = new BaseResponseViewModel();
+    private BaseResponse signUp(SignUpRequest data) {
+        BaseResponse response = new BaseResponse();
         if (data != null) {
-            response = UsersManager.getInstance()._signUp(data);
+            response = UsersManager.getInstance().signUp(data);
         } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
@@ -205,16 +208,16 @@ public class Users extends HttpServlet {
      * all'inerno del model, il quale si occupa di effettuare il controllo dei
      * dati
      *
-     * @param data Oggetto LoginRequestViewModel che contine i dati inseriti
-     * dall'utente
-     * @return Oggetto LoginResponseViewModel che contiene i dati dell'utente
-     * appena loggato
+     * @param data Oggetto LoginRequest che contine i dati inseriti
+ dall'utente
+     * @return Oggetto LoginResponse che contiene i dati dell'utente
+ appena loggato
      */
-    private LoginResponseViewModel login(LoginRequestViewModel data) {
-        LoginResponseViewModel response = new LoginResponseViewModel();
+    private LoginResponse login(LoginRequest data) {
+        LoginResponse response = new LoginResponse();
         if (data != null) {
 
-            response = UsersManager.getInstance()._login(data);
+            response = UsersManager.getInstance().login(data);
 
         } else {
             response.setError(true);
@@ -231,15 +234,15 @@ public class Users extends HttpServlet {
      * UserManager, situato all'interno del model, il quale si occupa di
      * effettuare la modifica dei dati
      *
-     * @param request Oggetto EditUserRequestViewModel che contine i dati
-     * inseriti dall'utente
-     * @return Oggetto EditUserResponseViewModel che contiene i dati dell'utente
-     * appena modificato
+     * @param request Oggetto EditUserRequest che contine i dati
+ inseriti dall'utente
+     * @return Oggetto EditUserResponse che contiene i dati dell'utente
+ appena modificato
      */
-    private EditUserResponseViewModel editUser(EditUserRequestViewModel request) {
-        EditUserResponseViewModel response = new EditUserResponseViewModel();
+    private EditUserResponse editUser(EditUserRequest request) {
+        EditUserResponse response = new EditUserResponse();
         if (request != null) {
-            response = UsersManager.getInstance()._editUser(request);
+            response = UsersManager.getInstance().editUser(request);
         } else {
             response.setError(true);
             response.setErrorMessage("Invalid data");
@@ -247,8 +250,8 @@ public class Users extends HttpServlet {
         return response;
     }
 
-    private UsersListResponseViewModel usersList() {
-        UsersListResponseViewModel response = UsersManager.getInstance().usersList();
+    private UsersListResponse usersList() {
+        UsersListResponse response = UsersManager.getInstance().usersList();
         response.setError(false);
         return response;
     }
