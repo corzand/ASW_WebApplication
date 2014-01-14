@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
 
 /**
  * Classe base per le classi manager che implementa la scrittura e la lettura di entità java in file XML
- * ...continua CORZANI
-*/
-
+ * In entrambi i metodi si fa utilizzo di reflection Java per poter inferire il tipo degli oggetti 
+ * @author ASW1009
+ */
 public class FileManager {
 
     protected String servletPath;
@@ -45,9 +45,11 @@ public class FileManager {
     private DateFormat dateFormat;
     
     /**
-    *
-    */
-
+     * Metodo utilizzato per inizializzare il manager, in particolare per quanto riguarda
+     * la gestione del file e relativi percorsi.
+     * @param servletPath percorso della servlet in cui inserire il file
+     * @param fileName nome del file 
+     */
     protected void init(String servletPath, String fileName) {
         this.servletPath = servletPath;
         this.fileName = fileName;
@@ -62,7 +64,7 @@ public class FileManager {
     }
     
     /**
-     * Restituisce l'identificativo progressivo
+     * Metodo utilizzato per ottenere il nuovo identificatore progressivo.
      * 
      * @return 
      */
@@ -71,6 +73,12 @@ public class FileManager {
         return progId;
     }
 
+    /**
+     * Metodo utilizzato per scrivere l'istanza della lista passata come parametro
+     * nel relativo file xml. Viene richiamato dopo ogni modifica alla lista di oggetti in memoria.
+     * @param list istanza della lista tipizzata
+     * @param type tipo di oggetti contenuti nella lista
+     */
     protected void writeXML(List list, Class type) {
         String itemName = type.getSimpleName();      
         
@@ -88,6 +96,7 @@ public class FileManager {
         for (Object instance : list) {
             Element[] itemFields = new Element[allFields.size()];
             
+            //Viene preparato il nodo con tutti i campi
             for (int i = 0; i < allFields.size(); i++) {
                 
                 try {
@@ -104,13 +113,16 @@ public class FileManager {
             for (Element itemField : itemFields) {
                 item.appendChild(itemField);
             }
-
+            //Viene appeso il nodo entità alla root
             root.appendChild(item);
         }
+        
+        //Creato il nodo con il progressivo
         Element listId = document.createElement("progId");
         listId.setTextContent(this.progId + "");
         root.appendChild(listId);
 
+        //Completata la scrittura
         try (OutputStream out = new FileOutputStream(xml)) {
             xmlManager.transform(out, document);
             out.flush();
@@ -119,6 +131,12 @@ public class FileManager {
         }
     }
 
+    /**
+     * Metodo utilizzato per creare la lista di entità in memoria partendo dalla lettura 
+     * dell'xml
+     * @param type Il tipo di entità che la lista contiene
+     * @return Lista tipizzata
+     */
     protected List readXML(Class type) {
         try {
             List itemList = new ArrayList();
@@ -129,9 +147,12 @@ public class FileManager {
             for (int i = 0; i < nodeItems.getLength(); i++) {
                 Node childNode = nodeItems.item(i);
 
+                //Viene istanziato l'oggetto richiamando via reflection il costruttore
                 Constructor<?> ctor = type.getConstructor();
                 Object object = ctor.newInstance();
 
+                //Viene preparato l'oggetto impostando tutti i campi, leggendo e parsando
+                //il nodo relativo all'entità all'interno del documento xml.
                 NodeList properties = childNode.getChildNodes();
                 for (int j = 0; j < properties.getLength(); j++) {
                     Node property = properties.item(j);
@@ -163,6 +184,7 @@ public class FileManager {
                 itemList.add(object);
             }
 
+            //Lettura del progressivo da file
             this.progId = Integer.parseInt(document.getElementsByTagName("progId").item(0).getTextContent());
 
             return itemList;

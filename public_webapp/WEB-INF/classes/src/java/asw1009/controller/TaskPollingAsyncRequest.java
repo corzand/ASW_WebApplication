@@ -1,6 +1,6 @@
 package asw1009.controller;
 
-import asw1009.viewmodel.request.PollingRequestViewModel;
+import asw1009.requests.PollingRequest;
 import javax.servlet.AsyncContext;
 
 /**
@@ -11,7 +11,7 @@ import javax.servlet.AsyncContext;
 public class TaskPollingAsyncRequest {
 
     private AsyncContext context;
-    private PollingRequestViewModel requestViewModel;
+    private PollingRequest requestViewModel;
     private String sessionId;
 
     /**
@@ -23,7 +23,7 @@ public class TaskPollingAsyncRequest {
      * della richiesta http
      * @param sessionId Stringa contenente l'id della sessione
      */
-    public TaskPollingAsyncRequest(AsyncContext context, PollingRequestViewModel requestViewModel, String sessionId) {
+    public TaskPollingAsyncRequest(AsyncContext context, PollingRequest requestViewModel, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
         this.requestViewModel = requestViewModel;
@@ -43,7 +43,7 @@ public class TaskPollingAsyncRequest {
      *
      * @return Oggetto requestViewModel che contiene i dati della richiesta http
      */
-    public PollingRequestViewModel getRequestViewModel() {
+    public PollingRequest getRequestViewModel() {
         return this.requestViewModel;
     }
 
