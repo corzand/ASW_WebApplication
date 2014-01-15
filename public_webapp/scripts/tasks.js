@@ -1,5 +1,10 @@
 /*
  * 
+ * @type TasksViewModelDefinition viewModel della pagina tasks
+ */
+var tasksViewModel;
+/*
+ * 
  * Enum utilizzato per discriminare i vari tipi di notifica inviati dal server
  */
 var notificationType = {
@@ -1215,7 +1220,7 @@ function TasksViewModelDefinition() {
  * Viene inizializzato il viewModel e vengono richiamate le funzioni di inizializzazione della pagina
  */
 $(document).ready(function() {
-    var tasksViewModel = new TasksViewModelDefinition();
+    tasksViewModel = new TasksViewModelDefinition();
     
     /*
      * $.when prende in input due oggetti xhr ritornati dalle $.ajax e aspetta 
@@ -1238,4 +1243,9 @@ $(document).ready(function() {
         tasksViewModel.domUtils.initAddOnEnterKey();
         tasksViewModel.services.search.request();
     });
+});
+
+$(window).resize(function() {
+    //Aggiorno i bounds dell'area in cui posso draggare
+    tasksViewModel.domUtils.setDragBounds();
 });
