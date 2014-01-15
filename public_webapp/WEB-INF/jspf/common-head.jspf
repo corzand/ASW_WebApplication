@@ -13,3 +13,5 @@
 <link type="text/css" rel="stylesheet" href="/style-sheets/jquery-ui/jquery-ui-1.10.3.custom.css" />
 <link type="text/css" rel="stylesheet" href="/style-sheets/style.css" />
 <link href='http://fonts.googleapis.com/css?family=Cabin:400,500,600' rel='stylesheet' type='text/css'>
+
+<link rel="icon" href="/favicon.ico" />
