@@ -40,7 +40,7 @@ function sendRequest(settings) {
         error: function(jqXHR, textStatus, errorThrown) {
             //L'abort della request (chiamato manualmente), nel nostro caso non è considerato 
             //errore, di conseguenza il feedback negativo viene mostrato soltanto negli altri casi 
-            if (textStatus !== "abort") {
+            if (textStatus !== "abort" && errorThrown !== "") {
                 showNegativeFeedback(errorThrown);
                 if (settings.errorCallback) {
                     settings.errorCallback(settings.callbackParameter);
