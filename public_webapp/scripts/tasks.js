@@ -1172,9 +1172,10 @@ function TasksViewModelDefinition() {
                 }
             }
             
-            //Ogni volta che viene pushato un task, si crea la relativa area di drop
-            self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .user"), taskToPush);
-
+            if(taskToPush){
+                //Ogni volta che viene pushato un task, si crea la relativa area di drop
+                self.domUtils.initDroppable($(".task[data-id='" + taskToPush.id() + "'] .user"), taskToPush);
+            }
             return taskToPush;
         };
         
