@@ -8,162 +8,165 @@
     </head>
     <body>
 
-        <h1> Titolo: Multi-User Task List </h1>
-        <h1>Autori:</h1>
+        <h1>Titolo: Multi-User Task List</h1>
+        <h1>Autori</h1>
         <p> Capelli Claudia, matricola: 675488, claudia.capelli5@studio.unibo.it <br/>
             Corzani Andrea, matricola: 654615, andrea.corzani@studio.unibo.it <br/>
             Lo Iacono Luca, matricola: 651821, luca.loiacono@studio.unibo.it <br/>
             Magnani Antonio, matricola: 680727, antonio.magnani@studio.unibo.it</p> 
 
 
-        <h1>Descrizione del servizio offerto dal sito:</h1>
-        <div><pre>L'elaborato consiste nella realizzazione di un'applicazione web che consenta di gestire, tra diversi utenti, delle liste di "task".
-        La fase di login viene realizzata attraverso un'applet Java. Una volta completata l'autenticazione, l'applicazione web presenta un front-end nativo (HTML, CSS, Javascript) interfacciato con un back-end a servizi Java.
-        L'idea è quella di creare, modificare, eliminare delle "to-do list" condivise tra gli utenti in modo da permettere ad ognuno di essi di prendersi carico di una o più attività.
-        L'interfaccia renderà esplicita la scelta degli utenti in modo da facilitare la pianificazione delle singole attività  da portare a termine quotidianamente.</pre></div>
+        <h1>Descrizione del servizio offerto dal sito</h1>
+        <p>L'elaborato consiste nella realizzazione di un'applicazione web che consenta di gestire, tra diversi utenti, delle liste di "task".
+            La fase di login viene realizzata attraverso un'applet Java. Una volta completata l'autenticazione, l'applicazione web presenta un front-end nativo (HTML, CSS, Javascript) interfacciato con un back-end a servizi Java.
+            <br>L'idea è quella di creare, modificare, eliminare delle "to-do list" condivise tra gli utenti in modo da permettere ad ognuno di essi di prendersi carico di una o più attività.
+            L'interfaccia renderà esplicita la scelta degli utenti in modo da facilitare la pianificazione delle singole attività  da portare a termine quotidianamente.</p>
 
-        <h1>Utilizzo del sito:</h1>
-        <div><pre>Il sito si interfaccia alle seguenti categorie di utenti:
-            * Pubblici, che accedono al sito per la prima volta ed effettuano la registrazione inserendo username, nome, cognome, email e password.
-            * Registrati, che accedono al sito utilizzando le proprie credenziali. L'utente registrato può accedere all'applicativo vero e proprio: può aggiungere, modificare, cancellare, ricercare, filtrare i task a lui accessibili.
-Può accedere alla schermata di modifica dell'utente tramite click sulle informazioni dell'utente posizionate nella top-bar.
-        * Amministratore, non è attualmente implementato. L'amministratore del sito si occupa della modifica, all’interno del file XML, delle categorie di task.</pre></div>
-        
-        <h1>Realizzazione del sito:</h1>
-        Il sito è strutturato secondo una classica architettura MVC: le view sono le pagine jsp unite ai fragments, le servlet costituiscono lo strato di controller ed il model è composto da classi singleton gestrici delle relative entità.
-        Le entità condivise tra client e server sono codificate come Java Beans e sono contenute in una library esterna importata sia dalla applet che dal server.
-        La gestione dei dati da parte del model è eseguita in memoria con scrittura di backup su file XML.
-        
-        <h2>Lato Client</h2>
-        Per la computazione lato Client il sito presenta due diverse tecnologie utilizzate nelle quattro pagine jsp accessibili:
-        Applet Java, utilizzata in fase di login (index.jsp);
-        Applicazione nativa (Javascript, HTML, CSS), utilizzata in fase di registrazione utente, modifica utente e gestione dei task.
-        
-        Per descrivere al meglio la struttura del sito lato client presenteremo le jsp in funzione del loro contenuto HTML e non del codice java eseguito lato server.
-        
-        index.jsp
-        Questa view utilizza un'applet java per offrire all'utente la possibilità di eseguire il login. L'applet si compone di due text-box in cui l'utente può inserire username e password. E' inoltre presente una checkbox il cui scopo è quello di richiedere al server la memorizzazioen delle credenziali.
-        Nel caso in cui le credenziali inserite siano valide avverà il redirect automatico alla view di gestione tasks.
-        Tramite la top.jspf, visibile in questa view, l'utente anonimo può navigare alla view di registrazione. 
-        
-        signup.jsp
-        Questa view consente al client di procedere con la registrazione di un nuovo utente. La tecnologia utilizzata è l'insieme composto da HTML, Javascript e CSS.
-        Tutti i campi presenti (Nome, Cognome, Email, Username, Password e Conferma Password) sono obbligatori, in caso di assenza di uno di essi o di errori da parte dell'utente (es.: formato mail non idoneo, password troppo corta, conferma errata)
-        la chiamata al servizio di signup non si effettua e all'utente vengono notificati gli errori commessi.
-        Anche in questa pagina è presente il fragment top.jspf che consente la navigazione tra l'index.jsp e la signup.jsp.
-        In caso di registrazione effettuata con successo si verifica il redirect automatico alla pagina di login: in questo modo l'utente potrà utilizzare le credenziali appena registrate per accedere all'applicazione.
-        
-        user.jsp
-        Questa view è accessibile tramite il fragment top.jspf mediante click in corrispondenza dei dati dell'utente loggato (picture o nome e cognome). Tramite user.jsp è possibile modificare i dati ed associare un'immagine personale all'utente.
-        Come per la signup la form è descritta e realizzata tramite HTML, CSS e Javascript. 
-        L'utente non ha la possibilità di modificare il proprio username e qualsiasi modifica voglia apportare deve essere confermata tramite l'inserimento della propria password. Nel caso in cui voglia modificare la password dovrà inserire l'attuale e, successivamente, la nuova con relativa conferma.
-        A modifiche avvenute correttamente vi è il redirect automatico alla pagina di gestione tasks, in caso contrario l'utente verrà informato degli eventuali errori commessi.
-        Anche nella user.jsp è presente il fragment top.jspf che, oltre al logo del sito, posiziona sulla destra le informazioni relative all'utente e il pulsante di logout.
-        
-        tasks.jsp
-        Questa view rappresenta il core dell'applicazione ed è una vera e propria single page application. 
-        In alto è presente la top.jspf che consente l'accesso, tramite click sulle informazioni dell'utente loggato, alla pagina di modifica utente.
-        Sulla sinistra è presente una side-bar a scomparsa il cui scopo è applicare filtri per la visualizzazione dei task sulla timeline.
-        A centro schermo troviamo il box di aggiunta task tramite il quale l'utente può aggiungere nuovi task alla timeline. Il titolo del singolo task è obbligatorio, nel caso in cui l'utente voglia estendere il contenuto del task
-        oltre al titolo e alla data di validità, può cliccare il bottone di modifica per aggiungere proprietà al task (descrizione, check-done, categoria, utente assegnato e pubblicità del task).
-        In rispetto della logica dell'applicazione i filtri di ricerca basati sulla data sono posizionati in una barra orizzontale sopra la timeline.
-        Immediatamente sopra la timeline vi è la user-bar che contiene le immagini personali degli utenti registrati: tramite drag & drop è possibile trascinare la picture sopra ad un task per assegnarlo ad un determinato utente.
-        La timeline è una scroll-bar orizzontale rappresentante la linea del tempo: ogni giorno è rappresentanto da un contenitore dove al suo interno sono visualizzati i relativi task. 
-        Ogni task può essere modificato cliccando sul box centrale; quest'azione mostra una pop-up in cui è possibile aggiornare o eliminare il task.
-        Oltre a questa possibilità l'utente ha alcune shortcut che consentono delle rapide modifiche: tramite un pulsante è possibile posticipare la data di realizzazione del task mentre tramite la checkbox è possibile marcare il task come fatto.
-        
-        Tecnologie Utilizzate: 
-        L'applet Java di Login è realizzata tramite una classe che estende JApplet dove la form è composta da alcuni componenti della library Swing (JTextField, JPasswordField, JLabel e JButton).
-        Tramite override del metodo init() di JApplet si crea un runnable da invocare con invokeAndWait che ha lo scopo di impostare la GUI e registrare il listener (applicato al JButton).
-        Viene inoltre impostato correttamente l'oggetto HTTPClient con la sessionId e il documentBase relativo al mount-point principale della Web Application. La applet riceve alcuni parametri in ingresso tra cui: i valori di username e password, se precedentemente settati in 2 cookies,
-        ed il sessionId per poter correttamente comunicare con il server.
-        Quando l'utente preme il pulsante di login viene preparato l'xml da inviare al server con i campi impostati e, attraverso la utility HTTPClient, si richiama il servizio sulla servlet users: se l'esito è positivo l'utente accede all'applicazione, in caso contrario viene mostrato l'errore nelle credenziali.
-        Sebbene l'applet sia molto semplice è stata realizzata a fini didattici per sperimentare un approccio diverso dalla classica form HTML che ci ha permesso di capire pregi e difetti di questa tecnologia.
-        
-        L'applet fa utilizzo della library esterna ASW_Lib1, che contiene gli oggetti Java rappresentanti sia le entità base utilizzate nell'applicazione (User.java, UserBase.java, Task.java, Category.java), sia gli oggetti Java scambiati con il server (requests e responses) per l'esecuzione dei servizi.        
-        <a href='javadoc'>Collegare Javadoc Lib1</a>
-        <a href="javadoc">Collegare Javadoc Applet1</a>
-        
-        Per quanto riguarda le restanti view, sono state realizzate nativamente con HTML, CSS e Javascript.
-        Tutte e tre utilizzano in modo esplicito il concetto di ViewModel per effettuare il binding (via Knockout) dei dati tra il contenuto HTML della JSP, e i dati in formato Javascript. E' quindi sempre presente un viewmodel dedicato alla pagina che rappresenta la classe che gestisce lato-client i dati da visualizzare e su cui l'utente può interagire.
-        La struttura del viewmodel si articola in properties (observable o meno, a seconda dei vari casi), funzioni costruttrici per i vari oggetti javascript utilizzati, e oggetti complessi che contengono (un po' come se ci fosse un namespace) varie funzioni utilizzate dal viewmodel.
-        Nella fattispecie, abbiamo sempre l'oggetto action che contiene tutti gli handler per gli eventi scatenati dall'utente, l'oggetto services che contiene le funzioni per operare con i servizi, ed eventualmente oggetti che contengono funzioni di utilities.
-        Questa struttura, sebbene possa sembrare un overhead inutile, in realtà serve per inserire le funzioni nei relativi scope e dare ordine ai file javascript.
-        Oltre a knockout.js, è stata utilizzata anche la library jQuery e relativa jQuery-ui, ma si è cercato di limintarne l'utilizzo nei casi in cui: knockout non forniva la funzionalità per effettuare il binding, oppure in tutti i casi in cui era necessario effettuare operazioni grafiche sul DOM.
-        Per quanto riguarda la validazione dei dati, si è cercato di farla il più possibile client-side, in modo da scaricare il server da compiti inutili. A questo è stato scelto il plugin jquery-validator che consente dichiarativamente di inserire delle regole di validazione per un form.
-        Alcune funzioni comuni a tutte le pagine, sono state inserite nel file utility.js, che consentono quindi di risparmiare codice che altrimenti sarebbe replicato in tutti i vari javascript. Un esempio è sicuramente la funzione sendRequest(rSettings) che al suo interno wrappa la chiamata a servizio $.ajax() configurandola sulla base dei settings passati come parametro.
-        Tutti gli include comuni sono inseriti nel fragment common-head.jspf, che viene incluso nel tag head di tutte le jsp.
-        Altri fragment utilizzati sono: auth (che contiene codice java server-side per la verifica dell'utente loggato in sessione), top.jspf, title.jspf e validation-dialog.jspf.
-        Title e validation-dialog vengono inclusi soltanto quando è necessario includere rispettivamente titolo o dialog di validazione, mentre top, essendo incluso in tutte le pagine, ha un contenuto molto simile a quello di una view, in quanto anch'esso dispone di un viewmodel al quale è bindato via knockout.
-        
-        Le pagine Signup.jsp e User.jsp, sono piuttosto semplici: il viewmodel si occupa sostanzialmente di gestire una form di dati, quindi una sola action, un solo servizio configurato, e varie property observable. 
-        Nel caso di user.jsp, sfruttiamo inoltre le file api HTML5 per leggere lato-client (in formato base64) un file immagine selezionato dall'utente e visualizzarlo nell'opportuno tag img.
-        
-        Come già anticipato, la parte "core" dell'applicazione è la view tasks.jsp, che rappresenta l'implementazione di una RIA nativa.
-        In questo caso il viewmodel è decisamente esteso (circa 1000 righe di codice javascript) e contiene al suo interno tutte le funzionalità per la gestione della RIA, sia per quanto riguarda i dati visualizzati e modificabili dall'utente, sia per quanto riguarda le funzionalità grafiche.
-        Per limitare la quantità di codice scritto, si è cercato di sfruttare al massimo il binding dichiarativo che knockout mette a disposizione, sia per i dati che per le diverse action. Tutto ciò che non siamo riusciti a bindare alla view, l'abbiamo fatto attraverso l'utilizzo di jQuery.
-        Oltre alle chiamate standard (JSON over HTTP-POST) che vengono effettuate ai vari servizi adibiti alla gestione dei tasks, una delle caratteristiche più rilevanti è la gestione della multiutenza, quindi conseguentemente del meccanismo di notifiche push. Per l'implementazione delle notifiche si è scelto l'approccio a long-polling offerto da COMET.
-        E' infatti implementata una funzione che effettua long-polling e tramite chiamata asincrona jquery, e alla quale il server risponde soltanto in corrispondenza del verificarsi di eventi dei quali si può ricevere notifica, ovvero modifica, aggiunta o eliminazione di un task da parte di un'altro utente.
-        Il modello MVC in questo modo è rispettato pienamente, con la view che è sempre aggiornata real-time sulla base dei dati realmente presesnti nel model. 
-        Ovviamente, siccome la timeline rappresenta solo una porzione dello spazio temporale e non tutti i task sono quindi visibili all'utente (anche relativamente al fatto che i task di utenti "terzi" siano pubblici o meno), la notifica viene ricevuta dall'utente X solo se il task modificato da Y cade nella timeline di X, oppure se X è sottoscritto al task.
-        Una volta ricevuta la notifica, la callback del long polling aggiorna il task di riferimento (sempre che non sia stato eliminato o reso inaccessibile) e mostra un box all'utente.         
-        Anche la notifica è bindata via knockout ad un oggetto javascript Notification.
-        Si rimanda al codice (commentato) per ulteriori dettagli relativi al meccanismo di notifica.
-        Anche in questo caso si fa uso di validazione client-side per l'unico campo obbligatorio che l'utente deve inserire sul task, ovvero il titolo.
-        I componenti jquery-ui utilizzati sono dialog, per mostrare la popup di dettaglio task e la popup di validazione, datepicker per la selezione dei campi di tipo data, draggable e droppbable per realizzare l'effetto di drag-drop della card utente sul box del task a che gli si vuole assegnare.
-        L'effetto di drag-drop è stato realizzato con qualche difficoltà, considerando soprattutto il fatto che il drag deve provocare uno scroll su diversi contenitori.
-        
-        Per quanto riguarda il layout delle varie pagine, si è scelto a scopo didattico di utilizzare il modello a box flessibili offerto da css3.
-        I box flessibili consentono di specificare dichiarativamente come lo spazio libero viene occupato dai figli di un determinato contenitore, impostando su di essi relative proprietà che ne specificano appunto la flessibilità.
-        Questo modello si è reso molto utile in particolare per la realizzazione del layout della pagina tasks, che altrimenti sarebbe stato decisamente più complesso. Utilizzando i box flessibili, abbiamo ottenuto un layout adattivo per diverse risoluzioni, in quanto la timeline si allarga/alza in modo flessibile sulla base della risoluzione.
-        La compatibilità è limitata alle ultime versioni di Chrome, Firefox e IE.
-        
-        Le scelte architetturali e funzionali per queste parti di sito sono state prese sulla base delle principali tecnologie ad oggi utilizzate. Tuttavia, per questioni di tempo e dimensione di progetto, non abbiamo mai preso in considerazione l'utilizzo di framework css come ad esempio bootstrap.
-        Interessante è stato capire e imparare come realizzare applicazioni che fanno uso di javascript come tecnologia client-side, apprezzandone le potenzialità e scontrandoci con la sua complessità, confrontandola con lo sviluppo client-side attraverso applet. Inizialmente, anche la fase di debugging non è stata semplice!
-        
-        <h2>Lato Server</h2>
-        Il server è strutturato in due package differenti, rappresentanti il Model ed il Controller dell'architettura MVC utilizzata.
-        
-        Il model si compone di classi singleton il cui scopo è gestire le varie entità presenti.
-        FileManager.java è la classe base dei manager componenti il model, il suo scopo è implementare la scrittura e la lettura di entità Java in XML. Le classi CategoriesManager.java, TasksManager.java e UsersManager.java estendono FileManager.java
-        e implementano i metodi necessari all'alterazione delle relative entità. 
-        
-        Il controller si compone di tre servlet (Application.java, Tasks.java e Users.java) che offrono diversi servizi ai client. TaskPollingAsyncRequest.java è un oggetto utilizzato dalla servlet Tasks.java per gestire le richieste asincrone secondo il pattern Comet.
-        
-        La servlet Application.java intercetta le richieste GET del client per le diverse view e, attraverso view selection sulle opportune jsp, effettua il forwarding.
-        
-        Tasks.java e Users.java sono due servlet che offrono i servizi esposti richiedenti chiamate POST. Ogni servlet interagisce con le relative istanze di model per operare sui dati.
-        Tasks.java offre servizi relativi ai task (aggiunta, modifica, eliminazione, notifica, ricerca) mentre Users.java offre servizi relativi alla gestione utenti (login, signup, edit).
-        
-        La tecnologia utilizzata nello strato di controller, è quella offerta dalle servlet java.
-        Nello specifico, i servizi offerti sono esposti come operations richiamabili dal client attraverso url logico. 
-        L'application controller è la servlet dedicata a rispondere alle richieste GET per le pagine jsp presenti nel sito, applica il meccanismo di view selection sulla base dell'operationforwarding
-        Si è scelto di utilizzare degli URL logici nel controller application, per dare significato auto-esplicativo alla richiesta del client piuttosto che far richiedere al client direttamente la risorsa (pagina jsp, esempio per la view di login: /application/login).    
-        
-        Users.js è la servlet che offre servizi di gestione degli utenti
-        Tasks.js è la servlet che offre servizi di gestione dei tasks
-        Entrambe le servlet si occupano di gestire le richieste di tipo POST, perchè ovviamente offrono servizi sotto forma di metodi che operano sui dati, non restituiscono direttamente una View ma altri dati, in formato XML o JSON.
-        La scelta del formato di scambio dati tra client e server è stata XML, nel caso della chiamata al servizio di login effettuata dalla applet, JSON nel caso degli altri servizi. 
-        JSON è stato utilizzato perchè più semplice da maneggiare via javascript, dato che la maggior parte della nostra applicazione client-side è basata su questa tecnologia. 
-        Lato-server, la serializzazione/deserializzazione di JSON è stata ottenuta attraverso la library <a href="https://code.google.com/p/google-gson/"> Google Gson</a> open source.
-        La maggior parte dei servizi esposti dalle servlet sono implementati in modo sincrono, ma c'è un'eccezione: la servlet Tasks.js si deve preoccupare anche della realizzazione del meccanismo di notifiche implementato tramite COMET, quindi per l'operation polling la richiesta del client viene sospesa e la risposta si manda in modo asincrono, solo quando è necessario inviare la notifica.
-        La struttura di appoggio utilizzata all'interno della servlet Tasks.java per salvare le richieste asincrone, è una HashMap in cui la chiave è rappresentata dalla sessionId del client che effettua la richiesta di polling, mentre l'oggetto salvato nella mappa ha tutte le informazioni necessarie al server per sapere se deve effettivamente completare quella determinata richiesta (notificando il client) oppure no.
-       
-        Per ulteriori informazioni su servlet <a href="link javadoc">javadoc controller</a>
-        
-        Le servlet si appoggiano al model dell'applicazione accedendo alle varie classi di model, che sono istanze singleton.
-        L'utilizzo del pattern singleton per le classi di model si è reso necessario poichè i dati sono da considerare univoci per applicazione, quindi è chiaro che creare una nuova istanza di ogni manager per ogni servlet, non avrebbe avuto senso.
-        I manager comunque vengono creati e inizializzati dall'application controller, che vi setta il percorso del file che i manager devono andare a scrivere. 
-        A questo punto ogni manager, una volta ricevuto il percorso, verifica che sul percorso sia presente il file; se esiste, legge il contenuto del file della relativa entità e prepara la lista in memoria, altrimenti imposta la lista vuota.
-        L'accesso ai manager, visto che può avvenire da diversi thread (uno per ogni chiamata) si effettua in modo mutualmente esclusivo, di conseguenza l'accesso all'istanza è chiuso all'interno di un blocco synchronized.
-        Per maggiori informazioni sul model e relativi metodi, si rimanda ai commenti nel codice e alla relativa javaDoc <a href="javadoc">javadoc</a>
-        
-        
-        <h2>Informazioni memorizzate sul Server e scambiate su rete</h2>
-        Il model, pur lavorando sui dati in memoria, mantiene sempre aggiornati gli XML delle relative entità (users.xml, tasks.xml); ciò consente di poter rileggere in fase di inizializzazione del server la situazione dei dati precedente.
-        Categories.xml è invece statico e al momento è prevista soltanto la fase di lettura in quanto, mancando la gestione dell'utente amministratore, le categorie non possono essere modificate.
-        
-        Per quanto riguarda le informazioni scambiate via HTTP, per il servizio di login utilizziamo XML over HTTP (sia per la request che per la response), per tutti gli altri servizi realizzati abbiamo utilizzato JSON over HTTP.
-        
+        <h1>Utilizzo del sito</h1>
+        <div>Il sito si interfaccia alle seguenti categorie di utenti:
+            <ul>
+                <li>Pubblici: accedono al sito per la prima volta ed effettuano la registrazione inserendo username, nome, cognome, email e password;</li>
+                <li>Registrati: accedono al sito utilizzando le proprie credenziali. L'utente registrato può accedere all'applicativo vero e proprio: può aggiungere, modificare, cancellare, ricercare, filtrare i task a lui accessibili.
+                    Può accedere alla schermata di modifica dell'utente tramite click sulle informazioni dell'utente posizionate nella top-bar;</li>
+                <li>Amministratore: non attualmente implementato. L'amministratore del sito si occupa della modifica, all’interno del file XML, delle categorie di task.</li>
+            </ul>
+
+            <h1>Realizzazione del sito</h1>
+            Il sito è strutturato secondo una classica architettura MVC: le view sono le pagine jsp unite ai fragments, le servlet costituiscono lo strato di controller ed il model è composto da classi singleton gestrici delle relative entità.<br>
+            Le entità condivise tra client e server sono codificate come Java Beans e sono contenute in una library esterna importata sia dalla applet che dal server.
+            La gestione dei dati da parte del model è eseguita in memoria con scrittura di backup su file XML.
+
+            <h2>Lato Client</h2>
+            Per la computazione lato Client il sito presenta due diverse tecnologie utilizzate nelle quattro pagine jsp accessibili:
+            <ul><li>Applet Java, utilizzata in fase di login (index.jsp);</li>
+                <li>Applicazione nativa (Javascript, HTML, CSS), utilizzata in fase di registrazione utente, modifica utente e gestione dei task.</li></ul>
+
+            Per descrivere al meglio la struttura del sito lato client presenteremo le jsp in funzione del loro contenuto HTML e non del codice java eseguito lato server.<br>
+
+            <p><b>index.jsp</b><br>
+                Questa view utilizza un'applet java per offrire all'utente la possibilità di eseguire il login. L'applet si compone di due text-box in cui l'utente può inserire username e password. E' inoltre presente una checkbox il cui scopo è quello di richiedere al server la memorizzazioen delle credenziali.
+                Nel caso in cui le credenziali inserite siano valide avverà il redirect automatico alla view di gestione tasks.
+                Tramite la top.jspf, visibile in questa view, l'utente anonimo può navigare alla view di registrazione. </p>
+
+            <p><b>signup.jsp</b><br>
+                Questa view consente al client di procedere con la registrazione di un nuovo utente. La tecnologia utilizzata è l'insieme composto da HTML, Javascript e CSS.
+                Tutti i campi presenti (Nome, Cognome, Email, Username, Password e Conferma Password) sono obbligatori, in caso di assenza di uno di essi o di errori da parte dell'utente (es.: formato mail non idoneo, password troppo corta, conferma errata)
+                la chiamata al servizio di signup non si effettua e all'utente vengono notificati gli errori commessi.
+                Anche in questa pagina è presente il fragment top.jspf che consente la navigazione tra l'index.jsp e la signup.jsp.
+                In caso di registrazione effettuata con successo si verifica il redirect automatico alla pagina di login: in questo modo l'utente potrà utilizzare le credenziali appena registrate per accedere all'applicazione.</p>
+
+            <p><b>user.jsp</b><br>
+                Questa view è accessibile tramite il fragment top.jspf mediante click in corrispondenza dei dati dell'utente loggato (picture o nome e cognome). Tramite user.jsp è possibile modificare i dati ed associare un'immagine personale all'utente.
+                Come per la signup la form è descritta e realizzata tramite HTML, CSS e Javascript. 
+                L'utente non ha la possibilità di modificare il proprio username e qualsiasi modifica voglia apportare deve essere confermata tramite l'inserimento della propria password. Nel caso in cui voglia modificare la password dovrà inserire l'attuale e, successivamente, la nuova con relativa conferma.
+                A modifiche avvenute correttamente vi è il redirect automatico alla pagina di gestione tasks, in caso contrario l'utente verrà informato degli eventuali errori commessi.
+                Anche nella user.jsp è presente il fragment top.jspf che, oltre al logo del sito, posiziona sulla destra le informazioni relative all'utente e il pulsante di logout.</p>
+
+            <p><b>tasks.jsp</b><br>
+                Questa view rappresenta il core dell'applicazione ed è una vera e propria single page application. 
+                In alto è presente la top.jspf che consente l'accesso, tramite click sulle informazioni dell'utente loggato, alla pagina di modifica utente.
+                Sulla sinistra è presente una side-bar a scomparsa il cui scopo è applicare filtri per la visualizzazione dei task sulla timeline.
+                A centro schermo troviamo il box di aggiunta task tramite il quale l'utente può aggiungere nuovi task alla timeline. Il titolo del singolo task è obbligatorio, nel caso in cui l'utente voglia estendere il contenuto del task
+                oltre al titolo e alla data di validità, può cliccare il bottone di modifica per aggiungere proprietà al task (descrizione, check-done, categoria, utente assegnato e pubblicità del task).
+                In rispetto della logica dell'applicazione i filtri di ricerca basati sulla data sono posizionati in una barra orizzontale sopra la timeline.
+                Immediatamente sopra la timeline vi è la user-bar che contiene le immagini personali degli utenti registrati: tramite drag & drop è possibile trascinare la picture sopra ad un task per assegnarlo ad un determinato utente.
+                La timeline è una scroll-bar orizzontale rappresentante la linea del tempo: ogni giorno è rappresentanto da un contenitore dove al suo interno sono visualizzati i relativi task. 
+                Ogni task può essere modificato cliccando sul box centrale; quest'azione mostra una pop-up in cui è possibile aggiornare o eliminare il task.
+                Oltre a questa possibilità l'utente ha alcune shortcut che consentono delle rapide modifiche: tramite un pulsante è possibile posticipare la data di realizzazione del task mentre tramite la checkbox è possibile marcare il task come fatto.</p>
+
+            <p><b>Tecnologie Utilizzate</b><br>
+            <p>L'applet Java di Login è realizzata tramite una classe che estende JApplet dove la form è composta da alcuni componenti della library Swing (JTextField, JPasswordField, JLabel e JButton).<br>
+                Tramite override del metodo init() di JApplet si crea un runnable da invocare con invokeAndWait che ha lo scopo di impostare la GUI e registrare il listener (applicato al JButton).
+                Viene inoltre impostato correttamente l'oggetto HTTPClient con la sessionId e il documentBase relativo al mount-point principale della Web Application.<br>
+                La applet riceve alcuni parametri in ingresso tra cui: i valori di username e password (in 2 cookiesse precedentemente settati) ed il sessionId per poter correttamente comunicare con il server.<br>
+                Quando l'utente preme il pulsante di login viene preparato l'xml da inviare al server con i campi impostati e, attraverso la utility HTTPClient, si richiama il servizio sulla servlet users: se l'esito è positivo l'utente accede all'applicazione, in caso contrario viene mostrato l'errore nelle credenziali.
+                Sebbene l'applet sia molto semplice è stata realizzata a fini didattici per sperimentare un approccio diverso dalla classica form HTML che ci ha permesso di capire pregi e difetti di questa tecnologia.<br>
+
+                L'applet fa utilizzo della library esterna ASW_Lib1, che contiene gli oggetti Java rappresentanti sia le entità base utilizzate nell'applicazione (User.java, UserBase.java, Task.java, Category.java), sia gli oggetti Java scambiati con il server (requests e responses) per l'esecuzione dei servizi.        
+            <p> <a href="./Lib1/index.html">Javadoc ASW_Lib1</a><br>
+                <a href="./Applet1/index.html">Javadoc ASW_Applet1</a></p>
+
+            <p> Per quanto riguarda le restanti view, sono state realizzate nativamente con HTML, CSS e Javascript.<br>
+                Tutte e tre utilizzano in modo esplicito il concetto di ViewModel per effettuare il binding (via Knockout) dei dati tra il contenuto HTML della JSP, e i dati in formato Javascript. E' quindi sempre presente un viewmodel dedicato alla pagina che rappresenta la classe e che gestisce, lato-client, i dati da visualizzare e su cui l'utente può interagire.<br>
+                La struttura del viewmodel si articola in properties (observable o meno, a seconda dei vari casi), funzioni costruttrici per i vari oggetti javascript utilizzati, e oggetti complessi che contengono (un po' come se ci fosse un namespace) varie funzioni utilizzate dal viewmodel.
+                Nella fattispecie, abbiamo sempre l'oggetto action che contiene tutti gli handler per gli eventi scatenati dall'utente, l'oggetto services che contiene le funzioni per operare con i servizi, ed eventualmente oggetti che contengono funzioni di utilities.
+                Questa struttura, sebbene possa sembrare un overhead inutile, in realtà serve per inserire le funzioni nei relativi scope e dare ordine ai file javascript.<br>
+                Oltre a knockout.js, è stata utilizzata anche la library jQuery e relativa jQuery-ui, ma si è cercato di limintarne l'utilizzo nei casi in cui: knockout non forniva la funzionalità per effettuare il binding, oppure in tutti i casi in cui era necessario effettuare operazioni grafiche sul DOM.<br>
+                Per quanto riguarda la validazione dei dati, si è cercato di farla il più possibile client-side, in modo da scaricare il server da compiti inutili. A questo è stato scelto il plugin jquery-validator che consente dichiarativamente di inserire delle regole di validazione per un form.
+                Alcune funzioni comuni a tutte le pagine sono state inserite nel file utility.js, che consente quindi di risparmiare codice che altrimenti sarebbe replicato in tutti i vari javascript. Un esempio è sicuramente la funzione sendRequest(rSettings) che al suo interno wrappa la chiamata a servizio $.ajax() configurandola sulla base dei settings passati come parametro.<br>
+                Tutti gli include comuni sono inseriti nel fragment common-head.jspf, che viene incluso nel tag head di tutte le jsp.
+                Altri fragment utilizzati sono: auth (che contiene codice java server-side per la verifica dell'utente loggato in sessione), top.jspf, title.jspf e validation-dialog.jspf.
+                Title e validation-dialog vengono inclusi soltanto quando è necessario includere rispettivamente titolo o dialog di validazione, mentre top, essendo incluso in tutte le pagine, ha un contenuto molto simile a quello di una view, in quanto anch'esso dispone di un viewmodel al quale è bindato via knockout. </p>
+
+            <p>Le pagine Signup.jsp e User.jsp, sono piuttosto semplici: il viewmodel si occupa sostanzialmente di gestire una form di dati, quindi una sola action, un solo servizio configurato, e varie property observable. <br>
+                Nel caso di user.jsp, sfruttiamo inoltre le file api HTML5 per leggere lato-client (in formato base64) un file immagine selezionato dall'utente e visualizzarlo nell'opportuno tag img.</p>
+
+            Come già anticipato, la parte "core" dell'applicazione è la view tasks.jsp, che rappresenta l'implementazione di una RIA nativa.
+            In questo caso il viewmodel è decisamente esteso (circa 1000 righe di codice javascript) e contiene al suo interno tutte le funzionalità per la gestione della RIA, sia per quanto riguarda i dati visualizzati e modificabili dall'utente, sia per quanto riguarda le funzionalità grafiche.
+            Per limitare la quantità di codice scritto, si è cercato di sfruttare al massimo il binding dichiarativo che knockout mette a disposizione, sia per i dati che per le diverse action. Tutto ciò che non siamo riusciti a bindare alla view, l'abbiamo fatto attraverso l'utilizzo di jQuery.
+            Oltre alle chiamate standard (JSON over HTTP-POST) che vengono effettuate ai vari servizi adibiti alla gestione dei tasks, una delle caratteristiche più rilevanti è la gestione della multiutenza, quindi conseguentemente del meccanismo di notifiche push.
+            <br>Per l'implementazione delle notifiche si è scelto l'approccio a long-polling offerto da COMET.
+            E' infatti implementata una funzione che effettua long-polling e tramite chiamata asincrona jquery, e alla quale il server risponde soltanto in corrispondenza del verificarsi di eventi dei quali si può ricevere notifica, ovvero modifica, aggiunta o eliminazione di un task da parte di un'altro utente.
+            Il modello MVC in questo modo è rispettato pienamente, con la view che è sempre aggiornata real-time sulla base dei dati realmente presenti nel model. 
+            Ovviamente, siccome la timeline rappresenta solo una porzione dello spazio temporale e non tutti i task sono quindi visibili all'utente (anche relativamente al fatto che i task di utenti "terzi" siano pubblici o meno), la notifica viene ricevuta dall'utente X solo se il task modificato da Y cade nella timeline di X, oppure se X è sottoscritto al task.
+            Una volta ricevuta la notifica, la callback del long polling aggiorna il task di riferimento (sempre che non sia stato eliminato o reso inaccessibile) e mostra un box all'utente.         
+            Anche la notifica è bindata via knockout ad un oggetto javascript Notification.
+            Si rimanda al codice (commentato) per ulteriori dettagli relativi al meccanismo di notifica.
+            Anche in questo caso si fa uso di validazione client-side per l'unico campo obbligatorio che l'utente deve inserire sul task, ovvero il titolo.
+            I componenti jquery-ui utilizzati sono dialog, per mostrare la popup di dettaglio task e la popup di validazione, datepicker per la selezione dei campi di tipo data, draggable e droppbable per realizzare l'effetto di drag-drop della card utente sul box del task a che gli si vuole assegnare.
+            L'effetto di drag-drop è stato realizzato con qualche difficoltà, considerando soprattutto il fatto che il drag deve provocare uno scroll su diversi contenitori.
+            <p>
+                Per quanto riguarda il layout delle varie pagine, si è scelto a scopo didattico di utilizzare il modello a box flessibili offerto da css3.<br>
+                I box flessibili consentono di specificare dichiarativamente come lo spazio libero viene occupato dai figli di un determinato contenitore, impostando su di essi relative proprietà che ne specificano appunto la flessibilità.
+                Questo modello si è reso molto utile in particolare per la realizzazione del layout della pagina tasks, che altrimenti sarebbe stato decisamente più complesso. Utilizzando i box flessibili, abbiamo ottenuto un layout adattivo per diverse risoluzioni, in quanto la timeline si allarga/alza in modo flessibile sulla base della risoluzione.
+                La compatibilità è limitata alle ultime versioni di Chrome, Firefox e IE.</p>
+
+            Le scelte architetturali e funzionali per queste parti di sito sono state prese sulla base delle principali tecnologie ad oggi utilizzate. Tuttavia, per questioni di tempo e dimensione di progetto, non abbiamo mai preso in considerazione l'utilizzo di framework css come ad esempio bootstrap.
+            Interessante è stato capire e imparare come realizzare applicazioni che fanno uso di javascript come tecnologia client-side, apprezzandone le potenzialità e scontrandoci con la sua complessità, confrontandola con lo sviluppo client-side attraverso applet. Inizialmente, anche la fase di debugging non è stata semplice!
+
+            <h2>Lato Server</h2>
+            Il server è strutturato in due package differenti, rappresentanti il Model ed il Controller dell'architettura MVC utilizzata.
+
+            Il model si compone di classi singleton il cui scopo è gestire le varie entità presenti.
+            FileManager.java è la classe base dei manager componenti il model, il suo scopo è implementare la scrittura e la lettura di entità Java in XML. Le classi CategoriesManager.java, TasksManager.java e UsersManager.java estendono FileManager.java
+            e implementano i metodi necessari all'alterazione delle relative entità. 
+
+            Il controller si compone di tre servlet (Application.java, Tasks.java e Users.java) che offrono diversi servizi ai client. TaskPollingAsyncRequest.java è un oggetto utilizzato dalla servlet Tasks.java per gestire le richieste asincrone secondo il pattern Comet.
+
+            La servlet Application.java intercetta le richieste GET del client per le diverse view e, attraverso view selection sulle opportune jsp, effettua il forwarding.
+
+            Tasks.java e Users.java sono due servlet che offrono i servizi esposti richiedenti chiamate POST. Ogni servlet interagisce con le relative istanze di model per operare sui dati.
+            Tasks.java offre servizi relativi ai task (aggiunta, modifica, eliminazione, notifica, ricerca) mentre Users.java offre servizi relativi alla gestione utenti (login, signup, edit).
+
+            La tecnologia utilizzata nello strato di controller, è quella offerta dalle servlet java.
+            Nello specifico, i servizi offerti sono esposti come operations richiamabili dal client attraverso url logico. 
+            L'application controller è la servlet dedicata a rispondere alle richieste GET per le pagine jsp presenti nel sito, applica il meccanismo di view selection sulla base dell'operationforwarding
+            Si è scelto di utilizzare degli URL logici nel controller application, per dare significato auto-esplicativo alla richiesta del client piuttosto che far richiedere al client direttamente la risorsa (pagina jsp, esempio per la view di login: /application/login).    
+
+            Users.js è la servlet che offre servizi di gestione degli utenti
+            Tasks.js è la servlet che offre servizi di gestione dei tasks
+            Entrambe le servlet si occupano di gestire le richieste di tipo POST, perchè ovviamente offrono servizi sotto forma di metodi che operano sui dati, non restituiscono direttamente una View ma altri dati, in formato XML o JSON.
+            La scelta del formato di scambio dati tra client e server è stata XML, nel caso della chiamata al servizio di login effettuata dalla applet, JSON nel caso degli altri servizi. 
+            JSON è stato utilizzato perchè più semplice da maneggiare via javascript, dato che la maggior parte della nostra applicazione client-side è basata su questa tecnologia. 
+            Lato-server, la serializzazione/deserializzazione di JSON è stata ottenuta attraverso la library <a href="https://code.google.com/p/google-gson/"> Google Gson</a> open source.
+            La maggior parte dei servizi esposti dalle servlet sono implementati in modo sincrono, ma c'è un'eccezione: la servlet Tasks.js si deve preoccupare anche della realizzazione del meccanismo di notifiche implementato tramite COMET, quindi per l'operation polling la richiesta del client viene sospesa e la risposta si manda in modo asincrono, solo quando è necessario inviare la notifica.
+            La struttura di appoggio utilizzata all'interno della servlet Tasks.java per salvare le richieste asincrone, è una HashMap in cui la chiave è rappresentata dalla sessionId del client che effettua la richiesta di polling, mentre l'oggetto salvato nella mappa ha tutte le informazioni necessarie al server per sapere se deve effettivamente completare quella determinata richiesta (notificando il client) oppure no.
+
+            Per ulteriori informazioni su servlet <a href="link javadoc">javadoc controller</a>
+
+            Le servlet si appoggiano al model dell'applicazione accedendo alle varie classi di model, che sono istanze singleton.
+            L'utilizzo del pattern singleton per le classi di model si è reso necessario poichè i dati sono da considerare univoci per applicazione, quindi è chiaro che creare una nuova istanza di ogni manager per ogni servlet, non avrebbe avuto senso.
+            I manager comunque vengono creati e inizializzati dall'application controller, che vi setta il percorso del file che i manager devono andare a scrivere. 
+            A questo punto ogni manager, una volta ricevuto il percorso, verifica che sul percorso sia presente il file; se esiste, legge il contenuto del file della relativa entità e prepara la lista in memoria, altrimenti imposta la lista vuota.
+            L'accesso ai manager, visto che può avvenire da diversi thread (uno per ogni chiamata) si effettua in modo mutualmente esclusivo, di conseguenza l'accesso all'istanza è chiuso all'interno di un blocco synchronized.
+            Per maggiori informazioni sul model e relativi metodi, si rimanda ai commenti nel codice e alla relativa javaDoc <a href="Lib1">javadoc</a>
+
+
+            <h2>Informazioni memorizzate sul Server e scambiate su rete</h2>
+            Il model, pur lavorando sui dati in memoria, mantiene sempre aggiornati gli XML delle relative entità (users.xml, tasks.xml); ciò consente di poter rileggere in fase di inizializzazione del server la situazione dei dati precedente.
+            Categories.xml è invece statico e al momento è prevista soltanto la fase di lettura in quanto, mancando la gestione dell'utente amministratore, le categorie non possono essere modificate.
+
+            Per quanto riguarda le informazioni scambiate via HTTP, per il servizio di login utilizziamo XML over HTTP (sia per la request che per la response), per tutti gli altri servizi realizzati abbiamo utilizzato JSON over HTTP.
+
     </body>
 </html>
