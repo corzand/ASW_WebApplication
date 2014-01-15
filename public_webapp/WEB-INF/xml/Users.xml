@@ -3,12 +3,39 @@
 <Users xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNameSpaceSchemaLocation="./xml-types/Users.xsd">    
     <User>
         <id>1</id>
-        <username>username</username>
+        <username>andrea</username>
         <picture></picture>
-        <firstName>Nome</firstName>
-        <lastName>Cognome</lastName>
-        <password>password</password>
+        <firstName>Andrea</firstName>
+        <lastName>Corzani</lastName>
+        <password>corzani</password>
         <email>email@email.com</email>
     </User>
-    <progId>1</progId>
+    <User>
+        <id>2</id>
+        <username>antonio</username>
+        <picture></picture>
+        <firstName>Antonio</firstName>
+        <lastName>Magnani</lastName>
+        <password>magnani</password>
+        <email>email@email.com</email>
+    </User>
+    <User>
+        <id>3</id>
+        <username>luca</username>
+        <picture></picture>
+        <firstName>Luca</firstName>
+        <lastName>Lo Iacono</lastName>
+        <password>loiacono</password>
+        <email>email@email.com</email>
+    </User>
+    <User>
+        <id>4</id>
+        <username>claudia</username>
+        <picture></picture>
+        <firstName>Claudia</firstName>
+        <lastName>Capelli</lastName>
+        <password>capelli</password>
+        <email>email@email.com</email>
+    </User>
+    <progId>4</progId>
 </Users>
