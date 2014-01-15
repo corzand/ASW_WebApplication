@@ -534,7 +534,7 @@ input.hasDatepicker {
     vertical-align: baseline;
     width: 50px;
     border-radius: 8px;
-    height: auto;
+    max-height: 50px;
 }
 
 .navigation .actions {
@@ -620,7 +620,7 @@ input.hasDatepicker {
 
 .edit-user .right img {
     max-width: 170px;
-    height: auto;
+    max-height: 170px;
     display: block;
     margin: 20px auto;
     border-radius: 6px;
