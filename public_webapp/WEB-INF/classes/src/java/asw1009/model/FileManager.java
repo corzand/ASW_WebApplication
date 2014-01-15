@@ -98,7 +98,7 @@ public class FileManager {
 
         Element root = document.createElement(this.fileName);
         root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
-    "xsi:noNamespaceSchemaLocation", "./xml-types/"+this.fileName+".xsd");
+    "xsi:noNamespaceSchemaLocation", "../../xml-types/"+this.fileName+".xsd");
         document.appendChild(root);
 
         for (Object instance : list) {
