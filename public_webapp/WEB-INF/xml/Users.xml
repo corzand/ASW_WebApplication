@@ -1,12 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Users>
-  <User>
-    <id>1</id>
-    <username>username</username>
-    <picture></picture>
-    <firstName>Nome</firstName>
-    <lastName>Cognome</lastName>
-    <password>password</password>
-    <email>email@email.com</email>
-  </User>
-  <progId>1</progId>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<Users xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNameSpaceSchemaLocation="./xml-types/Users.xsd">    
+    <User>
+        <id>1</id>
+        <username>username</username>
+        <picture></picture>
+        <firstName>Nome</firstName>
+        <lastName>Cognome</lastName>
+        <password>password</password>
+        <email>email@email.com</email>
+    </User>
+    <progId>1</progId>
 </Users>
