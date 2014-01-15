@@ -29,7 +29,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 /**
- * Classe che definisce tutti i servizi legati alla gestione dei task
+ * Controller che espone i servizi relativi ai Tasks.
+ * Intercetta tutte le chiamate che hanno come url pattern /tasks/
  *
  * @author ASW1009
  */
@@ -48,7 +49,8 @@ public class Tasks extends HttpServlet {
     private Gson gson;
 
     /**
-     * Metodo che inizializza tutti gli attributi della classe
+     * Metodo che inizializza i campi del controller, serializzatore json
+     * semaforo per gestire la concorrenza e HashMap contenente le richieste asincrone
      *
      * @throws ServletException
      */
@@ -61,10 +63,14 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Metodo che definisce il comportamento dell'applicazione a seguito di
-     * chiamate di tipo POST al server. Il metodo decodifica, per ogni serivzio
-     * chiamato, i dati inviati tramite una variabile di tipo gson e richiama i
-     * singoli metodi che si occupano di eseguire il servizio in questione
+     * Intercetta tutte le chiamate POST al server. 
+     * L'ultima parte dell'URL di chiamata al servizio, specifica il nome dell'operation
+     * che il client richiede. Tutte le operations prevedono uno scambio di dati con il client
+     * sotto forma di stringhe JSON (over http).
+     * Il controller, sulla base della stringa richiesta dal client, seleziona le operations 
+     * da eseguire e risponde al client. La risposta avviene sempre in modo sincrono, eccetto per la 
+     * richiesta di polling in cui la risposta avviene in modo asincrono, solo quando c'è una notifica
+     * da inviare.
      *
      * @param request Oggetto HttpServletRequest che contine i dati della
      * richiesta http
@@ -102,6 +108,7 @@ public class Tasks extends HttpServlet {
                     AddTaskResponse responseData = addTask(requestData);
                     jsonResponse = gson.toJson(responseData, AddTaskResponse.class);
                     if (!responseData.hasError()) {
+                        //Start notification thread
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 0).start();
                     }
                     break;
@@ -111,24 +118,25 @@ public class Tasks extends HttpServlet {
                     EditTaskResponse responseData = editTask(requestData);
                     jsonResponse = gson.toJson(responseData, EditTaskResponse.class);
                     if (!responseData.hasError()) {
-
+                        //Start notification thread
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 1).start();
-                        //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
-                        //da adesso alla prossima polling request per questo client?
                     }
                     break;
                 }
                 case ACTION_POLLING: {
                     PollingRequest requestData = gson.fromJson(json, PollingRequest.class);
+                    //Risposta asincrona;
                     AsyncContext asyncContext = request.startAsync(request, response);
                     try {
                         asyncContext.setTimeout(0);
-                        //il timeout a noi non serve... semplicemente se non ho nulla da
-                        //mandare al client, il client resta lì in attesa "infinita"
+                        //il timeout a noi non serve, il client resta in attesa
+                        //acquire semaphore
                         semaphore.acquire();
 
+                        //Metto la risposta nella lista di oggetti, la chiave della hashMap è sessionId
                         contexts.put(session.getId(), new TaskPollingAsyncRequest(asyncContext, requestData, session.getId()));
 
+                        //release semaphore
                         semaphore.release();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Tasks.class.getName()).log(Level.SEVERE, null, ex);
@@ -140,10 +148,8 @@ public class Tasks extends HttpServlet {
                     DeleteTaskResponse responseData = deleteTask(requestData);
                     jsonResponse = gson.toJson(responseData, DeleteTaskResponse.class);
                     if (!responseData.hasError()) {
-
+                        //Start notification thread
                         new pushTaskChangedNotificationThread(session.getId(), responseData.getTask(), 2).start();
-                        //ora che ho pushato, non rischio di perdermi eventuali modifiche "interessanti"
-                        //da adesso alla prossima polling request per questo client?
                     }
                 }
             }
@@ -155,15 +161,13 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Metodo che implementa il servizio di ricerca di più tasks
+     * Operation che offre il servizio di ricerca tasks
      *
-     * @param request Oggetto SearchTasksRequest che contine i dati
- della richiesta
+     * @param request Oggetto SearchTasksRequest che contine i dati della richiesta
      *
-     * @return Oggetto SearchTasksResponse che contiene l'elenco dei
- tasks richiesti
+     * @return Oggetto SearchTasksResponse che contiene l'elenco dei tasks richiesti
      */
-    public SearchTasksResponse searchTasks(SearchTasksRequest request) {
+    private SearchTasksResponse searchTasks(SearchTasksRequest request) {
         SearchTasksResponse response = new SearchTasksResponse();
         if (request != null) {
             response = TasksManager.getInstance().searchTasks(request);
@@ -182,8 +186,7 @@ public class Tasks extends HttpServlet {
      * chiamando CategoriesManager, situato all'interno del model, il quale si
      * occupa di effettuare la ricerca
      *
-     * @return Oggetto CategoriesListResponse contenente l'elenco delle
- categorie presenti
+     * @return Oggetto CategoriesListResponse contenente l'elenco delle categorie presenti
      */
     private CategoriesListResponse categoriesList() {
         CategoriesListResponse response = CategoriesManager.getInstance().categoriesList();
@@ -192,14 +195,11 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Metodo che permette di creare un task chiamando TaskManager, situato
-     * all'interno del model, il quale si occupa di effettuare la scrittura dei
-     * dati sul server
+     * Metodo che permette di creare un task chiamando la singleton TaskManager, situata
+     * all'interno del model, la quale si occupa della creazione dei dati
      *
-     * @param request Oggetto AddTaskRequest che contiene i dati della
- richiesta
-     * @return VOggetto AddTaskResponse che contiene i valori del task
- appena inserito
+     * @param request Oggetto AddTaskRequest che contiene i dati della richiesta
+     * @return VOggetto AddTaskResponse che contiene i valori del task appena inserito
      */
     private AddTaskResponse addTask(AddTaskRequest request) {
 
@@ -216,12 +216,10 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Metodo che permette di eliminare un task chiamando TaskManager, situato
-     * all'interno del model, il quale si occupa di effettuare la modifica dei
-     * dati
+     * Metodo che permette di eliminare un task chiamando la singleton TaskManager, situata
+     * all'interno del model, la quale si occupa di effettuare l'eliminazione dati
      *
-     * @param request Oggetto DeleteTaskRequest che contiene i dati
- della richiesta
+     * @param request Oggetto DeleteTaskRequest che contiene i dati della richiesta
      * @return Oggetto DeleteTaskResponse che contiene i valori del
  task appena eliminato
      */
@@ -238,14 +236,11 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Metodo che permette di modificare un task chiamando TaskManager, situato
-     * all'interno del model, il quale si occupa di effettuare la modifica dei
-     * dati
+     * Metodo che permette di modificare un task chiamando la singleton TaskManager, situata
+     * all'interno del model, la quale si occupa di effettuare la modifica dei dati
      *
-     * @param request Oggetto DeleteTaskRequest che contiene i dati
- della richiesta
-     * @return Oggetto DeleteTaskResponse che contiene i valori del
- task appena modificato
+     * @param request Oggetto DeleteTaskRequest che contiene i dati della richiesta
+     * @return Oggetto DeleteTaskResponse che contiene i valori del task appena modificato
      */
     private EditTaskResponse editTask(EditTaskRequest request) {
 
@@ -261,7 +256,8 @@ public class Tasks extends HttpServlet {
     }
 
     /**
-     * Classe che permette di notificare al client un'azione su un task
+     * Thread utilizzato per notificare al client un'azione effettuata da 
+     * un'altro client su un task
      */
     private class pushTaskChangedNotificationThread extends Thread {
 
@@ -288,14 +284,12 @@ public class Tasks extends HttpServlet {
         }
 
         /**
-         * Metodo che verifica se un task visaulizzato nella timeline ha subito
-         * modifche da altri utenti
+         * Metodo utilizzato per capire se l'utente è sottoscritto al task che è stato modificato, 
+         * in modo da inviargli eventualmente la notifica
          *
-         * @param requestViewModel Oggetto PollingRequest che contiene
- i dati della richiesta
-         * @param task Oggetto Task che contiene i dati del task in questione
-         * @return Valore booleano che vale 1 se il task è presente nella
-         * timeline e 0 se non è presente
+         * @param requestViewModel Oggetto PollingRequest che contiene i dati della richiesta di polling dell'utente
+         * @param task Oggetto Task che contiene i dati del task modificato
+         * @return Valore booleano che vale 1 se il task è presente nella timeline dell'utente e 0 se non è presente
          */
         private boolean isSubscribedToTask(PollingRequest requestViewModel, Task task) {
             for (int id : requestViewModel.getTaskIds()) {
@@ -307,20 +301,20 @@ public class Tasks extends HttpServlet {
             return false;
         }
 
-        /**
-         * Metodo che implementa l'attesa delle richieste tramite polling
-         */
         @Override
         public void run() {
             try {
+                //Preso il lock sulla lista delle richieste asincrone
                 semaphore.acquire();
                 Iterator<Entry<String, TaskPollingAsyncRequest>> iter = contexts.entrySet().iterator();
                 while (iter.hasNext()) {
+                    //per ogni richiesta, si valuta se mandare la notifica del task modificato.
                     Entry<String, TaskPollingAsyncRequest> entry = iter.next();
                     TaskPollingAsyncRequest asyncRequest = entry.getValue();
+                    
                     if (!sessionId.equals(asyncRequest.getSessionId())
-                            && (TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequestViewModel().getSearchRequestViewModel())
-                            || isSubscribedToTask(asyncRequest.getRequestViewModel(), task))) {
+                            && (TasksManager.getInstance().isTaskMatchingRequest(task, asyncRequest.getRequest().getSearchRequestViewModel())
+                            || isSubscribedToTask(asyncRequest.getRequest(), task))) {
                         //Notify!
                         iter.remove();
                         AsyncContext context = asyncRequest.getContext();
@@ -333,7 +327,6 @@ public class Tasks extends HttpServlet {
                             clientToPush.getOutputStream().flush();
                         } catch (IOException ex) {
                             System.out.println("Client disconnected");
-                            //Client disconnected... nothing do do, just bye bye :)
                         }
                         context.complete();
                     }

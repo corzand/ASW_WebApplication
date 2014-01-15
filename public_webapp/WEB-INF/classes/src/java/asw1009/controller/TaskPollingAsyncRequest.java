@@ -11,22 +11,23 @@ import javax.servlet.AsyncContext;
 public class TaskPollingAsyncRequest {
 
     private AsyncContext context;
-    private PollingRequest requestViewModel;
+    private PollingRequest request;
     private String sessionId;
 
     /**
-     * Costruttore della classe
+     * Oggetto utilizzato nella lista di richieste di polling, che memorizza,
+     * oltre all'asyncContext relativo alla richiesta, anche i dati della richiesta
+     * e l'id di sessione.
      *
      *
      * @param context Oggetto AsyncContext contiene il context della richiesta
-     * @param requestViewModel Oggetto requestViewModel che contiene i dati
-     * della richiesta http
+     * @param request Oggetto request che contiene i dati della richiesta che il client ha inviato
      * @param sessionId Stringa contenente l'id della sessione
      */
-    public TaskPollingAsyncRequest(AsyncContext context, PollingRequest requestViewModel, String sessionId) {
+    public TaskPollingAsyncRequest(AsyncContext context, PollingRequest request, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
-        this.requestViewModel = requestViewModel;
+        this.request = request;
     }
 
     /**
@@ -39,12 +40,12 @@ public class TaskPollingAsyncRequest {
     }
 
     /**
-     * Metodo che restituisce il requestViewModel
+     * Metodo che restituisce il request
      *
-     * @return Oggetto requestViewModel che contiene i dati della richiesta http
+     * @return Oggetto request che contiene i dati della richiesta http
      */
-    public PollingRequest getRequestViewModel() {
-        return this.requestViewModel;
+    public PollingRequest getRequest() {
+        return this.request;
     }
 
     /**

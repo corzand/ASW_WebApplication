@@ -12,18 +12,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet(urlPatterns = {"/application/*"})
+
 /**
- * Classe che provvede definisce le chiamate ai servizi attraverso metodi di
- * tipo HttpServlet
+ * Controller per tutte le chiamate con URL /application/*. 
+ * Intercetta la richieste GET del client, seleziona la View ed effettua il forwarding.
  *
  * @author ASW1009
  */
+@WebServlet(urlPatterns = {"/application/*"})
 public class Application extends HttpServlet {
 
     /**
-     * Metodo che inizializza la classi che gestiscono i sevizi principali
-     * dell'applicazione
+     * Inizializzazione dei vari Manager singleton  adibiti alla gestione del model
      *
      * @throws ServletException
      */
@@ -42,14 +42,14 @@ public class Application extends HttpServlet {
     private final String ACTION_USER = "user";
 
     /**
-     * Metodo che inoltra la richiesta http con i dati del servizio richiesto
+     * Metodo invocato per inoltrare la richiesta http del client alla view 
+     * opportunamente selzionata dal controller
      *
      * @param request Oggetto HttpServletRequest che contine i dati della
      * richiesta http
      * @param response Oggetto HttpServletResponse che contine i dati della
      * risposta http
-     * @param page Stringa che contiene il titolo della pagina da invocare per
-     * chiamare un servizio
+     * @param page Stringa che contiene il titolo della view selezionata
      * @throws ServletException
      * @throws IOException
      */
@@ -61,8 +61,8 @@ public class Application extends HttpServlet {
     }
 
     /**
-     * Metodo che prepara la richiesta http da inoltrare impostando la pagina
-     * jsp da chiamare
+     * Metodo richiamato su ogni richiesta GET. 
+     * Il controller effettua view selection e forwarding alla relativa jsp
      *
      * @param request Oggetto HttpServletRequest che contine i dati della
      * richiesta http
