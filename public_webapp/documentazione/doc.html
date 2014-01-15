@@ -23,7 +23,7 @@
             L'interfaccia renderà esplicita la scelta degli utenti in modo da facilitare la pianificazione delle singole attività  da portare a termine quotidianamente.</p>
 
         <h1>Utilizzo del sito</h1>
-        <div>Il sito si interfaccia alle seguenti categorie di utenti:
+        Il sito si interfaccia alle seguenti categorie di utenti:
             <ul>
                 <li>Pubblici: accedono al sito per la prima volta ed effettuano la registrazione inserendo username, nome, cognome, email e password;</li>
                 <li>Registrati: accedono al sito utilizzando le proprie credenziali. L'utente registrato può accedere all'applicativo vero e proprio: può aggiungere, modificare, cancellare, ricercare, filtrare i task a lui accessibili.
@@ -74,7 +74,7 @@
                 Ogni task può essere modificato cliccando sul box centrale; quest'azione mostra una pop-up in cui è possibile aggiornare o eliminare il task.
                 Oltre a questa possibilità l'utente ha alcune shortcut che consentono delle rapide modifiche: tramite un pulsante è possibile posticipare la data di realizzazione del task mentre tramite la checkbox è possibile marcare il task come fatto.</p>
 
-            <p><b>Tecnologie Utilizzate</b><br>
+            <b>Tecnologie Utilizzate</b><br>
             <p>L'applet Java di Login è realizzata tramite una classe che estende JApplet dove la form è composta da alcuni componenti della library Swing (JTextField, JPasswordField, JLabel e JButton).<br>
                 Tramite override del metodo init() di JApplet si crea un runnable da invocare con invokeAndWait che ha lo scopo di impostare la GUI e registrare il listener (applicato al JButton).
                 Viene inoltre impostato correttamente l'oggetto HTTPClient con la sessionId e il documentBase relativo al mount-point principale della Web Application.<br>
@@ -124,49 +124,112 @@
             Le scelte architetturali e funzionali per queste parti di sito sono state prese sulla base delle principali tecnologie ad oggi utilizzate. Tuttavia, per questioni di tempo e dimensione di progetto, non abbiamo mai preso in considerazione l'utilizzo di framework css come ad esempio bootstrap.
             Interessante è stato capire e imparare come realizzare applicazioni che fanno uso di javascript come tecnologia client-side, apprezzandone le potenzialità e scontrandoci con la sua complessità, confrontandola con lo sviluppo client-side attraverso applet. Inizialmente, anche la fase di debugging non è stata semplice!
 
+            <ul>
+                <li>
+                    Applet
+                    <ul><li> ASW_Applet1.jar: Consente all'utente di accedere all'applicativo tramite l'inserimento delle proprie credenziali. </li></ul>
+                </li>
+                <li>
+                   Javascript
+                   <ul>
+                       <li>
+                           application.js: contiene le informazioni sull'utente loggato e la action di logout, anch'essa bindata direttamente sulla view con l'utilizzo di knockout. Bindato alla topbar, presente in tutte le pagine.
+                       </li>
+                       <li>
+                           signup.js: contiene la action di signup e i campi observable compilati dall'utente che vuole registrarsi.
+                       </li>
+                       <li>
+                           tasks.js: core client-side dell'applicazione, contiene gli handler di tutti gli eventi che possono essere generati dall'utente e le chiamate ai vari servizi offerti dalla view.
+                       </li>
+                       <li>
+                           user.js: ViewModel bindato alla view di modifica dell'utente, gli observable sono compilati secondo i campi dell'utente loggato.
+                       </li>
+                       <li>
+                           utility.js: File contenente le funzioni comuni che possono essere utilizzate in tutti gli scope javascript dell'applicazione.
+                       </li>               
+                   </ul>
+                </li>
+            </ul>
             <h2>Lato Server</h2>
-            Il server è strutturato in due package differenti, rappresentanti il Model ed il Controller dell'architettura MVC utilizzata.
+            Il server è strutturato in due package differenti, rappresentanti il Model ed il Controller dell'architettura MVC utilizzata.<br>
+            <p>Il model si compone di classi singleton il cui scopo è gestire le varie entità presenti.
+                FileManager.java è la classe base dei manager componenti il model, il suo scopo è implementare la scrittura e la lettura di entità Java in XML. Le classi CategoriesManager.java, TasksManager.java e UsersManager.java estendono FileManager.java
+                e implementano i metodi necessari all'alterazione delle relative entità. </p>
 
-            Il model si compone di classi singleton il cui scopo è gestire le varie entità presenti.
-            FileManager.java è la classe base dei manager componenti il model, il suo scopo è implementare la scrittura e la lettura di entità Java in XML. Le classi CategoriesManager.java, TasksManager.java e UsersManager.java estendono FileManager.java
-            e implementano i metodi necessari all'alterazione delle relative entità. 
+            <p>Il controller si compone di tre servlet (Application.java, Tasks.java e Users.java) che offrono diversi servizi ai client. TaskPollingAsyncRequest.java è un oggetto utilizzato dalla servlet Tasks.java per gestire le richieste asincrone secondo il pattern Comet.
+                <br>La servlet Application.java intercetta le richieste GET del client per le diverse view e, attraverso view selection sulle opportune jsp, effettua il forwarding.
 
-            Il controller si compone di tre servlet (Application.java, Tasks.java e Users.java) che offrono diversi servizi ai client. TaskPollingAsyncRequest.java è un oggetto utilizzato dalla servlet Tasks.java per gestire le richieste asincrone secondo il pattern Comet.
-
-            La servlet Application.java intercetta le richieste GET del client per le diverse view e, attraverso view selection sulle opportune jsp, effettua il forwarding.
-
-            Tasks.java e Users.java sono due servlet che offrono i servizi esposti richiedenti chiamate POST. Ogni servlet interagisce con le relative istanze di model per operare sui dati.
-            Tasks.java offre servizi relativi ai task (aggiunta, modifica, eliminazione, notifica, ricerca) mentre Users.java offre servizi relativi alla gestione utenti (login, signup, edit).
-
-            La tecnologia utilizzata nello strato di controller, è quella offerta dalle servlet java.
-            Nello specifico, i servizi offerti sono esposti come operations richiamabili dal client attraverso url logico. 
-            L'application controller è la servlet dedicata a rispondere alle richieste GET per le pagine jsp presenti nel sito, applica il meccanismo di view selection sulla base dell'operationforwarding
-            Si è scelto di utilizzare degli URL logici nel controller application, per dare significato auto-esplicativo alla richiesta del client piuttosto che far richiedere al client direttamente la risorsa (pagina jsp, esempio per la view di login: /application/login).    
-
-            Users.js è la servlet che offre servizi di gestione degli utenti
-            Tasks.js è la servlet che offre servizi di gestione dei tasks
-            Entrambe le servlet si occupano di gestire le richieste di tipo POST, perchè ovviamente offrono servizi sotto forma di metodi che operano sui dati, non restituiscono direttamente una View ma altri dati, in formato XML o JSON.
-            La scelta del formato di scambio dati tra client e server è stata XML, nel caso della chiamata al servizio di login effettuata dalla applet, JSON nel caso degli altri servizi. 
-            JSON è stato utilizzato perchè più semplice da maneggiare via javascript, dato che la maggior parte della nostra applicazione client-side è basata su questa tecnologia. 
-            Lato-server, la serializzazione/deserializzazione di JSON è stata ottenuta attraverso la library <a href="https://code.google.com/p/google-gson/"> Google Gson</a> open source.
-            La maggior parte dei servizi esposti dalle servlet sono implementati in modo sincrono, ma c'è un'eccezione: la servlet Tasks.js si deve preoccupare anche della realizzazione del meccanismo di notifiche implementato tramite COMET, quindi per l'operation polling la richiesta del client viene sospesa e la risposta si manda in modo asincrono, solo quando è necessario inviare la notifica.
-            La struttura di appoggio utilizzata all'interno della servlet Tasks.java per salvare le richieste asincrone, è una HashMap in cui la chiave è rappresentata dalla sessionId del client che effettua la richiesta di polling, mentre l'oggetto salvato nella mappa ha tutte le informazioni necessarie al server per sapere se deve effettivamente completare quella determinata richiesta (notificando il client) oppure no.
-
-            Per ulteriori informazioni su servlet <a href="link javadoc">javadoc controller</a>
-
-            Le servlet si appoggiano al model dell'applicazione accedendo alle varie classi di model, che sono istanze singleton.
-            L'utilizzo del pattern singleton per le classi di model si è reso necessario poichè i dati sono da considerare univoci per applicazione, quindi è chiaro che creare una nuova istanza di ogni manager per ogni servlet, non avrebbe avuto senso.
-            I manager comunque vengono creati e inizializzati dall'application controller, che vi setta il percorso del file che i manager devono andare a scrivere. 
+                <br>Tasks.java e Users.java sono due servlet che offrono i servizi esposti richiedenti chiamate POST. Ogni servlet interagisce con le relative istanze di model per operare sui dati.
+                Tasks.java offre servizi relativi ai task (aggiunta, modifica, eliminazione, notifica, ricerca) mentre Users.java offre servizi relativi alla gestione utenti (login, signup, edit).</p>
+            <b>Tecnologie Utilizzate</b><br>
+            <p>La tecnologia utilizzata nello strato di controller, è quella offerta dalle servlet java.
+                Nello specifico, i servizi offerti sono esposti come operations richiamabili dal client attraverso url logico. <br>
+                L'application controller è la servlet dedicata a rispondere alle richieste GET per le pagine jsp presenti nel sito, applica il meccanismo di view selection sulla base dell'operation forwarding.
+                Si è scelto di utilizzare degli URL logici nel controller application per dare significato auto-esplicativo alla richiesta del client piuttosto che far richiedere al client direttamente la risorsa (pagina jsp, esempio per la view di login: /application/login).    </p>
+            <p>
+                Users.js è la servlet che offre servizi di gestione degli utenti mentre Tasks.js è la servlet che offre servizi di gestione dei tasks.<br>
+                Entrambe le servlet si occupano di gestire le richieste di tipo POST, perchè ovviamente offrono servizi sotto forma di metodi che operano sui dati, non restituiscono direttamente una View ma altri dati, in formato XML o JSON.
+                La scelta del formato di scambio dati tra client e server è stata XML nel caso della chiamata al servizio di login effettuata dalla applet, JSON nel caso degli altri servizi. <br>
+                JSON è stato utilizzato perchè più semplice da maneggiare via javascript, dato che la maggior parte della nostra applicazione client-side è basata su questa tecnologia. 
+                Lato-server, la serializzazione/deserializzazione di JSON è stata ottenuta attraverso la library <a href="https://code.google.com/p/google-gson/"> Google Gson</a> open source.<br></p>
+            <p>La maggior parte dei servizi esposti dalle servlet sono implementati in modo sincrono, ma c'è un'eccezione: la servlet Tasks.js si deve preoccupare anche della realizzazione del meccanismo di notifiche implementato tramite COMET, quindi per l'operation polling la richiesta del client viene sospesa e la risposta si manda in modo asincrono, solo quando è necessario inviare la notifica.
+                La struttura di appoggio utilizzata all'interno della servlet Tasks.java per salvare le richieste asincrone, è una HashMap in cui la chiave è rappresentata dalla sessionId del client che effettua la richiesta di polling, mentre l'oggetto salvato nella mappa ha tutte le informazioni necessarie al server per sapere se deve effettivamente completare quella determinata richiesta (notificando il client) oppure no.</p>
+            <p>Le servlet si appoggiano al model dell'applicazione accedendo alle varie classi di model, che sono istanze singleton.
+                L'utilizzo del pattern singleton per le classi di model si è reso necessario poichè i dati sono da considerare univoci per applicazione, quindi è chiaro che creare una nuova istanza di ogni manager per ogni servlet, non avrebbe avuto senso.<br>
+                I manager comunque vengono creati e inizializzati dall'application controller, che vi setta il percorso del file che i manager devono andare a scrivere. <br>
             A questo punto ogni manager, una volta ricevuto il percorso, verifica che sul percorso sia presente il file; se esiste, legge il contenuto del file della relativa entità e prepara la lista in memoria, altrimenti imposta la lista vuota.
-            L'accesso ai manager, visto che può avvenire da diversi thread (uno per ogni chiamata) si effettua in modo mutualmente esclusivo, di conseguenza l'accesso all'istanza è chiuso all'interno di un blocco synchronized.
-            Per maggiori informazioni sul model e relativi metodi, si rimanda ai commenti nel codice e alla relativa javaDoc <a href="Lib1">javadoc</a>
+            L'accesso ai manager, visto che può avvenire da diversi thread (uno per ogni chiamata) si effettua in modo mutuamente esclusivo, di conseguenza l'accesso all'istanza è chiuso all'interno di un blocco synchronized.
+            <p>Per maggiori informazioni sul model, sul controller e le servlet si rimanda ai commenti nel codice e alla relativa <a href="./Model e Controller/index.html">Javadoc</a>.</p>
 
-
+            <ul>
+                <li>
+                    JSP
+                    <ul>
+                        <li> 
+                            index.jsp: Pagina di accesso alla web application, contiene la applet di login, la top.jspf e la title.jspf.
+                        </li>
+                        <li>
+                            signup.jsp: Pagina di registrazione all'applicazione, contiene la top.jspf, la title.jspf e la form necessaria alla signup.
+                        </li>
+                        <li>
+                            user.jsp: Pagina di modifica dell'utente, contiene la top.jspf e la auth.jspf e la form necessaria alla modifica dell'utente.
+                        </li>
+                        <li>
+                            tasks.jsp: Pagina centrale dell'applicazione, contiene la top.jspf, la auth.jspf e la validation-dialog.jspf.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                   JSPF
+                   <ul>
+                       <li>
+                           auth.jspf: Fragment che esegue il redirect automatico nel caso in cui l'utente non sia loggato.
+                       </li>
+                       <li>
+                           common-head.jspf: Contiene gli include di tutti gli script, css e librerie comunemente utilizzati.
+                       </li>
+                       <li>
+                          title.jspf: Titolo di presentazione per le pagine di login e registrazione.
+                       </li>
+                       <li>
+                          top.jspf: Topbar visibile in tutte le pagine, contiene il logo per il redirect, le informazioni dell'utente ed i bottoni per login, logout e signup.
+                       </li>
+                       <li>
+                          validation-dialog.jspf: Fragment utilizzato per l'inclusione delle notifiche nella topbar. Presente solo nella pagina tasks.jsp.
+                       </li>               
+                   </ul>
+                <li>
+                   Servlet
+                   <ul>
+                       
+                   </ul>  
+                </li>
+            </ul>
+            
             <h2>Informazioni memorizzate sul Server e scambiate su rete</h2>
             Il model, pur lavorando sui dati in memoria, mantiene sempre aggiornati gli XML delle relative entità (users.xml, tasks.xml); ciò consente di poter rileggere in fase di inizializzazione del server la situazione dei dati precedente.
             Categories.xml è invece statico e al momento è prevista soltanto la fase di lettura in quanto, mancando la gestione dell'utente amministratore, le categorie non possono essere modificate.
 
             Per quanto riguarda le informazioni scambiate via HTTP, per il servizio di login utilizziamo XML over HTTP (sia per la request che per la response), per tutti gli altri servizi realizzati abbiamo utilizzato JSON over HTTP.
-
     </body>
 </html>

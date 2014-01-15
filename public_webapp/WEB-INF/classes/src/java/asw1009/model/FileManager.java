@@ -31,8 +31,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * Classe base per le classi manager che implementa la scrittura e la lettura di entità java in file XML
- * In entrambi i metodi si fa utilizzo di reflection Java per poter inferire il tipo degli oggetti 
+ * Classe base per le classi manager che implementa la scrittura e la lettura di
+ * entità java in file XML In entrambi i metodi si fa utilizzo di reflection
+ * Java per poter inferire il tipo degli oggetti
+ *
  * @author ASW1009
  */
 public class FileManager {
@@ -43,12 +45,13 @@ public class FileManager {
     protected ManageXML xmlManager;
     private int progId;
     private DateFormat dateFormat;
-    
+
     /**
-     * Metodo utilizzato per inizializzare il manager, in particolare per quanto riguarda
-     * la gestione del file e relativi percorsi.
+     * Metodo utilizzato per inizializzare il manager, in particolare per quanto
+     * riguarda la gestione del file e relativi percorsi.
+     *
      * @param servletPath percorso della servlet in cui inserire il file
-     * @param fileName nome del file 
+     * @param fileName nome del file
      */
     protected void init(String servletPath, String fileName) {
         this.servletPath = servletPath;
@@ -62,11 +65,11 @@ public class FileManager {
         this.dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.US);
         this.progId = 0;
     }
-    
+
     /**
      * Metodo utilizzato per ottenere il nuovo identificatore progressivo.
-     * 
-     * @return 
+     *
+     * @return
      */
     protected int getNextId() {
         progId = progId + 1;
@@ -74,31 +77,36 @@ public class FileManager {
     }
 
     /**
-     * Metodo utilizzato per scrivere l'istanza della lista passata come parametro
-     * nel relativo file xml. Viene richiamato dopo ogni modifica alla lista di oggetti in memoria.
+     * Metodo utilizzato per scrivere l'istanza della lista passata come
+     * parametro nel relativo file xml. Viene richiamato dopo ogni modifica alla
+     * lista di oggetti in memoria.
+     *
      * @param list istanza della lista tipizzata
      * @param type tipo di oggetti contenuti nella lista
      */
     protected void writeXML(List list, Class type) {
-        String itemName = type.getSimpleName();      
-        
+        String itemName = type.getSimpleName();
+
         List<Field> allFields = new LinkedList<>(Arrays.asList(type.getDeclaredFields()));
         Class superclass = type.getSuperclass();
-        
-        if(superclass != null){
+
+        if (superclass != null) {
             allFields.addAll(Arrays.asList(superclass.getDeclaredFields()));
         }
-        
+
         Document document = xmlManager.newDocument();
+
         Element root = document.createElement(this.fileName);
+        root.setAttributeNS("http://www.w3.org/2001/XMLSchema-instance",
+    "xsi:noNamespaceSchemaLocation", "./xml-types/"+this.fileName+".xsd");
         document.appendChild(root);
-        
+
         for (Object instance : list) {
             Element[] itemFields = new Element[allFields.size()];
-            
+
             //Viene preparato il nodo con tutti i campi
             for (int i = 0; i < allFields.size(); i++) {
-                
+
                 try {
                     Field field = allFields.get(i);
                     field.setAccessible(true);
@@ -116,7 +124,7 @@ public class FileManager {
             //Viene appeso il nodo entità alla root
             root.appendChild(item);
         }
-        
+
         //Creato il nodo con il progressivo
         Element listId = document.createElement("progId");
         listId.setTextContent(this.progId + "");
@@ -132,8 +140,9 @@ public class FileManager {
     }
 
     /**
-     * Metodo utilizzato per creare la lista di entità in memoria partendo dalla lettura 
-     * dell'xml
+     * Metodo utilizzato per creare la lista di entità in memoria partendo dalla
+     * lettura dell'xml
+     *
      * @param type Il tipo di entità che la lista contiene
      * @return Lista tipizzata
      */
@@ -158,9 +167,9 @@ public class FileManager {
                     Node property = properties.item(j);
                     if (property.getNodeType() == Node.ELEMENT_NODE) {
                         Field field;
-                        try{
+                        try {
                             field = type.getDeclaredField(property.getNodeName());
-                        }catch(NoSuchFieldException ex){
+                        } catch (NoSuchFieldException ex) {
                             field = type.getSuperclass().getDeclaredField(property.getNodeName());
                         }
                         field.setAccessible(true);

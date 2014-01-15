@@ -176,8 +176,7 @@ public class TasksManager extends FileManager {
     /**
      * Metodo invocato per effettuare la modifica di un task. Verifica che il
      * timeStamp sia uguale a quello dell'ultima versione, in caso contrario
-     * invia un messaggio di errato aggiornamento corredato dal task aggiornato, 
-     * in modo che il client.
+     * invia un messaggio di errato aggiornamento corredato dal task aggiornato.
      *
      * @param request oggetto contenente la richiesta di modifica del task.
      * @return response che contiene il task aggiornato.
