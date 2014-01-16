@@ -186,7 +186,7 @@ public class UsersManager extends FileManager {
                 sessionUser.setEmail(request.getEmail());
 
                 sessionUser.setId(user.getId());
-
+                sessionUser.setPicture(user.getPicture());
                 sessionUser.setUsername(user.getUsername());
 
                 if (!request.getPicture().equals("")) {

@@ -142,7 +142,10 @@ function UserViewModelDefinition() {
                     oldPassword: {
                         required: true
                     },
-                    confirmNewPassword: {
+                    newPassword: {
+                        required: false,
+                        minlength: 6
+                    },confirmNewPassword: {
                         equalTo: function() {
                             if (self.newPassword() !== "") {
                                 return "#newPassword";
@@ -161,6 +164,9 @@ function UserViewModelDefinition() {
                     },
                     oldPassword: {
                         required: "Inserisci la tua password attuale"
+                    },
+                    newPassword: {
+                        minlength: "La password dev'essere lungo almeno 6 caratteri"
                     },
                     confirmNewPassword: {
                         equalTo: "Le due password devono coincidere"
