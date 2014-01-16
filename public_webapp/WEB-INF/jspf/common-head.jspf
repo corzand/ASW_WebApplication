@@ -1,17 +1,19 @@
 <%@ page pageEncoding="UTF-8" %>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<base href="<%=request.getContextPath()%>/" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.0.0/knockout-min.js"></script>
 <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/i18n/jquery-ui-i18n.min.js"></script>
 
-<script src="/scripts/utility.js"></script>
-<script src="/scripts/application.js"></script>
+<script src="scripts/utility.js"></script>
+<script src="scripts/application.js"></script>
 
-<link type="text/css" rel="stylesheet" href="/style-sheets/jquery-ui/jquery-ui-1.10.3.custom.css" />
-<link type="text/css" rel="stylesheet" href="/style-sheets/style.css" />
+<link type="text/css" rel="stylesheet" href="style-sheets/jquery-ui/jquery-ui-1.10.3.custom.css" />
+<link type="text/css" rel="stylesheet" href="style-sheets/style.css" />
 <link href='http://fonts.googleapis.com/css?family=Cabin:400,500,600' rel='stylesheet' type='text/css'>
 
-<link rel="icon" href="/style-sheets/images/favicon.ico" />
+<link rel="icon" href="style-sheets/images/favicon.ico" />
+

@@ -4,7 +4,7 @@
     <head>      
         <title>Signup</title>
         <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
-        <script src="/scripts/signup.js"></script>
+        <script src="scripts/signup.js"></script>
     </head>
     <body class="vertical-box">
         <%@ include file="/WEB-INF/jspf/top.jspf" %> 

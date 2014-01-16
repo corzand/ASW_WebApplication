@@ -697,7 +697,7 @@ function TasksViewModelDefinition() {
                     //Inizializzazione della datepicker per il giorno del task
                     $("#taskDate").datepicker({
                         showOn: "button",
-                        buttonImage: "/style-sheets/images/calendar_dark.png",
+                        buttonImage: "style-sheets/images/calendar_dark.png",
                         buttonImageOnly: true,
                         onSelect: function() {
                             boundTask.date = $("#taskDate").datepicker("getDate");
@@ -767,7 +767,7 @@ function TasksViewModelDefinition() {
         domUtils.initDatePickers = function() {
             $("#fastAddDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar_dark.png",
+                buttonImage: "style-sheets/images/calendar_dark.png",
                 buttonImageOnly: true,
                 onSelect: function() {
                     //Aggiornamento manuale del viewModel
@@ -778,7 +778,7 @@ function TasksViewModelDefinition() {
 
             $("#startDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar_light.png",
+                buttonImage: "style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
                 maxDate: self.endDate,
                 onSelect: function() {
@@ -793,7 +793,7 @@ function TasksViewModelDefinition() {
 
             $("#endDate").datepicker({
                 showOn: "button",
-                buttonImage: "/style-sheets/images/calendar_light.png",
+                buttonImage: "style-sheets/images/calendar_light.png",
                 buttonImageOnly: true,
                 minDate: self.startDate,
                 onSelect: function() {

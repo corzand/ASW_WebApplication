@@ -1,23 +1,26 @@
 <%@ page pageEncoding="UTF-8" %>
 <div class="navigation fixed-box-pack toolbar">
     <div class="logo" title="gestisci tasks">
-        <a href="/application/tasks"> 
-            <img src="/style-sheets/images/logo.png"/>
+        <a href="application/tasks"> 
+            <img src="style-sheets/images/logo.png"/>
             <span class="title">Multi-User Task List</span>
         </a>
     </div>
     <div class="items">       
+        <script>            
+            context = '<%=request.getContextPath()%>';
+        </script>
         <%if (session.getAttribute("user") == null) { %> 
         <div class="actions">
-            <a href="/application/login" class="button top-button"><span>Login</span></a>
-            <a href="/application/signup" class="button top-button"><span>Sign Up</span></a>
+            <a href="application/login" class="button top-button"><span>Login</span></a>
+            <a href="application/signup" class="button top-button"><span>Sign Up</span></a>
         </div>
         <% } else {%>
-        <script type="text/javascript">
+        <script type="text/javascript">            
             loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
         </script>
         <div class="logged-user">
-            <a href="/application/user" title="modifica dati utente"> 
+            <a href="application/user" title="modifica dati utente"> 
                 <div class="picture">
                     <img data-bind="attr: {src: User.picture}"/>
                 </div>

@@ -1,4 +1,4 @@
 <%@ page pageEncoding="UTF-8" %>
 <%if (session.getAttribute("user") == null) {
-         response.sendRedirect("/application/login");
+         response.sendRedirect(request.getContextPath()+"/application/login");
      }%>

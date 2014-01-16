@@ -24,7 +24,7 @@ function requestSettings() {
  */
 function sendRequest(settings) {
     return $.ajax({
-        url: settings.url,
+        url: context + settings.url,
         type: settings.type,
         contentType: settings.contentType,
         dataType: settings.dataType,

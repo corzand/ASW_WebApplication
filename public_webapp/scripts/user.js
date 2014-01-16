@@ -21,7 +21,7 @@ function UserViewModelDefinition() {
         if (self.userPicture() !== '') {
             return self.userPicture();
         } else {
-            return '/style-sheets/images/user_light.png';
+            return 'style-sheets/images/user_light.png';
         }
     });
 
@@ -66,7 +66,7 @@ function UserViewModelDefinition() {
                 if (!data.error) {
                     showPositiveFeedback("Utente aggiornato correttamente.");
                     setTimeout(function() {
-                        window.location.href = "/application/tasks";
+                        window.location.href = context + "/application/tasks";
                     }, 2000);
                 } else {
                     showNegativeFeedback(data.errorMessage);

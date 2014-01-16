@@ -4,7 +4,7 @@
     <head>
         <title>User Management</title>
         <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
-        <script src="/scripts/user.js"></script>
+        <script src="scripts/user.js"></script>
     </head>
     <body class="vertical-box">
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>

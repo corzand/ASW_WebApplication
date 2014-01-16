@@ -50,7 +50,7 @@ function SignUpViewModelDefinition() {
                 if (!data.error) {
                     showPositiveFeedback("Utente aggiunto correttamente");
                     setTimeout(function() {
-                        window.location.href = "/application/login";
+                        window.location.href = context + "/application/login";
                     }, 2000);
                 } else {
                     showNegativeFeedback(data.errorMessage);

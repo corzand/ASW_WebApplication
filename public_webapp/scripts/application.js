@@ -1,5 +1,6 @@
 //Variabile globale contenente le informazioni sull'utente loggato
 var loggedUser; 
+var context;
 
 /*
  * Costruttore dell'oggetto applicationViewModel bindato alla topbar presente in tutte le pagine.
@@ -24,7 +25,7 @@ function ApplicationViewModelDefinition() {
             if (loggedUser.picture !== '') {
                 user.picture = ko.observable(loggedUser.picture);
             } else {
-                user.picture = ko.observable('/style-sheets/images/user_light.png');
+                user.picture = ko.observable('style-sheets/images/user_light.png');
             }
         }
     };
@@ -64,7 +65,7 @@ function ApplicationViewModelDefinition() {
                 },
                 "callback": function(data) {
                     if (!data.error) {
-                        window.location.href = "/application/login";
+                        window.location.href = context + "/application/login";
                     } else {
                         alert(data.errorMessage);
                     }

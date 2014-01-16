@@ -4,7 +4,7 @@
     <head>
         <title>Multi-User Task List</title>
         <%@ include file="/WEB-INF/jspf/common-head.jspf" %>
-        <script src="/scripts/tasks.js"></script>
+        <script src="scripts/tasks.js"></script>
     </head>
     <body class="vertical-box"> 
         <%@ include file="/WEB-INF/jspf/auth.jspf" %>
