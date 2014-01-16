@@ -190,7 +190,7 @@
                     <div class="cell right-label">Utente assegnato</div>
                     <div class="cell">
                         <div class="select">
-                            <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Assegna...'"></select>
+                            <select data-bind="options : Users, optionsText: 'username', value: AssignedUser, optionsCaption: 'Nessuno'"></select>
                         </div>
                     </div>
                 </div>
