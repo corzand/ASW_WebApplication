@@ -28,13 +28,13 @@ function sendRequest(settings) {
         type: settings.type,
         contentType: settings.contentType,
         dataType: settings.dataType,
-        data: settings.requestData,
+        data: JSON.stringify({ data : settings.requestData}),
         success: function(data, textStatus, jqXHR) {
             //Se viene passata una callback, questa callback viene eseguita passando
             //come parametro la risposta del server, unita ad un oggetto che è possibile
             //inserire nei settings
             if (settings.successCallback) {
-                settings.successCallback(data, settings.callbackParameter);
+                settings.successCallback(data.data, settings.callbackParameter);
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {

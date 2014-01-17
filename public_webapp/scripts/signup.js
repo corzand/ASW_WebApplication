@@ -32,7 +32,7 @@ function SignUpViewModelDefinition() {
             "request": function() {
                 var rSettings = new requestSettings();
                 rSettings.url = '/users/signup/';
-                rSettings.requestData = JSON.stringify(self.services.signUp.requestData());
+                rSettings.requestData = self.services.signUp.requestData();
                 rSettings.successCallback = self.services.signUp.callback;
                 return sendRequest(rSettings);
             },

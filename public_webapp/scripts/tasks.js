@@ -232,7 +232,7 @@ function TasksViewModelDefinition() {
             "request": function() {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/search/';
-                rSettings.requestData = JSON.stringify(self.services.search.requestData());
+                rSettings.requestData = self.services.search.requestData();
                 rSettings.successCallback = self.services.search.callback;
                 return sendRequest(rSettings);
             },
@@ -262,7 +262,15 @@ function TasksViewModelDefinition() {
                         });
                         currentDay.setDate(currentDay.getDate() + 1);
                     }
-
+                    
+                    if(!data.tasks){
+                        data.tasks = [];
+                    }else if(!(data.tasks instanceof Array)){
+                        var jettisonOnlyTask = data.tasks;
+                        data.tasks = [];
+                        data.tasks.push(jettisonOnlyTask);
+                    }
+                    
                     //Attraverso la funzione pushTask vengono inseriti i task nei
                     //giorni di loro competenza
                     for (i = 0; i < data.tasks.length; i++) {
@@ -286,7 +294,7 @@ function TasksViewModelDefinition() {
             "request": function() {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/polling/';
-                rSettings.requestData = JSON.stringify(self.services.polling.requestData());
+                rSettings.requestData = self.services.polling.requestData();
                 rSettings.successCallback = self.services.polling.callback;
                 
                 //Se c'è una richiesta polling non ancora completata, la si fa 
@@ -308,7 +316,9 @@ function TasksViewModelDefinition() {
                 //inviato al server, sia gli id dei task ai quali ci si è sottoscritti e 
                 //sui quali si vuole ricevere un'eventuale notifica.
                 return {
-                    searchRequestViewModel: self.services.search.requestData(),
+                    startDate: self.services.search.requestData().startDate,
+                    endDate: self.services.search.requestData().endDate,
+                    userId: self.services.search.requestData().userId,
                     taskIds: taskIds
                 };
             },
@@ -374,7 +384,7 @@ function TasksViewModelDefinition() {
             "request": function($dialog, task) {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/add/';
-                rSettings.requestData = JSON.stringify(self.services.add.requestData(task));
+                rSettings.requestData = self.services.add.requestData(task);
                 rSettings.successCallback = self.services.add.callback;
                 if ($dialog) {
                     rSettings.callbackParameter = $dialog;
@@ -430,7 +440,7 @@ function TasksViewModelDefinition() {
             "request": function(task, boundTask, $dialog) {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/edit/';
-                rSettings.requestData = JSON.stringify(self.services.edit.requestData(boundTask));
+                rSettings.requestData = self.services.edit.requestData(boundTask);
                 rSettings.successCallback = self.services.edit.callback;
                 rSettings.callbackParameter = {
                     "task": task,
@@ -503,7 +513,7 @@ function TasksViewModelDefinition() {
             request: function(task, $dialog) {
                 var rSettings = new requestSettings();
                 rSettings.url = '/tasks/delete/';
-                rSettings.requestData = JSON.stringify(self.services.delete.requestData(task));
+                rSettings.requestData = self.services.delete.requestData(task);
                 rSettings.successCallback = self.services.delete.callback;
                 rSettings.callbackParameter = $dialog;
                 return sendRequest(rSettings);

@@ -1,9 +1,13 @@
 package asw1009.model;
 
-import asw1009.model.entities.Category;
+import asw1009.model.entities.CategoryList;
 import asw1009.responses.CategoriesListResponse;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Classe singleton rappresentante il gestore delle categorie. Contiene la lista
@@ -11,16 +15,21 @@ import java.util.List;
  *
  * @author ASW1009
  */
-public class CategoriesManager extends FileManager {
+public class CategoriesManager {
 
-    private List<Category> categories;
+    private CategoryList items;
     private static CategoriesManager instance;
+    private JAXBContext jc;
+    private Unmarshaller um;
+    protected File xml;
+    protected String directoryPath;
+    private String fileName;
 
     /**
      * Costruttore di classe.
      */
     public CategoriesManager() {
-        categories = new ArrayList<>();
+
     }
 
     /**
@@ -29,15 +38,23 @@ public class CategoriesManager extends FileManager {
      * una lista di categorie nuova.
      *
      * @param directoryPath stringa rappresentante il percorso del file.
-     * @param fileName stringa rappresentante il nome del file.
      */
-    @Override
-    public void init(String directoryPath, String fileName) {
-        super.init(directoryPath, fileName);
-        if (xml.exists()) {
-            categories = (List<Category>) readXML(Category.class);
-        } else {
-            categories = new ArrayList<>();
+    public void init(String directoryPath) {
+        try {
+            this.jc = JAXBContext.newInstance(CategoryList.class);
+            this.um = jc.createUnmarshaller();
+
+            this.directoryPath = directoryPath;
+            this.fileName = "Categories";
+            this.xml = new File(this.directoryPath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
+
+            if (xml.exists()) {
+                items = (CategoryList) um.unmarshal(xml);
+            } else {
+                items = new CategoryList();
+            }
+        } catch (JAXBException ex) {
+            Logger.getLogger(CategoriesManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -62,7 +79,7 @@ public class CategoriesManager extends FileManager {
     public CategoriesListResponse categoriesList() {
         CategoriesListResponse response = new CategoriesListResponse();
         response.setError(false);
-        response.setCategories(categories);
+        response.setCategories(items.getList());
         return response;
     }
 }

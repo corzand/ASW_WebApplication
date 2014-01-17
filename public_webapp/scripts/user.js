@@ -46,7 +46,7 @@ function UserViewModelDefinition() {
             "request": function() {
                 var rSettings = new requestSettings();
                 rSettings.url = '/users/edituser/';
-                rSettings.requestData = JSON.stringify(self.services.editUserData.requestData());
+                rSettings.requestData = self.services.editUserData.requestData();
                 rSettings.successCallback = self.services.editUserData.callback;
                 sendRequest(rSettings);
             },

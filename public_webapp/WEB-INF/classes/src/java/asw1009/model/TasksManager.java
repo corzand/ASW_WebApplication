@@ -1,6 +1,7 @@
 package asw1009.model;
 
 import asw1009.model.entities.Task;
+import asw1009.model.entities.TaskList;
 import asw1009.requests.AddTaskRequest;
 import asw1009.requests.DeleteTaskRequest;
 import asw1009.requests.SearchTasksRequest;
@@ -9,9 +10,16 @@ import asw1009.requests.EditTaskRequest;
 import asw1009.responses.DeleteTaskResponse;
 import asw1009.responses.EditTaskResponse;
 import asw1009.responses.SearchTasksResponse;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Classe singleton rappresentante il gestore dei task. Contiene la lista delle
@@ -19,16 +27,21 @@ import java.util.List;
  *
  * @author ASW1009
  */
-public class TasksManager extends FileManager {
+public class TasksManager {
 
-    private List<Task> tasks;
+    private TaskList items;
     private static TasksManager instance;
+    private JAXBContext jc;
+    private Unmarshaller um;
+    private Marshaller m;
+    protected File xml;
+    protected String directoryPath;
+    private String fileName;
 
     /**
      * Costruttore di classe.
      */
     public TasksManager() {
-        tasks = new ArrayList<>();
     }
 
     /**
@@ -37,15 +50,23 @@ public class TasksManager extends FileManager {
      * altrimenti crea una lista di task nuova.
      *
      * @param directoryPath stringa rappresentante il percorso del file.
-     * @param fileName stringa rappresentante il nome del file.
      */
-    @Override
-    public void init(String directoryPath, String fileName) {
-        super.init(directoryPath, fileName);
-        if (xml.exists()) {
-            tasks = (List<Task>) readXML(Task.class);
-        } else {
-            tasks = new ArrayList<>();
+    public void init(String directoryPath) {
+       try {
+            this.jc = JAXBContext.newInstance(TaskList.class);
+            this.um = jc.createUnmarshaller();
+            this.m = jc.createMarshaller();
+            this.directoryPath = directoryPath;
+            this.fileName = "Tasks";
+            this.xml = new File(this.directoryPath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
+
+            if (xml.exists()) {
+                items = (TaskList) um.unmarshal(xml);
+            } else {
+                items = new TaskList();
+            }
+        } catch (JAXBException ex) {
+            Logger.getLogger(CategoriesManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -70,8 +91,8 @@ public class TasksManager extends FileManager {
      */
     private Task getTaskById(int id) {
 
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
+        for (int i = 0; i < items.getList().size(); i++) {
+            Task task = items.getList().get(i);
             if (task.getId() == id) {
                 return task;
             }
@@ -80,10 +101,14 @@ public class TasksManager extends FileManager {
     }
 
     /**
-     * Aggiorna il file xml contenente tutti i task
+     * Aggiorna il fileXML scrivendolo.
      */
     private void updateXML() {
-        writeXML(tasks, Task.class);
+        try {
+            m.marshal(items, xml);
+        } catch (JAXBException ex) {
+            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -126,9 +151,9 @@ public class TasksManager extends FileManager {
     public SearchTasksResponse searchTasks(SearchTasksRequest request) {
         SearchTasksResponse response = new SearchTasksResponse();
         List<Task> tasksToAdd = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
+        for (int i = 0; i < items.getList().size(); i++) {
 
-            Task currentTask = tasks.get(i);
+            Task currentTask = items.getList().get(i);
             if (isTaskMatchingRequest(currentTask, request)) {
                 tasksToAdd.add(currentTask);
             }
@@ -149,7 +174,7 @@ public class TasksManager extends FileManager {
         AddTaskResponse response = new AddTaskResponse();
         Date date = new Date();
         Task task = new Task();
-        task.setId(getNextId());
+        task.setId(items.getNextId());
         task.setAssignedUserId(request.getAssignedUserId());
         task.setAttachment(request.getAttachment());
         task.setCategoryId(request.getCategoryId());
@@ -163,7 +188,7 @@ public class TasksManager extends FileManager {
         task.setUserId(request.getUserId());
         task.setTimeStamp(date.getTime());
 
-        tasks.add(task);
+        items.getList().add(task);
 
         response.setTask(task);
         response.setError(false);
@@ -235,7 +260,7 @@ public class TasksManager extends FileManager {
         if (task != null) {
             if (task.getTimeStamp() == request.getTimeStamp()) {
 
-                tasks.remove(task);
+                items.getList().remove(task);
 
                 viewModel.setTask(task);
                 viewModel.setError(false);

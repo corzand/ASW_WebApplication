@@ -31,9 +31,9 @@ public class Application extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        UsersManager.getInstance().init(getServletContext().getRealPath("/"), "Users");
-        CategoriesManager.getInstance().init(getServletContext().getRealPath("/"), "Categories");
-        TasksManager.getInstance().init(getServletContext().getRealPath("/"), "Tasks");
+        UsersManager.getInstance().init(getServletContext().getRealPath("/"));
+        CategoriesManager.getInstance().init(getServletContext().getRealPath("/"));
+        TasksManager.getInstance().init(getServletContext().getRealPath("/"));
     }
 
     //Define servlet actions

@@ -17,7 +17,7 @@
         </div>
         <% } else {%>
         <script type="text/javascript">            
-            loggedUser = JSON.parse('<%= session.getAttribute("user")%>');
+            loggedUser = JSON.parse('<%= session.getAttribute("user")%>').User;
         </script>
         <div class="logged-user">
             <a href="application/user" title="modifica dati utente"> 

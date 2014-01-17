@@ -2,6 +2,7 @@ package asw1009.model;
 
 import org.apache.commons.codec.binary.Base64;
 import asw1009.model.entities.User;
+import asw1009.model.entities.UserList;
 import asw1009.requests.EditUserRequest;
 import asw1009.requests.LoginRequest;
 import asw1009.requests.SignUpRequest;
@@ -12,8 +13,12 @@ import asw1009.responses.UsersListResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 /**
  * Classe singleton rappresentante il gestore degli utenti. Contiene la lista
@@ -21,34 +26,46 @@ import java.util.List;
  *
  * @author ASW1009
  */
-public class UsersManager extends FileManager {
+public class UsersManager {
 
-    private List<User> users;
+    private UserList items;
     private static UsersManager instance;
+    private JAXBContext jc;
+    private Unmarshaller um;
+    private Marshaller m;
+    protected File xml;
+    protected String directoryPath;
+    private String fileName;
 
     /**
      * Costruttore di classe.
      */
     public UsersManager() {
-        users = new ArrayList<>();
     }
 
-    @Override
     /**
      * Metodo che fa l'override del metodo init() della classe FileManager: se
      * il file.xml esiste istanzia la lista leggendo dal file, altrimenti crea
      * una lista di utenti nuova.
      *
      * @param directoryPath stringa rappresentante il percorso del file.
-     * @param fileName stringa rappresentante il nome del file.
      */
-    public void init(String directoryPath, String fileName) {
-        super.init(directoryPath, fileName);
+    public void init(String directoryPath) {
+        try {
+            this.jc = JAXBContext.newInstance(UserList.class);
+            this.um = jc.createUnmarshaller();
+            this.m = jc.createMarshaller();
+            this.directoryPath = directoryPath;
+            this.fileName = "Users";
+            this.xml = new File(this.directoryPath + System.getProperty("file.separator") + "WEB-INF" + System.getProperty("file.separator") + "xml" + System.getProperty("file.separator") + this.fileName + ".xml");
 
-        if (xml.exists()) {
-            users = readXML(User.class);
-        } else {
-            users = new ArrayList<>();
+            if (xml.exists()) {
+                items = (UserList) um.unmarshal(xml);
+            } else {
+                items = new UserList();
+            }
+        } catch (JAXBException ex) {
+            Logger.getLogger(CategoriesManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -71,8 +88,8 @@ public class UsersManager extends FileManager {
      * @param user rappresentante l'utente.
      */
     public void addUser(User user) {
-        user.setId(getNextId());
-        users.add(user);
+        user.setId(items.getNextId());
+        items.getList().add(user);
 
         updateXML();
     }
@@ -86,8 +103,8 @@ public class UsersManager extends FileManager {
      */
     private User getUserByUsername(String username) {
 
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
+        for (int i = 0; i < items.getList().size(); i++) {
+            User user = items.getList().get(i);
             if (user.getUsername().equals(username)) {
                 return user;
             }
@@ -100,7 +117,11 @@ public class UsersManager extends FileManager {
      * Aggiorna il fileXML scrivendolo.
      */
     private void updateXML() {
-        writeXML(users, User.class);
+        try {
+            m.marshal(items, xml);
+        } catch (JAXBException ex) {
+            Logger.getLogger(UsersManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -228,7 +249,7 @@ public class UsersManager extends FileManager {
     public UsersListResponse usersList() {
         UsersListResponse response = new UsersListResponse();
         response.setError(false);
-        response.setUsers(users);
+        response.setUsers(items.getList());
         return response;
     }
 
@@ -254,7 +275,7 @@ public class UsersManager extends FileManager {
 
             byte[] imageByteArray = Base64.decodeBase64(splitted[1]);
             String filePath = "multimedia/users/" + id + extension;
-            File file = new File(servletPath + filePath);
+            File file = new File(directoryPath + filePath);
             if (!file.exists()) {
                 file.createNewFile();
             }
