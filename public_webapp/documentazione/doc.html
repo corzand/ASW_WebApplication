@@ -6,8 +6,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width">
     </head>
-    <body>
-
+    <body style="margin: 50px">
+        <h1>Elaborato Gruppo 1009 - Applicazioni e Servizi Web (a.a. 2014/15) </h1>
         <h1>Titolo: Multi-User Task List</h1>
         <h1>Autori</h1>
         <p> Capelli Claudia, matricola: 675488, claudia.capelli5@studio.unibo.it <br/>
@@ -35,6 +35,8 @@
         Il sito &egrave; strutturato secondo una classica architettura MVC: le view sono le pagine jsp unite ai fragments, le servlet costituiscono lo strato di controller ed il model &egrave; composto da classi singleton gestrici delle relative entit&agrave;.<br>
         Le entit&agrave; condivise tra client e server sono codificate come Java Beans e sono contenute in una library esterna importata sia dalla applet che dal server.
         La gestione dei dati da parte del model &egrave; eseguita in memoria con scrittura di backup su file XML.
+        <br>
+        <img src="./immagini/MVC.jpg" />
 
         <h2>Lato Client</h2>
         Per la computazione lato Client il sito presenta due diverse tecnologie utilizzate nelle quattro pagine jsp accessibili:
@@ -84,7 +86,6 @@
 
             L'applet fa utilizzo della library esterna ASW_Lib1, che contiene gli oggetti Java rappresentanti sia le entit&agrave; base utilizzate nell'applicazione (User.java, UserBase.java, Task.java, Category.java), sia gli oggetti Java scambiati con il server (requests e responses) per l'esecuzione dei servizi.        
         <p> <a href="./Lib1/index.html">Javadoc ASW_Lib1</a><br>
-            <a href="./Applet1/index.html">Javadoc ASW_Applet1</a></p>
 
         <p> Per quanto riguarda le restanti view, sono state realizzate nativamente con HTML, CSS e Javascript.<br>
             Tutte e tre utilizzano in modo esplicito il concetto di ViewModel per effettuare il binding (via Knockout) dei dati tra il contenuto HTML della JSP, e i dati in formato Javascript. E' quindi sempre presente un viewmodel dedicato alla pagina che rappresenta la classe e che gestisce, lato-client, i dati da visualizzare e su cui l'utente pu&ograve; interagire.<br>
@@ -152,9 +153,9 @@
         </ul>
         <h2>Lato Server</h2>
         Il server &egrave; strutturato in due package differenti, rappresentanti il Model ed il Controller dell'architettura MVC utilizzata.<br>
-        <p>Il model si compone di classi singleton il cui scopo &egrave; gestire le varie entit&agrave; presenti.
-            FileManager.java &egrave; la classe base dei manager componenti il model, il suo scopo &egrave; implementare la scrittura e la lettura di entit&agrave; Java in XML. Le classi CategoriesManager.java, TasksManager.java e UsersManager.java estendono FileManager.java
-            e implementano i metodi necessari all'alterazione delle relative entit&agrave;. </p>
+        <p>Il model si compone di classi singleton il cui scopo &egrave; gestire le varie entit&agrave; presenti.            
+            La serializzazione(deserializzazione) Java -> XML (XML -> Java) si effettua nelle Singleton attraverso l'utilizzo di JAXB, che mette a disposizione tutta l'infrastruttura necessaria, appoggiandosi ovviamente sulle classi comuni di libreria opportunamente annotate.
+        </p>
 
         <p>Il controller si compone di tre servlet (Application.java, Tasks.java e Users.java) che offrono diversi servizi ai client. TaskPollingAsyncRequest.java &egrave; un oggetto utilizzato dalla servlet Tasks.java per gestire le richieste asincrone secondo il pattern Comet.
             <br>La servlet Application.java intercetta le richieste GET del client per le diverse view e, attraverso view selection sulle opportune jsp, effettua il forwarding.
@@ -171,7 +172,7 @@
             Entrambe le servlet si occupano di gestire le richieste di tipo POST, perch&egrave; ovviamente offrono servizi sotto forma di metodi che operano sui dati, non restituiscono direttamente una View ma altri dati, in formato XML o JSON.
             La scelta del formato di scambio dati tra client e server &egrave; stata XML nel caso della chiamata al servizio di login effettuata dalla applet, JSON nel caso degli altri servizi. <br>
             JSON &egrave; stato utilizzato perch&egrave; pi&ugrave; semplice da maneggiare via javascript, dato che la maggior parte della nostra applicazione client-side &egrave; basata su questa tecnologia. 
-            Lato-server, la serializzazione/deserializzazione di JSON &egrave; stata ottenuta attraverso la library <a href="https://code.google.com/p/google-gson/"> Google Gson</a> open source.<br></p>
+            Lato-server, la serializzazione/deserializzazione di JSON &egrave; stata ottenuta attraverso la library <a href="http://jettison.codehaus.org/"> Jettison</a>.<br></p>
         <p>La maggior parte dei servizi esposti dalle servlet sono implementati in modo sincrono, ma c'&egrave; un'eccezione: la servlet Tasks.js si deve preoccupare anche della realizzazione del meccanismo di notifiche implementato tramite COMET, quindi per l'operation polling la richiesta del client viene sospesa e la risposta si manda in modo asincrono, solo quando &egrave; necessario inviare la notifica.
             La struttura di appoggio utilizzata all'interno della servlet Tasks.java per salvare le richieste asincrone, &egrave; una HashMap in cui la chiave &egrave; rappresentata dalla sessionId del client che effettua la richiesta di polling, mentre l'oggetto salvato nella mappa ha tutte le informazioni necessarie al server per sapere se deve effettivamente completare quella determinata richiesta (notificando il client) oppure no.</p>
         <p>Le servlet si appoggiano al model dell'applicazione accedendo alle varie classi di model, che sono istanze singleton.
@@ -239,15 +240,15 @@
 
         Per quanto riguarda le informazioni scambiate via HTTP, per il servizio di login utilizziamo XML over HTTP (sia per la request che per la response), per tutti gli altri servizi realizzati abbiamo utilizzato JSON over HTTP.
 
-        Tutti i fiel XML vengono letti e scritti dalla classe FileManager.java che ha l'unico scopo di trasformare entit&agrave; Java in file XML e viceversa.
-        L'unica eccezione &egrave; fatta per il file Login.xml il quale viene letto da FileManager.java come tutti gli altri ma &egrave; scritto direttamente da LoginApplet.java.
+        Tutti i file XML vengono letti e scritti dalle classi di model, che oltre ad offrire le varie operazioni sui dati, mantengono costantemente sincronizzato il file di propria competenza.
+        L'unica eccezione &egrave; fatta per il file Login.xml che viene utilizzato nel servizio di login.
 
         Di seguito presentiamo i file XML utilizzati, relativi XML Schema e i file che si relazionano con essi :
         <ul>	
-            <li>Users.xml (<a href="../xml-types/Users.xsd">XML Schema</a>): LoginApplet.java > Users.java > UsersManager.java > FileManager.java</li>
-            <li>Categories.xml (<a href="../xml-types/Categories.xsd">XML Schema</a>): CategoriesManager.java > FileManager.java</li>
-            <li>Tasks.xml (<a href="../xml-types/Tasks.xsd">XML Schema</a>): TasksManager.java > FileManager.java</li>
-            <li>Login.xml (<a href="../xml-types/Login.xsd">XML Schema</a>): UsersManager.java > FileManager.java</li>
+            <li>Users.xml (<a href="../xml-types/Users.xsd">XML Schema</a>): LoginApplet.java / Users.java / UsersManager.java</li>
+            <li>Categories.xml (<a href="../xml-types/Categories.xsd">XML Schema</a>): CategoriesManager.java</li>
+            <li>Tasks.xml (<a href="../xml-types/Tasks.xsd">XML Schema</a>): TasksManager.java </li>
+            <li>Login.xml (<a href="../xml-types/Login.xsd">XML Schema</a>): UsersManager.java</li>
         </ul>
     </body>
 </html>

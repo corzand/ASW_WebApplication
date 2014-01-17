@@ -532,7 +532,7 @@ input.hasDatepicker {
 
 .navigation .logged-user img {
     vertical-align: baseline;
-    width: 50px;
+    max-width: 50px;
     border-radius: 8px;
     max-height: 50px;
 }

@@ -14,13 +14,10 @@
                  }%>
                 <%@ include file="/WEB-INF/jspf/title.jspf" %> 
                 <%
-                    //String username = request.getParameter("username");
-                    //String password = request.getParameter("password");
                     Cookie[] cookies = request.getCookies();
                     String username = "";
                     String password = "";
                     
-
                     if (cookies == null) {                        
                         System.out.println("nessun cookies");
                     } else {
